@@ -180,14 +180,18 @@ def fetch_prefecture() -> dict:
 
     lo, hi = COHORT
     agg: dict[str, int] = {}
+    by_year: dict[str, dict[str, int]] = {}      # 都道府県ページで年度別に見せるため全期間を残す
     for v in _as_list(sd["DATA_INF"]["VALUE"]):
-        year = int(tname[v["@time"]][:4])
-        if not (lo <= year <= hi):
-            continue
+        label = tname[v["@time"]]
+        year = int(label[:4])
+        area = aname[v["@area"]]
         try:
-            agg[aname[v["@area"]]] = agg.get(aname[v["@area"]], 0) + int(v["$"])
+            val = int(v["$"])
         except (ValueError, TypeError):
             continue
+        by_year.setdefault(area, {})[label] = val
+        if lo <= year <= hi:
+            agg[area] = agg.get(area, 0) + val
 
     national = agg.pop("全国", 0)
     total = sum(agg.values())
@@ -202,6 +206,8 @@ def fetch_prefecture() -> dict:
         "filter": "建て方=共同住宅／構造=鉄筋コンクリート造／利用関係=分譲住宅／表章項目=戸数",
         "national": national,
         "units": dict(sorted(agg.items(), key=lambda kv: -kv[1])),
+        "by_year": {k: dict(sorted(v.items(), key=lambda kv: (int(kv[0][:4]))))
+                    for k, v in by_year.items()},
     }
 
 

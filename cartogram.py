@@ -45,8 +45,9 @@ def _short(name: str) -> str:
     return name.rstrip("都道府県")[:2]
 
 
-def cartogram(units: dict[str, int], highlight: tuple[str, ...] = ()) -> str:
-    """units: 都道府県名 → 戸数。highlight: 枠を強調する都道府県。"""
+def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
+              links: dict[str, str] | None = None) -> str:
+    """units: 都道府県名 → 戸数。highlight: 枠を強調。links: 都道府県名 → リンク先。"""
     missing = set(TILES) - set(units)
     if missing:
         raise SystemExit(f"配置表にあるが数値が無い都道府県: {sorted(missing)}")
@@ -89,11 +90,23 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = ()) -> str:
         b = bin_of(v)
         x, y = X0 + col * PITCH, Y0 + row * PITCH
         stroke = ' stroke="var(--ink)" stroke-width="2"' if name in highlight else ''
+        href = (links or {}).get(name)
+        if href:
+            s.append(f'<a href="{href}" aria-label="{name}の大規模修繕統計">')
         s.append(f'<rect x="{x}" y="{y}" width="{SIZE}" height="{SIZE}" rx="3" fill="var(--b{b})"{stroke}/>')
         s.append(f'<text x="{x + SIZE/2}" y="{y + 21}" text-anchor="middle" font-size="13" '
                  f'font-weight="600" fill="var(--b{b}f)">{_short(name)}</text>')
         s.append(f'<text x="{x + SIZE/2}" y="{y + 39}" text-anchor="middle" font-family="{MONO}" '
                  f'font-size="13" fill="var(--b{b}f)">{round(v/1000)}</text>')
+        if href:
+            s.append('</a>')
+
+    # 凡例まで目を戻さなくて済むよう、東京タイルの下に単位と読み方を添える
+    tx, ty = TILES["東京都"]
+    ex, ey = X0 + tx * PITCH, Y0 + ty * PITCH + SIZE + 26
+    s.append(f'<text x="{ex}" y="{ey}" font-family="{MONO}" font-size="12" fill="var(--ink3)">単位：千戸</text>')
+    s.append(f'<text x="{ex}" y="{ey + 19}" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'
+             f'例）東京 {round(units["東京都"]/1000)} ＝ {units["東京都"]/10000:.1f}万戸</text>')
 
     if highlight:
         s.append(f'<text x="{X0}" y="778" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'

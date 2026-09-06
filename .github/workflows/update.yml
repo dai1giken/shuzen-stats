@@ -7,7 +7,7 @@ name: monthly-update
 #   - ESTAT_APP_ID は Secrets に置く。リポジトリには絶対に入れない
 #   - basis.json に取得日が入るので毎回コミットは入る。元データが伸びたかは
 #     コミットメッセージで区別する（「月次更新（A → B）」/「再生成（… のまま）」）
-#   - 公開するのは index.html と ogp.png だけ。ソースは配らない
+#   - 公開するのは index.html / ogp.png / sitemap.xml / pref（47県）。ソースは配らない
 
 on:
   schedule:
@@ -77,7 +77,7 @@ jobs:
             MSG="chore: 月次更新（$BEFORE → $AFTER）"
             echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
           fi
-          git add basis.json page.html index.html ogp.png
+          git add basis.json page.html index.html ogp.png sitemap.xml pref
           if git diff --cached --quiet; then
             echo "差分なし。コミットしません。"
           else
@@ -88,8 +88,10 @@ jobs:
       - name: 公開するファイルだけ集める
         run: |
           mkdir -p _site
-          cp index.html ogp.png _site/
+          cp index.html ogp.png sitemap.xml robots.txt _site/
+          cp -r pref _site/
           touch _site/.nojekyll
+          echo "公開ファイル数: $(find _site -type f | wc -l)" 
 
       - uses: actions/upload-pages-artifact@v3
         with:

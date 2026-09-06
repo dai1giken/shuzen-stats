@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from build_pref import SLUG, build as build_pref
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
@@ -283,7 +284,8 @@ def main() -> None:
         "{{CHART_CPI}}": cpi_chart(dmonths, prim, cpi["values"],
                                    "改装・改修工事費", "消費者物価（総合）"),
         "{{CHART_CYCLE}}": cycle_chart(),
-        "{{CHART_MAP}}": cartogram(pref["units"], highlight=tokyo3),
+        "{{CHART_MAP}}": cartogram(pref["units"], highlight=tokyo3,
+                                   links={k: f"pref/{v}.html" for k, v in SLUG.items()}),
         "{{PREF_FROM}}": str(pref["cohort"][0]),
         "{{PREF_TO}}": str(pref["cohort"][1]),
         "{{PREF_AGE_FROM}}": str(2026 - pref["cohort"][1]),
@@ -347,6 +349,8 @@ def main() -> None:
     (HERE / "page.html").write_text(out, encoding="utf-8")
     (HERE / "index.html").write_text(HEAD.replace("__SITE__", SITE_URL) + out + "\n</body>\n</html>\n", encoding="utf-8")
 
+    n_pref = build_pref(basis)
+    print(f"pref/      {n_pref} 県 ＋ 一覧、sitemap.xml")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
     print(f"  A={_fmt(a)} m² ({latest})　ピーク {peak_year} {_fmt(peak)} m² → {tokens['{{DECLINE_PCT}}']}%減")

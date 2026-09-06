@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>和歌山県の大規模修繕統計｜修繕適齢期の分譲マンション 5,769戸</title>
+<meta name="description" content="和歌山県で1988〜2001年度に着工した分譲マンションは5,769戸。2026年時点で築25〜38年、大規模修繕の2〜3回目にあたります。全国26位、全国の0.4%。国土交通省の公表統計をそのまま並べています。">
+<meta property="og:title" content="和歌山県の大規模修繕統計｜修繕適齢期の分譲マンション 5,769戸">
+<meta property="og:description" content="和歌山県で1988〜2001年度に着工した分譲マンションは5,769戸。2026年時点で築25〜38年、大規模修繕の2〜3回目にあたります。全国26位、全国の0.4%。国土交通省の公表統計をそのまま並べています。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dai1giken.github.io/shuzen-stats/pref/wakayama.html">
+<meta property="og:image" content="https://dai1giken.github.io/shuzen-stats/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dai1giken.github.io/shuzen-stats/pref/wakayama.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
+  --ink:#191D16; --ink2:#4C5348; --ink3:#7D8578;
+  --rule:#D2D6CB; --rule-soft:#E2E5DC; --shu:#BE3A22; --ai:#2C5468;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}}
+:root[data-theme="dark"]{
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--jp);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 56px),
+                   repeating-linear-gradient(to bottom,var(--rule-soft) 0 1px,transparent 1px 56px)}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 96px}
+a{color:var(--ai);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--ink);padding:26px 0 10px}
+a.by{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);text-decoration:none}
+a.by b{color:var(--ink);font-weight:600;font-family:var(--jp);font-size:14px;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+a.by:hover b{color:var(--shu);text-decoration-color:var(--shu)}
+.masthead .spacer{flex:1 1 100px}
+.crumb{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.srcband{margin-top:18px;border:1px solid var(--ai);border-left-width:4px;background:var(--surface);
+  padding:12px 18px;font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.srcband b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ai);display:block;margin-bottom:4px}
+.srcband strong{color:var(--ink)}
+.toplabel{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ai);
+  margin:28px 0 10px;display:block;font-weight:500}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1;margin:0;text-wrap:balance}
+h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:15px;line-height:1.7;color:var(--ink2);margin-top:14px;max-width:60ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:30px}
+.kpi{background:var(--surface);padding:18px 20px}
+.kpi .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;margin:6px 0 4px}
+.kpi .v small{font-size:14px;font-weight:500;color:var(--ink2);margin-left:3px}
+.kpi.hi .v{color:var(--shu)}
+.kpi p{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+section{margin-top:56px}
+h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-bottom:9px;border-bottom:1px solid var(--ink);
+  display:flex;align-items:baseline;gap:12px;text-wrap:balance}
+h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
+.lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
+.chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
+  border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
+.tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:420px;background:var(--surface);font-size:13.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft)}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+tr.me td{background:var(--sunk);font-weight:600}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
+.warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
+.warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
+.warn strong{color:var(--ink)}
+a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+a.cta:hover{background:var(--sunk);border-color:var(--ai)}
+a.cta .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.cta .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.cta:hover .n{color:var(--ai)}
+a.cta .d{font-size:12.5px;color:var(--ink2)}
+a.cta .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--ai)}
+a.sitelink{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:20px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+a.sitelink:hover{background:var(--sunk);border-color:var(--shu)}
+a.sitelink .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.sitelink .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.sitelink:hover .n{color:var(--shu)}
+a.sitelink .d{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--shu)}
+.credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+.prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:24px}
+.prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
+  align-items:baseline;gap:8px;color:var(--ink)}
+.prefgrid a:hover{background:var(--sunk)}
+.prefgrid .nm{font-size:14px}
+.prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b>↗</a>
+    <span class="spacer"></span>
+    <span class="crumb"><a href="https://dai1giken.github.io/shuzen-stats/">大規模修繕統計ビューア</a> ／ 都道府県別</span>
+  </header>
+  <div class="srcband">
+    <b>SOURCE ／ 出典</b>
+    <strong>このページの数値は、すべて国土交通省の公表値です。</strong>
+    住宅着工統計調査（e-Stat API）から取得し、期間の合計以外の加工はしていません。
+    当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+  </div>
+
+  <span class="toplabel">国土交通省 公表統計 ／ 都道府県別</span>
+  <h1>和歌山県の大規模修繕統計
+    <span class="sub">1988〜2001年度に和歌山県で着工した分譲マンションは <strong>5,769戸</strong>。2026年時点で築25〜38年、大規模修繕の2回目から3回目にあたる住戸です。</span>
+  </h1>
+
+  <div class="kpis">
+    <div class="kpi hi">
+      <span class="k">修繕適齢期の住戸</span>
+      <div class="v">5,769<small>戸</small></div>
+      <p>1988〜2001年度に着工した分譲マンション（共同住宅・鉄筋コンクリート造）。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">全国順位</span>
+      <div class="v">26<small>位 / 47</small></div>
+      <p>全国 1,560,831戸 に占める割合は 0.4%。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">工事費の目安</span>
+      <div class="v">123<small>万円／戸</small></div>
+      <p>3回目以上の中央値を2026年6月の物価に換算した<strong>全国値</strong>。県別の工事費指数は存在しません。</p>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="idx">Fig.</span>和歌山県の分譲マンション着工戸数（年度別）</h2>
+    <p class="lede">朱色の期間が、2026年時点で築25〜38年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
+    <div class="chartbox">
+      <svg viewBox="0 0 900 320" role="img" aria-label="年度別の分譲マンション着工戸数。1988年度から2023年度まで。">
+      <g stroke="var(--rule-soft)" stroke-width="1">
+      <line x1="62" y1="209.5" x2="872" y2="209.5"/>
+      <line x1="62" y1="151.0" x2="872" y2="151.0"/>
+      <line x1="62" y1="92.5" x2="872" y2="92.5"/>
+      <line x1="62" y1="34.0" x2="872" y2="34.0"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" text-anchor="end">
+      <text x="53" y="272.0">0</text>
+      <text x="53" y="213.5">500</text>
+      <text x="53" y="155.0">1,000</text>
+      <text x="53" y="96.5">1,500</text>
+      <text x="53" y="38.0">2,000</text>
+      </g>
+      <text x="62" y="20" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">戸</text>
+      <line x1="62" y1="268" x2="872" y2="268" stroke="var(--rule)"/>
+      <rect x="63.5" y="188.7" width="19.5" height="79.3" rx="2" fill="var(--shu)" opacity="1"><title>1988年度　678 戸</title></rect>
+      <rect x="86.0" y="114.8" width="19.5" height="153.2" rx="2" fill="var(--shu)" opacity="1"><title>1989年度　1,309 戸</title></rect>
+      <rect x="108.5" y="95.5" width="19.5" height="172.5" rx="2" fill="var(--shu)" opacity="1"><title>1990年度　1,474 戸</title></rect>
+      <rect x="131.0" y="152.6" width="19.5" height="115.4" rx="2" fill="var(--shu)" opacity="1"><title>1991年度　986 戸</title></rect>
+      <rect x="153.5" y="241.2" width="19.5" height="26.8" rx="2" fill="var(--shu)" opacity="1"><title>1992年度　229 戸</title></rect>
+      <rect x="176.0" y="247.6" width="19.5" height="20.4" rx="2" fill="var(--shu)" opacity="1"><title>1993年度　174 戸</title></rect>
+      <rect x="198.5" y="247.1" width="19.5" height="20.9" rx="2" fill="var(--shu)" opacity="1"><title>1994年度　179 戸</title></rect>
+      <rect x="221.0" y="266.1" width="19.5" height="1.9" rx="2" fill="var(--shu)" opacity="1"><title>1995年度　16 戸</title></rect>
+      <rect x="243.5" y="262.5" width="19.5" height="5.5" rx="2" fill="var(--shu)" opacity="1"><title>1996年度　47 戸</title></rect>
+      <rect x="266.0" y="268.0" width="19.5" height="0.0" rx="2" fill="var(--shu)" opacity="1"><title>1997年度　0 戸</title></rect>
+      <rect x="288.5" y="263.2" width="19.5" height="4.8" rx="2" fill="var(--shu)" opacity="1"><title>1998年度　41 戸</title></rect>
+      <rect x="311.0" y="251.0" width="19.5" height="17.0" rx="2" fill="var(--shu)" opacity="1"><title>1999年度　145 戸</title></rect>
+      <rect x="333.5" y="223.2" width="19.5" height="44.8" rx="2" fill="var(--shu)" opacity="1"><title>2000年度　383 戸</title></rect>
+      <rect x="356.0" y="255.4" width="19.5" height="12.6" rx="2" fill="var(--shu)" opacity="1"><title>2001年度　108 戸</title></rect>
+      <rect x="378.5" y="249.0" width="19.5" height="19.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2002年度　162 戸</title></rect>
+      <rect x="401.0" y="256.4" width="19.5" height="11.6" rx="2" fill="var(--ai)" opacity="0.42"><title>2003年度　99 戸</title></rect>
+      <rect x="423.5" y="245.3" width="19.5" height="22.7" rx="2" fill="var(--ai)" opacity="0.42"><title>2004年度　194 戸</title></rect>
+      <rect x="446.0" y="238.9" width="19.5" height="29.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2005年度　249 戸</title></rect>
+      <rect x="468.5" y="229.6" width="19.5" height="38.4" rx="2" fill="var(--ai)" opacity="0.42"><title>2006年度　328 戸</title></rect>
+      <rect x="491.0" y="223.9" width="19.5" height="44.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2007年度　377 戸</title></rect>
+      <rect x="513.5" y="259.0" width="19.5" height="9.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2008年度　77 戸</title></rect>
+      <rect x="536.0" y="258.9" width="19.5" height="9.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2009年度　78 戸</title></rect>
+      <rect x="558.5" y="268.0" width="19.5" height="0.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2010年度　0 戸</title></rect>
+      <rect x="581.0" y="268.0" width="19.5" height="0.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2011年度　0 戸</title></rect>
+      <rect x="603.5" y="258.2" width="19.5" height="9.8" rx="2" fill="var(--ai)" opacity="0.42"><title>2012年度　84 戸</title></rect>
+      <rect x="626.0" y="236.3" width="19.5" height="31.7" rx="2" fill="var(--ai)" opacity="0.42"><title>2013年度　271 戸</title></rect>
+      <rect x="648.5" y="251.9" width="19.5" height="16.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2014年度　138 戸</title></rect>
+      <rect x="671.0" y="268.0" width="19.5" height="0.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2015年度　0 戸</title></rect>
+      <rect x="693.5" y="216.2" width="19.5" height="51.8" rx="2" fill="var(--ai)" opacity="0.42"><title>2016年度　443 戸</title></rect>
+      <rect x="716.0" y="256.5" width="19.5" height="11.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2017年度　98 戸</title></rect>
+      <rect x="738.5" y="252.9" width="19.5" height="15.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2018年度　129 戸</title></rect>
+      <rect x="761.0" y="251.5" width="19.5" height="16.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2019年度　141 戸</title></rect>
+      <rect x="783.5" y="257.0" width="19.5" height="11.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2020年度　94 戸</title></rect>
+      <rect x="806.0" y="259.9" width="19.5" height="8.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2021年度　69 戸</title></rect>
+      <rect x="828.5" y="233.5" width="19.5" height="34.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2022年度　295 戸</title></rect>
+      <rect x="851.0" y="268.0" width="19.5" height="0.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2023年度　0 戸</title></rect>
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" text-anchor="middle">
+      <text x="116.8" y="286">1990</text>
+      <text x="229.2" y="286">1995</text>
+      <text x="341.8" y="286">2000</text>
+      <text x="454.2" y="286">2005</text>
+      <text x="566.8" y="286">2010</text>
+      <text x="679.2" y="286">2015</text>
+      <text x="791.8" y="286">2020</text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11">
+      <rect x="62" y="292" width="24" height="10" rx="2" fill="var(--shu)"/>
+      <text x="93" y="301" fill="var(--ink2)">1988〜2001年度＝2026年時点で築25〜38年</text>
+      <rect x="392" y="292" width="24" height="10" rx="2" fill="var(--ai)" opacity=".42"/>
+      <text x="423" y="301" fill="var(--ink2)">その他の年度</text>
+      </g></svg>
+      <div class="chart-foot">
+        出典：国土交通省「住宅着工統計調査」時系列表／<a href="https://www.e-stat.go.jp/dbview?sid=0003119736" target="_blank" rel="noopener">e-Stat statsDataId=0003119736</a><br>
+        建て方=共同住宅／構造=鉄筋コンクリート造／利用関係=分譲住宅／表章項目=戸数　取得日 2026-09-06
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="idx">Rank</span>順位の近い都道府県</h2>
+    <div class="tablebox"><table>
+      <thead><tr><th>順位</th><th>都道府県</th><th>戸数</th><th>全国比</th></tr></thead>
+      <tbody><tr><td class="n">24</td><td><a href="kagawa.html">香川県</a></td><td class="n">6,392</td><td class="n">0.4%</td></tr><tr><td class="n">25</td><td><a href="niigata.html">新潟県</a></td><td class="n">6,105</td><td class="n">0.4%</td></tr><tr class="me"><td class="n">26</td><td>和歌山県</td><td class="n">5,769</td><td class="n">0.4%</td></tr><tr><td class="n">27</td><td><a href="fukushima.html">福島県</a></td><td class="n">5,589</td><td class="n">0.4%</td></tr><tr><td class="n">28</td><td><a href="ishikawa.html">石川県</a></td><td class="n">5,444</td><td class="n">0.3%</td></tr></tbody></table></div>
+    <p class="lede"><a href="index.html">47都道府県の一覧を見る →</a></p>
+  </section>
+
+  <div class="warn">
+    <h4>この数字は「いま建っている数」ではありません</h4>
+    <ul>
+      <li><strong>着工戸数（フロー）であって、現存する住宅の数（ストック）ではありません。</strong>その後の取り壊しや用途変更は反映されていません。</li>
+      <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
+      <li><strong>工事費の指数は全国値しかありません。</strong>県別・市区町村別の建設工事費デフレーターは公表されていないため、金額に関する数字はすべて全国共通です。</li>
+      <li>上の工事費は統計上の中央値であり、<strong>見積の目安ではありません</strong>。共通仮設費は含まれず、仕様・規模・立地・劣化状況も反映していません。</li>
+    </ul>
+  </div>
+
+  <a class="cta" href="https://dai1giken.github.io/shuzen-stats/">
+    <span class="k">全国の統計へ</span>
+    <span class="n">大規模修繕統計ビューア</span>
+    <span class="d">工事費指数・戸あたり工事金額・修繕周期・積立金は全国共通です</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="sitelink" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">
+    <span class="k">制作・提供</span>
+    <span class="n">株式会社第一技研</span>
+    <span class="d">マンション・ビルの外装大規模修繕　dai1giken.co.jp</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。<br>
+  本ページの図表・数値は、出典の明記だけで自由に転載できます（CC BY 4.0）。</p>
+</div>
+</body>
+</html>
