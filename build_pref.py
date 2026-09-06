@@ -54,6 +54,10 @@ MONO = "IBM Plex Mono, monospace"
 #
 # どちらも公開して差し支えない値なので Secrets には置かない。
 # **空文字なら何も出力しない。** 先に Search Console だけ入れて、GA4 は後から足せる。
+# 2026-09-07 に所有権の確認済み。**空にすると確認が外れる。**
+# Search Console は「確認状態を維持するためにメタタグを削除しないでください」と言っている。
+# タグが消えても画面は何も変わらないので、消したことに気づけるのは
+# Search Console からデータが来なくなったときになる。
 GSC_TOKEN = "NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw"
 GA_ID = ""
 
