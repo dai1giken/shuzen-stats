@@ -28,11 +28,17 @@ from build_pref import CSS, SITE_URL, SLUG, head, MONO
 
 HERE = Path(__file__).resolve().parent
 
+
+def unit(pref_name: str) -> str:
+    """東京都→「都」、北海道→「道」、大阪府→「府」、それ以外→「県」。
+    ラベルを「県全体」「県内比」と決め打ちにすると東京都で誤りになる。"""
+    return pref_name[-1] if pref_name[-1] in "都道府県" else "県"
+
 FOOT_T = """
   <a class="cta" href="{back}">
     <span class="k">都道府県の統計へ</span>
     <span class="n">{pref}の大規模修繕統計</span>
-    <span class="d">県全体の戸数と、順位の近い都道府県</span>
+    <span class="d">{whole}の戸数と、順位の近い都道府県</span>
     <span class="arrow">→</span>
   </a>
 
@@ -134,6 +140,7 @@ def build(basis: dict) -> int:
             continue
         pre = code[:2]
         name, pref_name = a["name"], a["pref"]
+        u = unit(pref_name)
         v = coh(a)
         total = a["total"]
         share = v / total * 100 if total else 0
@@ -149,10 +156,10 @@ def build(basis: dict) -> int:
 
         h = [head(title, desc, canonical)]
         rank_html = (f'<div class="v">{r}<small>位 / {len(leaves[pre])}</small></div>'
-                     f'<p>{pref_name}の市区町村のうち。県全体 {pref_v:,}戸 の {pshare:.1f}%。</p>'
+                     f'<p>{pref_name}の市区町村のうち。{u}全体 {pref_v:,}戸 の {pshare:.1f}%。</p>'
                      if r else
                      f'<div class="v">—</div><p>区の合計にあたる行のため、順位は付けていません。'
-                     f'県全体 {pref_v:,}戸 の {pshare:.1f}%。</p>')
+                     f'{u}全体 {pref_v:,}戸 の {pshare:.1f}%。</p>')
 
         h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
@@ -197,7 +204,7 @@ def build(basis: dict) -> int:
             h.append(f'''  <section>
     <h2><span class="idx">Rank</span>{pref_name}内で順位の近い市区町村</h2>
     <div class="tablebox"><table>
-      <thead><tr><th>順位</th><th>市区町村</th><th>築26〜45年</th><th>県内比</th></tr></thead>
+      <thead><tr><th>順位</th><th>市区町村</th><th>築26〜45年</th><th>{u}内比</th></tr></thead>
       <tbody>''')
             for c2, a2 in near:
                 cls = ' class="me"' if c2 == code else ''
@@ -212,12 +219,13 @@ def build(basis: dict) -> int:
     <h4>この数字が指しているもの</h4>
     <ul>
       <li><strong>分譲と賃貸の区別はありません。</strong>この統計表には所有関係の軸が無く、絞り込めるのは「非木造の共同住宅」までです。賃貸マンションも含まれています。</li>
-      <li><strong>標本調査にもとづく推計値です。</strong>全数調査ではありません。また小規模な町村は個別に公表されないため、市区町村の合計は県の値と一致しません（一都三県で0.1〜0.5%の差）。</li>
+      <li><strong>標本調査にもとづく推計値です。</strong>全数調査ではありません。また小規模な町村は個別に公表されないため、市区町村の合計は{u}の値と一致しません（一都三県で0.1〜0.5%の差）。</li>
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
     </ul>
   </div>
 ''')
-        h.append(FOOT_T.format(back=f"../pref/{SLUG[pref_name]}.html", pref=pref_name, site=SITE_URL))
+        h.append(FOOT_T.format(back=f"../pref/{SLUG[pref_name]}.html", pref=pref_name,
+                               whole=f"{u}全体", site=SITE_URL))
         (out / f"{code}.html").write_text("".join(h), encoding="utf-8")
         written.append(code)
 
@@ -247,7 +255,8 @@ def build(basis: dict) -> int:
                        f'<span class="vv">{coh(a2):,}</span></a>')
         idx.append('</div></section>\n')
     idx.append('  <p class="colophon">単位：戸。多い順。集計行（特別区部・政令市）は一覧から除いています。</p>\n')
-    idx.append(FOOT_T.format(back="../pref/", pref="都道府県別", site=SITE_URL))
+    idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
+                             whole="都道府県全体", site=SITE_URL))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
 
     return len(written)
