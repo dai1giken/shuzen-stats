@@ -281,6 +281,8 @@ def main() -> None:
             "median_now": {r["label"]: round(r["median"] * factor, 1) for r in sv["per_unit"]},
             "q1_now": {r["label"]: round(r["q1"] * factor, 1) for r in sv["per_unit"]},
             "q3_now": {r["label"]: round(r["q3"] * factor, 1) for r in sv["per_unit"]},
+            # 回答件数。「統計から計算しただけの数値」だと画面で言うのに使う
+            "n": {r["label"]: r["n"] for r in sv["per_unit"]},
             "reserve_yen": rsv["monthly_per_unit_yen"],
         },
     }

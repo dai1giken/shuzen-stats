@@ -149,7 +149,9 @@ h1 .tagline{display:block;font-family:var(--cond);font-weight:600;font-size:clam
 
 /* 比較バー */
 .bars{margin-top:18px;display:flex;flex-direction:column;gap:10px}
-.barrow{display:grid;grid-template-columns:5.6em 1fr 6.4em;gap:10px;align-items:center}
+/* 3列目は「4,885〜7,995万円」＋その下に中央値、が折り返さない幅にすること */
+.barrow{display:grid;grid-template-columns:5.6em 1fr 9.6em;gap:10px;align-items:center}
+@media (max-width:560px){.barrow{grid-template-columns:4.6em 1fr 8.4em;gap:7px}}
 .barrow .k{font-family:var(--mono);font-size:11px;color:var(--ink3);text-align:right;line-height:1.35}
 .bartrack{position:relative;height:32px;background:var(--raise);border:1px solid var(--rule);border-radius:2px;overflow:hidden}
 .barfill{position:absolute;left:0;top:0;bottom:0;background:var(--ai);transition:width .28s ease}
@@ -240,6 +242,19 @@ h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--s
 .calc-diff .big.short{color:var(--shu)}
 .calc-diff .big.over{color:var(--ai)}
 .calc-note{padding:12px 16px;border-top:1px solid var(--rule-soft);font-size:12px;line-height:1.8;color:var(--ink3)}
+/* 「統計から計算した数値である」ことと「共通仮設費を含まない」ことは読み飛ばされては困る。
+   注記の列に埋めず、入力欄と計算結果のあいだに赤枠で置く。 */
+.calc-caution{margin:0;padding:13px 16px;border-top:1px solid var(--rule);
+  border-left:5px solid var(--shu);background:var(--sunk);font-size:13px;line-height:1.85;color:var(--ink2)}
+.calc-caution b{display:block;font-family:var(--cond);font-weight:700;font-size:15.5px;color:var(--shu);
+  letter-spacing:.01em;margin-bottom:3px}
+.calc-caution .no{color:var(--shu);font-weight:700}
+/* 中央値の1本だけだと「その額がかかる」と読まれる。回答の真ん中50%の幅を帯で重ねる */
+.bartrack .band{position:absolute;top:0;bottom:0;background:var(--shu);opacity:.2;
+  transition:left .28s ease,width .28s ease}
+.bartrack .medline{position:absolute;top:0;bottom:0;width:2px;background:var(--shu);transition:left .28s ease}
+.barrow .v .rng{display:block;font-family:var(--mono);font-weight:500;font-size:10.5px;color:var(--ink3);
+  letter-spacing:-.02em;margin-top:3px;white-space:nowrap}
 
 
 /* 強い注記（読み飛ばされては困るもの） */
@@ -249,6 +264,8 @@ h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--s
 .warn li{margin-bottom:5px}
 .warn li:last-child{margin-bottom:0}
 .warn strong{color:var(--ink)}
+/* 共通仮設費を含まない、は最も誤解が高くつくので朱で出す */
+.warn strong.hard{color:var(--shu)}
 .warn-inline{margin-top:14px;padding:11px 14px;border-left:3px solid var(--shu);background:var(--sunk);font-size:12.5px;line-height:1.8;color:var(--ink2)}
 .warn-inline strong{color:var(--ink)}
 
@@ -425,7 +442,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <!-- ===== 計算ツール ===== -->
   <section id="calc">
     <h2><span class="idx">Tool</span>修繕積立金と工事費を並べる</h2>
-    <p class="lede">入力した積立条件と、Fig.1 の統計上の中央値に戸数を掛けた額を、並べて表示するだけの計算機です。<strong>これは見積でも、必要額の算定でも、助言でもありません。</strong>統計の中央値は、個別のマンションに必要な金額とは無関係です。</p>
+    <p class="lede">入力した積立条件と、Fig.1 の統計上の分布に戸数を掛けた額を、並べて表示するだけの計算機です。<strong>これは見積でも、必要額の算定でも、助言でもありません。</strong>統計の分布は、個別のマンションに必要な金額とは無関係です。</p>
 
     <div class="calc">
       <div class="calc-in">
@@ -437,6 +454,13 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
         <label><span class="cap">月額の修繕積立金（円／戸）</span><input type="number" id="cMon" min="0" max="100000" step="100" value="13378"></label>
       </div>
 
+      <p class="calc-caution">
+        <b>これは統計から計算しただけの数値です</b>
+        右側は<strong>実態調査（回答{{SV_N}}件）の分布</strong>に戸数を掛けたものであって、このマンションの工事費ではありません。
+        <span class="no">共通仮設費は含まれていません</span>（原典の集計定義）。設計コンサル費も別です。
+        仕様・規模・立地・劣化状況・工期・足場の条件は、いずれも反映していません。
+      </p>
+
       <div class="calc-out">
         <p class="years" id="cYears">—</p>
         <div class="bars">
@@ -446,8 +470,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
             <span class="v" id="cVal1">—<small>万円</small></span>
           </div>
           <div class="barrow">
-            <span class="k">中央値×戸数</span>
-            <span class="bartrack"><span class="barfill now" id="cBar2"></span></span>
+            <span class="k">統計上の<br>工事費の幅</span>
+            <span class="bartrack"><span class="band" id="cBand"></span><span class="medline" id="cMed"></span></span>
             <span class="v" id="cVal2">—<small>万円</small></span>
           </div>
         </div>
@@ -462,7 +486,9 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <div class="warn">
         <h4>この結果で発注や交渉の判断はできません</h4>
         <ul>
-          <li>右の額は <strong>統計の中央値 × 戸数</strong> にすぎず、そのマンションに必要な工事費ではありません。共通仮設費も含まれていません。</li>
+          <li>右の帯は <strong>統計の分布 × 戸数</strong> にすぎず、そのマンションに必要な工事費ではありません。</li>
+          <li><strong class="hard">工事金額に共通仮設費は含まれていません。</strong>原典の集計定義によるもので、設計コンサル費も別です。実際の工事にはどちらもかかります。</li>
+          <li>帯は回答の真ん中50%です。<strong>外側に50%の回答がある</strong>ので、帯を外れていること自体は何も意味しません（原典の分布では200万円／戸超が2.8%、75万円／戸未満が15.1%）。</li>
           <li>積立見込は単純な足し算で、利息・値上げ・一時金・借入・他の修繕への支出を含みません。</li>
           <li>実際の必要額は<strong>長期修繕計画と現地調査</strong>で決まります。差額が出ても、それ自体は過不足を示しません。</li>
         </ul>
@@ -1018,25 +1044,41 @@ var primary = byName[D.primary];
     var q1   = C.q1_now[$t.value]*units, q3 = C.q3_now[$t.value]*units;
 
     set('cYears', (years>0 ? '実施まで '+years+'年' : '実施までの年数は0年（築年数が実施年以上）')
-      + '　／　工事費は '+$t.value+'・中央値 '+nf1.format(med)+' 万円／戸（'+C.latest_month+'換算）で計算');
+      + '　／　工事費は '+$t.value+'・1戸あたり '
+      + nf1.format(C.q1_now[$t.value])+'〜'+nf1.format(C.q3_now[$t.value])+' 万円'
+      + '（中央値 '+nf1.format(med)+' 万円・'+C.latest_month+'換算）で計算');
 
-    var mx=Math.max(save,cost,1);
-    $('cBar1').style.width=w(save,mx); $('cBar2').style.width=w(cost,mx);
+    // 中央値の棒を1本だけ描くと「その額がかかる」と読まれる。
+    // 真ん中50%（下位25%〜上位25%）の帯を描き、中央値はその上の線にする。
+    var mx=Math.max(save,cost,q3,1);
+    $('cBar1').style.width=w(save,mx);
+    var band=$('cBand'), medl=$('cMed');
+    band.style.left=(q1/mx*100)+'%'; band.style.width=Math.max(1.5,(q3-q1)/mx*100)+'%';
+    medl.style.left='calc('+(cost/mx*100)+'% - 1px)';
     $('cVal1').innerHTML=nf0.format(Math.round(save))+'<small>万円</small>';
-    $('cVal2').innerHTML=nf0.format(Math.round(cost))+'<small>万円</small>';
+    $('cVal2').innerHTML=nf0.format(Math.round(q1))+'〜'+nf0.format(Math.round(q3))+'<small>万円</small>'
+      + '<span class="rng">中央値 '+nf0.format(Math.round(cost))+' 万円</span>';
 
+    // 差額も1点で出すと「いくら足りない」と読まれる。幅の両端で出す。
     var d=save-cost, short=d<0;
+    var dHi=save-q1, dLo=save-q3;              // 下位25%のときの差／上位25%のときの差
     var e=$('cDiff');
     e.textContent=(short?'−':'+')+nf0.format(Math.abs(Math.round(d)));
     e.className='big '+(short?'short':'over');
-    set('cDiffLab', short?'不足':'差引');
-    set('cPerUnit','（1戸あたり '+(short?'−':'+')+nf1.format(Math.abs(d/units))+' 万円）');
+    set('cDiffLab', short?'中央値なら不足':'中央値なら差引');
+    function sgn(x){ return (x<0?'−':'+')+nf0.format(Math.abs(Math.round(x))); }
+    set('cPerUnit','（1戸あたり '+(short?'−':'+')+nf1.format(Math.abs(d/units))+' 万円）'
+      + '　幅で見ると '+sgn(dLo)+' 〜 '+sgn(dHi)+' 万円');
 
-    set('cNote','幅で見ると、'+$t.value+'の工事費は下位25%〜上位25%で '
-      + nf0.format(Math.round(q1))+'〜'+nf0.format(Math.round(q3))+' 万円。'
+    set('cNote','工事費は'+$t.value+'の回答（n='+C.n[$t.value]+'件）の分布から出しています。'
+      + '帯は下位25%〜上位25%（真ん中50%が入る範囲）で '
+      + nf0.format(Math.round(q1))+'〜'+nf0.format(Math.round(q3))+' 万円、'
+      + '縦線が中央値 '+nf0.format(Math.round(cost))+' 万円。'
+      + '原典の分布では 200万円／戸超が2.8%、75万円／戸未満が15.1% あり、'
+      + '個別の見積がこの帯を外れていること自体は何も意味しません。'
       + '積立見込は「現在の残高＋月額×戸数×12ヶ月×'+years+'年」の単純合計で、'
       + '利息・値上げ・一時金・借入は含みません。工事費は'+C.latest_month+'の物価であり、'
-      + '将来の変動は織り込んでいません。共通仮設費は工事金額に含まれていません。');
+      + '将来の変動は織り込んでいません。');
   }
   [$u,$a,$n,$t,$b,$m].forEach(function(x){ x.addEventListener('input',render); });
   render();
