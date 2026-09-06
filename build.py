@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
-from build_pref import SLUG, build as build_pref, stock_by_pref
+from build_pref import SLUG, analytics_tags, build as build_pref, stock_by_pref
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
@@ -217,7 +217,7 @@ HEAD = """<!doctype html>
 <meta property="og:url" content="__SITE__">
 <meta property="og:image" content="__SITE__ogp.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="__SITE__">
+<link rel="canonical" href="__SITE__">__ANALYTICS__
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
@@ -381,7 +381,8 @@ def main() -> None:
         raise SystemExit("template に未定義のトークンが残っています。")
 
     (HERE / "page.html").write_text(out, encoding="utf-8")
-    (HERE / "index.html").write_text(HEAD.replace("__SITE__", SITE_URL) + out + "\n</body>\n</html>\n", encoding="utf-8")
+    page_head = HEAD.replace("__SITE__", SITE_URL).replace("__ANALYTICS__", analytics_tags())
+    (HERE / "index.html").write_text(page_head + out + "\n</body>\n</html>\n", encoding="utf-8")
 
     # build_city を先に走らせること。build_pref がサイトマップを作るとき
     # ディスク上の city/*.html を glob するので、逆順だと閾値で消したページが

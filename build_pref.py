@@ -39,6 +39,36 @@ HERE = Path(__file__).resolve().parent
 SITE_URL = "https://dai1giken.github.io/shuzen-stats/"
 MONO = "IBM Plex Mono, monospace"
 
+# ---- アクセス解析 -------------------------------------------------------
+# GitHub は Pages サイトのアクセス解析を提供していない（リポジトリの
+# Insights → Traffic はリポジトリの閲覧数であって、公開サイトの数字ではない）。
+# だから外部の道具を入れるしかない。2つは役割が違うので両方入れる。
+#
+#   GSC_TOKEN … Google Search Console の所有権確認。**スクリプトを読み込まない**。
+#               検索クエリ・表示回数・クリック・インデックス済みページ数が見える。
+#               「検索から来ているか」に答えるのはこちら。
+#   GA_ID     … Google Analytics 4 の測定ID（G- で始まる）。訪問者の行動が見える。
+#               Cookie を置いて外部へ送信するので、第一技研の名前で出す以上は
+#               改正電気通信事業法の外部送信規律の説明を添えること。
+#
+# どちらも公開して差し支えない値なので Secrets には置かない。
+# **空文字なら何も出力しない。** 先に Search Console だけ入れて、GA4 は後から足せる。
+GSC_TOKEN = ""
+GA_ID = ""
+
+
+def analytics_tags() -> str:
+    """head に差し込む解析タグ。定数が空なら空文字を返す。"""
+    t = []
+    if GSC_TOKEN:
+        t.append(f'<meta name="google-site-verification" content="{GSC_TOKEN}">')
+    if GA_ID:
+        t.append(f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>'
+                 '<script>window.dataLayer=window.dataLayer||[];'
+                 'function gtag(){dataLayer.push(arguments);}'
+                 f"gtag('js',new Date());gtag('config','{GA_ID}');</script>")
+    return ("\n" + "\n".join(t)) if t else ""
+
 SLUG = {
     "北海道": "hokkaido", "青森県": "aomori", "岩手県": "iwate", "宮城県": "miyagi",
     "秋田県": "akita", "山形県": "yamagata", "福島県": "fukushima", "茨城県": "ibaraki",
@@ -178,7 +208,7 @@ def head(title: str, desc: str, canonical: str, crumb: str = "都道府県別") 
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{SITE_URL}ogp.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="{canonical}">
+<link rel="canonical" href="{canonical}">{analytics_tags()}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
