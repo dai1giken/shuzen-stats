@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>大規模修繕統計ビューア</title>
-<meta name="description" content="大規模修繕にかかわる政府統計を、加工せず読める形に並べたページ。工事費指数・修繕周期・積立金と、都道府県別の修繕適齢期の住戸数。算式と基準値をすべて公開しています。株式会社第一技研。">
+<meta name="description" content="大規模修繕にかかわる政府統計を、読める形に並べたページ。工事費指数・修繕周期・積立金と、都道府県別の修繕適齢期の住戸数。算式と基準値をすべて公開しています。株式会社第一技研。">
 <meta property="og:title" content="大規模修繕統計ビューア｜株式会社第一技研">
 <meta property="og:description" content="いま日本でどれだけの建物が修繕の齢を迎えているか。政府統計の公表値だけで並べています。">
 <meta property="og:type" content="website">
@@ -357,7 +357,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
     <span class="body">
       <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン<br>総務省　住宅・土地統計調査 ・ 消費者物価指数</span>
       <strong>このページに載っている数値は、すべて上記の政府統計の公表値です。</strong>
-      e-Stat の API から取得し、単位換算と経過秒による按分のほかに加工はしていません。
+      e-Stat の API などから取得し、<strong>単位換算・期間の合計・経過秒による按分・指数比による物価換算</strong>を行って表示しています。どの計算も、算式と基準値を下の Method に書いてあります。
       当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
     </span>
   </div>
@@ -365,7 +365,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <span class="toplabel">国土交通省 公表統計</span>
   <h1>大規模修繕統計ビューア
     <span class="tagline">政府統計が、そのまま読める。</span>
-    <span class="sub">国土交通省が公表している建設・住宅の統計を、加工せず読める形へ並べ直しただけの公開ページです。修繕にかかるお金が過去からいくら上がったのか、修繕の時期を迎えた住戸がどこにどれだけあるのかを、公表値のまま確かめられます。</span>
+    <span class="sub">国土交通省・総務省が公表している建設・住宅の統計を、読める形へ並べ直した公開ページです。修繕にかかるお金が過去からいくら上がったのか、修繕の時期を迎えた住戸がどこにどれだけあるのかを、公表値と、その計算の過程まで見た上で確かめられます。</span>
   </h1>
 
   <!-- ===== 指数パネル ===== -->
@@ -1812,7 +1812,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   "@type": "Dataset",
   "name": "大規模修繕統計ビューア",
   "alternateName": "Japan Major Repair Statistics Viewer",
-  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、住宅・土地統計調査、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。都道府県別・一都三県の市区町村別の修繕適齢期の住戸数を含む。",
+  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、住宅・土地統計調査、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、読める形へ並べ直した公開データページ。数値はすべて公表値で、算式も公開している。都道府県別・一都三県の市区町村別の修繕適齢期の住戸数を含む。",
   "inLanguage": "ja",
   "dateModified": "2026-09-06",
   "license": "https://creativecommons.org/licenses/by/4.0/",

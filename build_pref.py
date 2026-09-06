@@ -459,7 +459,7 @@ def build(basis: dict) -> int:
         h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
-    e-Stat の API から取得し、期間の合計以外の加工はしていません。
+    e-Stat の API から取得し、<strong>建築の時期の区分を合計して割合を出すところまで</strong>を行っています。
     当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
     なお<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。
     絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。

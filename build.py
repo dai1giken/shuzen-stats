@@ -210,7 +210,7 @@ HEAD = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>大規模修繕統計ビューア</title>
-<meta name="description" content="大規模修繕にかかわる政府統計を、加工せず読める形に並べたページ。工事費指数・修繕周期・積立金と、都道府県別の修繕適齢期の住戸数。算式と基準値をすべて公開しています。株式会社第一技研。">
+<meta name="description" content="大規模修繕にかかわる政府統計を、読める形に並べたページ。工事費指数・修繕周期・積立金と、都道府県別の修繕適齢期の住戸数。算式と基準値をすべて公開しています。株式会社第一技研。">
 <meta property="og:title" content="大規模修繕統計ビューア｜株式会社第一技研">
 <meta property="og:description" content="いま日本でどれだけの建物が修繕の齢を迎えているか。政府統計の公表値だけで並べています。">
 <meta property="og:type" content="website">
