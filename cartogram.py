@@ -46,8 +46,20 @@ def _short(name: str) -> str:
 
 
 def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
-              links: dict[str, str] | None = None) -> str:
-    """units: 都道府県名 → 戸数。highlight: 枠を強調。links: 都道府県名 → リンク先。"""
+              links: dict[str, str] | None = None, *,
+              label: str = "分譲マンション着工戸数", scale: str = "千戸") -> str:
+    """units: 都道府県名 → 戸数。highlight: 枠を強調。links: 都道府県名 → リンク先。
+
+    label: aria-label と凡例に出す指標名。図によって中身が違うので直書きしない。
+    scale: "千戸" か "万戸"。ストックだと東京が 1578 と4桁になり、
+           52px のタイルに font-size 13 では収まらない。万戸・小数1桁なら 157.8 で収まる。
+    """
+    if scale == "万戸":
+        def _n(v: float) -> str:
+            return f"{v / 10000:.1f}"
+    else:
+        def _n(v: float) -> str:
+            return f"{round(v / 1000)}"
     missing = set(TILES) - set(units)
     if missing:
         raise SystemExit(f"配置表にあるが数値が無い都道府県: {sorted(missing)}")
@@ -67,13 +79,13 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
                 b += 1
         return min(b, 5)
 
-    s = ['<svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の分譲マンション着工戸数タイルマップ。'
+    s = [f'<svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の{label}タイルマップ。'
          + "、".join(f"{k}{v:,}戸" for k, v in list(sorted(units.items(), key=lambda kv: -kv[1]))[:5])
          + ' の順に多い。">']
 
     # 凡例
     s.append(f'<text x="{X0}" y="18" font-family="{MONO}" font-size="11.5" fill="var(--ink3)" '
-             f'letter-spacing="1">単位：千戸　　少ない ← → 多い</text>')
+             f'letter-spacing="1">単位：{scale}　　少ない ← → 多い</text>')
     lw = 52
     for b in range(6):
         lx = X0 + b * lw
@@ -81,7 +93,7 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
     s.append(f'<g font-family="{MONO}" font-size="10.5" fill="var(--ink3)">')
     s.append(f'<text x="{X0}" y="56">0</text>')
     for b, c in enumerate(cuts):
-        s.append(f'<text x="{X0 + (b + 1) * lw}" y="56" text-anchor="middle">{round(c/1000)}</text>')
+        s.append(f'<text x="{X0 + (b + 1) * lw}" y="56" text-anchor="middle">{_n(c)}</text>')
     s.append('</g>')
 
     # タイル
@@ -97,16 +109,16 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
         s.append(f'<text x="{x + SIZE/2}" y="{y + 21}" text-anchor="middle" font-size="13" '
                  f'font-weight="600" fill="var(--b{b}f)">{_short(name)}</text>')
         s.append(f'<text x="{x + SIZE/2}" y="{y + 39}" text-anchor="middle" font-family="{MONO}" '
-                 f'font-size="13" fill="var(--b{b}f)">{round(v/1000)}</text>')
+                 f'font-size="13" fill="var(--b{b}f)">{_n(v)}</text>')
         if href:
             s.append('</a>')
 
     # 凡例まで目を戻さなくて済むよう、東京タイルの下に単位と読み方を添える
     tx, ty = TILES["東京都"]
     ex, ey = X0 + tx * PITCH, Y0 + ty * PITCH + SIZE + 26
-    s.append(f'<text x="{ex}" y="{ey}" font-family="{MONO}" font-size="12" fill="var(--ink3)">単位：千戸</text>')
+    s.append(f'<text x="{ex}" y="{ey}" font-family="{MONO}" font-size="12" fill="var(--ink3)">単位：{scale}</text>')
     s.append(f'<text x="{ex}" y="{ey + 19}" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'
-             f'例）東京 {round(units["東京都"]/1000)} ＝ {units["東京都"]/10000:.1f}万戸</text>')
+             f'例）東京 {_n(units["東京都"])} ＝ {units["東京都"]:,}戸</text>')
 
     if highlight:
         s.append(f'<text x="{X0}" y="778" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'

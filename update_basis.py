@@ -16,6 +16,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import re
 import sys
 import urllib.parse
 import urllib.request
@@ -42,7 +43,11 @@ CPI_ID = "0003427113"
 # ただし所有関係の軸が無いため「非木造の共同住宅」までしか絞れず、賃貸が混ざる。
 CITY_ID = "0004021796"
 CITY_PREFS = {"13": "東京都", "14": "神奈川県", "11": "埼玉県", "12": "千葉県"}
-CITY_COHORT = ("1981～1990年", "1991～2000年")     # 2026年時点で築26〜45年
+# コホートは「築26〜45年」という意味で決まる。表示ラベルを直書きすると、
+# e-Stat 側が波ダッシュを ～(U+FF5E) から 〜(U+301C) に直しただけで一致しなくなり、
+# しかも下流が .get(k, 0) なので全ページが「0戸」になったまま CI は緑で通る。
+# そこでラベルから年を読み取って選ぶ（pick_cohort）。
+STOCK_WINDOW = (1981, 2000)                       # 2026年時点で築26〜45年
 
 DEFLATOR_ID = "0004055083"
 DEFLATOR_TAB = "100"          # 表章項目「建設工事費デフレーター」（後方3ヶ月平均ではない方）
@@ -79,6 +84,43 @@ def _call(endpoint: str, **params) -> dict:
 
 def _as_list(v):
     return [v] if isinstance(v, dict) else (v or [])
+
+
+_DASH = str.maketrans({"～": "-", "〜": "-", "~": "-", "－": "-", "—": "-"})
+
+
+def _label_years(label: str) -> tuple[int | None, int | None]:
+    """建築の時期のラベルから、開始年と終了年を読み取る。
+
+    '1981～1990年'   → (1981, 1990)
+    '1970年以前'     → (None, 1970)     端が開いているのでコホートには選ばない
+    '2021～2023年9月' → (2021, 2023)
+    '総数'           → (None, None)
+    """
+    ys = [int(m) for m in re.findall(r"(?:19|20)\d{2}", label.translate(_DASH))]
+    if not ys:
+        return (None, None)
+    if "以前" in label:
+        return (None, ys[0])
+    if "以降" in label:
+        return (ys[0], None)
+    return (ys[0], ys[-1])
+
+
+def pick_cohort(order: list[str]) -> list[str]:
+    """建築の時期の区分から、STOCK_WINDOW にすっぽり収まるものだけを選ぶ。
+
+    2件にならなければ区分の切り方が変わったということなので、黙って続けずに止める。
+    ここで止めないと「全ページ0戸だが CI は緑」になる。
+    """
+    lo, hi = STOCK_WINDOW
+    sel = [lb for lb in order
+           if (y := _label_years(lb))[0] is not None and y[1] is not None
+           and lo <= y[0] and y[1] <= hi]
+    if len(sel) != 2:
+        sys.exit(f"建築の時期の区分が変わりました。{STOCK_WINDOW} に収まる区分が "
+                 f"{len(sel)} 件です（期待2件）。\n  区分: {order}\n  選択: {sel}")
+    return sel
 
 
 def _code(classes, cls_id: str, name: str) -> str:
@@ -176,6 +218,7 @@ def fetch_city() -> dict:
         if c["@id"] == "cat04":
             periods = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
     order = [periods[k] for k in sorted(periods) if periods[k] != "総数"]
+    cohort = pick_cohort(order)
 
     d = _call("getStatsData", statsDataId=CITY_ID, cdCat01="2", cdCat02="3", cdCat03="00",
               limit=100000)
@@ -191,33 +234,42 @@ def fetch_city() -> dict:
     parents = {a.get("@parentCode") for a in areas.values()}
     out = {}
     for code, a in areas.items():
-        if code[:2] not in CITY_PREFS or code not in raw:
+        # 市区町村の行は一都三県ぶんだけ持つ。ページを作るのがそこだけだから。
+        # ただし合計行（全国 00000 と都道府県 XX000）は47都道府県ぶん全部を持つ。
+        # 都道府県ページの見出し数字をこのストック表に統一するのに要る。
+        is_total_row = code.endswith("000")
+        if not (is_total_row or code[:2] in CITY_PREFS) or code not in raw:
             continue
         vals = raw[code]
         out[code] = {
             "name": a["@name"],
-            "pref": CITY_PREFS[code[:2]],
+            # 一都三県の市区町村は所属県名。合計行は自分の名前（「全国」「北海道」など）
+            "pref": CITY_PREFS.get(code[:2], a["@name"]),
             "parent": a.get("@parentCode"),
             "is_leaf": code not in parents,          # 集計行（政令市・特別区部）を除くため
             "total": vals.get("総数", 0),
             "periods": {k: vals.get(k, 0) for k in order},
         }
 
-    n_leaf = sum(1 for v in out.values() if v["is_leaf"] and len(v["name"]) and v["parent"] != None and len(v["periods"]))
     for pre, nm in CITY_PREFS.items():
         pr = out.get(pre + "000")
         leaves = [v for k, v in out.items() if k[:2] == pre and v["is_leaf"] and k != pre + "000"]
-        s_leaf = sum(sum(v["periods"][k] for k in CITY_COHORT) for v in leaves)
-        s_pref = sum(pr["periods"][k] for k in CITY_COHORT) if pr else 0
+        s_leaf = sum(sum(v["periods"][k] for k in cohort) for v in leaves)
+        s_pref = sum(pr["periods"][k] for k in cohort) if pr else 0
         print(f"  {nm}: 市区町村 {len(leaves):3d} ／ 築26〜45年 県値 {s_pref:,} 対 市区町村合計 {s_leaf:,} "
               f"／ 差 {s_pref - s_leaf:,}")
+        # この検査は前からここに書かれていたが、印字するだけで判定していなかった。
+        # 0 が通ると全ページが「0戸」で正常終了する。
+        if not s_pref or not s_leaf:
+            sys.exit(f"{nm} の築26〜45年が 0 戸です（県値 {s_pref} ／ 市区町村合計 {s_leaf}）。"
+                     f"\n  コホート: {cohort}\n  区分: {order}")
 
     return {
         "statsDataId": CITY_ID,
         "url": f"https://www.e-stat.go.jp/dbview?sid={CITY_ID}",
         "survey": "令和5年住宅・土地統計調査（2023年10月1日現在）",
         "filter": "建物の構造=非木造／建て方=共同住宅／階数=総数",
-        "cohort": list(CITY_COHORT),
+        "cohort": cohort,
         "order": order,
         "areas": out,
     }

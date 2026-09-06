@@ -1,8 +1,5 @@
-<title>大規模修繕統計ビューア</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
-
+<!-- title と font の link は build.py の HEAD 定数へ移した。
+     ここに置くと build.py:HEAD と連結したとき <body> の中に落ちる。 -->
 <style>
 :root{
   --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
@@ -321,7 +318,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <div class="srcband">
     <span class="tagcol">SOURCE ／ 出典</span>
     <span class="body">
-      <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン</span>
+      <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン<br>総務省　住宅・土地統計調査 ・ 消費者物価指数</span>
       <strong>このページに載っている数値は、すべて上記の政府統計の公表値です。</strong>
       e-Stat の API から取得し、単位換算と経過秒による按分のほかに加工はしていません。
       当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
@@ -527,35 +524,75 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
     </div>
   </section>
 
-  <!-- ===== 都道府県タイルマップ ===== -->
+  <!-- ===== 都道府県タイルマップ（1）現存ストック ===== -->
   <section id="map">
-    <h2><span class="idx">Fig. 5</span>都道府県別　分譲マンションの着工戸数（{{PREF_FROM}}〜{{PREF_TO}}年度）</h2>
-    <p class="lede">{{PREF_FROM}}〜{{PREF_TO}}年度に着工した分譲マンション（共同住宅・鉄筋コンクリート造・分譲住宅）の戸数です。2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年、Fig.3 の2回目から3回目の周期にあたります。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <h2><span class="idx">Fig. 5</span>都道府県別　築26〜45年の非木造共同住宅（現存ストック）</h2>
+    <p class="lede">2023年10月1日時点で現存する非木造共同住宅のうち、1981〜2000年に建築されたものの戸数です。2026年時点で築26〜45年、Fig.3 の2回目から3回目の周期にあたります。<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 総務省</span><span><strong>{{STOCK_SURVEY}}</strong>　e-Stat API 取得・{{GENERATED}}</span></div>
+      {{CHART_STOCK}}
+      <div class="chart-foot">
+        <a href="{{STOCK_URL}}" target="_blank" rel="noopener">e-Stat statsDataId={{STOCK_SID}}</a>　{{STOCK_FILTER}}<br>
+        全国値 {{STOCK_TOTAL}} 戸に対し、47都道府県の合計は {{STOCK_SUM47}} 戸。差 {{STOCK_DIFF}} 戸は標本調査によるものです。<br>
+        <strong>タイルをクリックすると、その都道府県のページへ移動します。</strong>
+      </div>
+    </div>
+    <p class="lede"><a href="pref/">47都道府県の一覧を見る →</a>　／　<a href="city/">一都三県の市区町村別を見る →</a></p>
+    <div class="figgrid">
+      <div class="keynum">
+        <span class="k">National</span>
+        <div class="v">{{STOCK_TOTAL}}<small>戸</small></div>
+        <p>1981〜2000年建築の非木造共同住宅の全国合計。2026年時点で築26〜45年です。</p>
+      </div>
+      <div class="keynum hi">
+        <span class="k">一都三県</span>
+        <div class="v">{{STOCK_METRO_PCT}}<small>%</small></div>
+        <p>東京・神奈川・埼玉・千葉の合計 {{STOCK_METRO}} 戸。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">最多</span>
+        <div class="v">{{STOCK_TOP1_UNITS}}<small>戸</small></div>
+        <p>{{STOCK_TOP1}}。次いで{{STOCK_NEXT}}の順です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 都道府県タイルマップ（2）分譲マンションの着工＝別の統計 ===== -->
+  <section id="map-flow">
+    <h2><span class="idx">Fig. 6</span>都道府県別　分譲マンションの着工戸数（{{PREF_FROM}}〜{{PREF_TO}}年度）</h2>
+    <div class="warn">
+      <h4>ここから下は別の統計です</h4>
+      <ul>
+        <li>Fig.5 は<strong>現存ストック</strong>〔2023年10月1日時点で建っている住宅の数〕ですが、こちらは<strong>着工戸数（フロー）</strong>〔その年度に着工した数〕です。その後の取り壊しや用途変更は反映されていません。</li>
+        <li>絞り込みは<strong>「分譲マンション」まで届きます</strong>（共同住宅・鉄筋コンクリート造・分譲住宅）。賃貸は入りません。Fig.5 で失われる分譲／賃貸の区別が、ここでは効きます。</li>
+        <li>期間の取り方も違い、こちらは<strong>{{PREF_FROM}}〜{{PREF_TO}}年度着工＝2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年</strong>です。<strong>Fig.5 とは直接比べられません。</strong></li>
+      </ul>
+    </div>
+    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。</p>
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>住宅着工統計調査</strong>　e-Stat API 取得・{{GENERATED}}</span></div>
       {{CHART_MAP}}
       <div class="chart-foot">
         <a href="{{PREF_URL}}" target="_blank" rel="noopener">e-Stat statsDataId={{PREF_SID}}</a>　建て方＝共同住宅／構造＝鉄筋コンクリート造／利用関係＝分譲住宅／表章項目＝戸数<br>
         全国値 {{PREF_TOTAL}} 戸に対し、47都道府県の合計は差 0 戸で一致します。<br>
-        <strong>タイルをクリックすると、その都道府県のページへ移動します。</strong>
+        タイルはリンクではありません。都道府県ページの見出し数字は Fig.5 のストックなので、ここから直接は送っていません。
       </div>
     </div>
-    <p class="lede"><a href="pref/">47都道府県の一覧を見る →</a></p>
     <div class="figgrid">
       <div class="keynum">
         <span class="k">National</span>
         <div class="v">{{PREF_TOTAL}}<small>戸</small></div>
         <p>{{PREF_FROM}}〜{{PREF_TO}}年度の全国合計。2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年です。</p>
       </div>
-      <div class="keynum hi">
+      <div class="keynum">
         <span class="k">一都三県</span>
         <div class="v">{{METRO_PCT}}<small>%</small></div>
-        <p>東京・神奈川・埼玉・千葉の合計 {{METRO_UNITS}} 戸。全国の約半分がこの4都県に集まっています。</p>
+        <p>東京・神奈川・埼玉・千葉の合計 {{METRO_UNITS}} 戸。</p>
       </div>
       <div class="keynum">
         <span class="k">最多</span>
         <div class="v">{{TOP1_UNITS}}<small>戸</small></div>
-        <p>{{TOP1}}。次いで神奈川県、大阪府、兵庫県、埼玉県の順です。</p>
+        <p>{{TOP1}}。次いで{{TOP_NEXT}}の順です。</p>
       </div>
     </div>
   </section>
@@ -630,7 +667,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
 
   <!-- ===== 着工床面積 ===== -->
   <section id="starts">
-    <h2><span class="idx">Fig. 6</span>建築物着工床面積の推移（年度別）</h2>
+    <h2><span class="idx">Fig. 7</span>建築物着工床面積の推移（年度別）</h2>
     <p class="lede">建築物着工統計の年度別床面積、全国・全用途・全構造。ピークは{{PEAK_YEAR}}の{{PEAK_OKU}}億m²、{{LATEST_YEAR}}は{{LATEST_OKU}}億m²です。棒にカーソルを重ねると実数が出ます。</p>
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>建築着工統計調査</strong>　e-Stat API 取得・{{GENERATED}}</span></div>
@@ -785,7 +822,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   "@type": "Dataset",
   "name": "大規模修繕統計ビューア",
   "alternateName": "Japan Major Repair Statistics Viewer",
-  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。",
+  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、住宅・土地統計調査、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。都道府県別・一都三県の市区町村別の修繕適齢期の住戸数を含む。",
   "inLanguage": "ja",
   "dateModified": "{{GENERATED}}",
   "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -796,7 +833,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   },
   "spatialCoverage": {"@type": "Country", "name": "日本"},
   "temporalCoverage": "{{DEF_FIRST}}/{{DEF_MONTH}}",
-  "keywords": ["大規模修繕", "修繕積立金", "建設工事費デフレーター", "建築補修", "マンション", "分譲マンション", "建築着工統計", "工事費", "修繕周期"],
+  "keywords": ["大規模修繕", "修繕積立金", "建設工事費デフレーター", "建築補修", "マンション", "分譲マンション", "建築着工統計", "住宅・土地統計調査", "非木造共同住宅", "工事費", "修繕周期", "都道府県別", "市区町村別"],
   "variableMeasured": [
     {"@type": "PropertyValue", "name": "建設工事費デフレーター（建築補修）", "value": "{{DEF_VALUE}}", "unitText": "2020年度＝100", "measurementTechnique": "e-Stat API statsDataId={{DEF_SID}}"},
     {"@type": "PropertyValue", "name": "消費者物価指数（総合・全国）", "value": "{{CPI_NOW}}", "unitText": "2020年＝100", "measurementTechnique": "e-Stat API statsDataId={{CPI_SID}}"},
@@ -808,6 +845,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
     "https://www.e-stat.go.jp/dbview?sid={{CPI_SID}}",
     "https://www.e-stat.go.jp/dbview?sid=0003119730",
     "https://www.e-stat.go.jp/dbview?sid={{PREF_SID}}",
+    "{{STOCK_URL}}",
     "{{SV_URL}}",
     "{{RSV_URL}}"
   ]
