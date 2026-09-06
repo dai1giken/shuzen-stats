@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 
 # 公開先の実URL。og:image と canonical に使う。
 # 独自ドメイン（例 shuzen.dai1giken.co.jp）に移すときはここだけ直す。
-SITE_URL = "https://yojirofujioka.github.io/shuzen-stats/"
+SITE_URL = "https://dai1giken.github.io/shuzen-stats/"
 
 # ---- Fig.1 の描画領域 ----
 C1 = dict(w=900, h=340, x0=80, x1=872, ytop=40, ybase=288, ymax=200_000_000)

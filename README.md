@@ -2,7 +2,7 @@
 
 マンションの大規模修繕にかかわる日本の政府統計を、加工せず読める形へ並べ直した公開ページです。
 
-**https://yojirofujioka.github.io/shuzen-stats/**
+**https://dai1giken.github.io/shuzen-stats/**
 
 制作・提供：株式会社第一技研
 
