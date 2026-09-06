@@ -54,7 +54,7 @@ MONO = "IBM Plex Mono, monospace"
 #
 # どちらも公開して差し支えない値なので Secrets には置かない。
 # **空文字なら何も出力しない。** 先に Search Console だけ入れて、GA4 は後から足せる。
-GSC_TOKEN = ""
+GSC_TOKEN = "NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw"
 GA_ID = ""
 
 

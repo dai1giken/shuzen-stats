@@ -23,6 +23,7 @@ import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+JST = dt.timezone(dt.timedelta(hours=9))
 BASE = "https://api.e-stat.go.jp/rest/3.0/app/json/"
 STATS_DATA_ID = "0003119730"
 
@@ -369,7 +370,9 @@ def main() -> None:
     latest = years[-1]
 
     basis = {
-        "generated": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        # GitHub Actions のランナーは UTC。naive な now() だと UTC が入り、
+        # 画面には「取得日」として日本時間のつもりで出てしまう。JST を明示する。
+        "generated": dt.datetime.now(JST).strftime("%Y-%m-%d %H:%M"),
         "source": {
             "name": "国土交通省 建築着工統計調査（建築物着工統計 時系列表・年度次）",
             "statsDataId": STATS_DATA_ID,

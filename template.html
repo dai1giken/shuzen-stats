@@ -1404,7 +1404,10 @@ renderChart();
 (function(){
   var C=B.clock, SEC=31536000;
   var rateArea=C.annual_floor_area_m2/SEC, rateMan=(C.c_2034-C.b_2024)/10/SEC;
-  function jstNow(){var d=new Date();return new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);}
+  // 実際の瞬間を9時間ずらし、getUTC* で読むと必ず JST になるようにする。
+  // getTimezoneOffset を足してはいけない。閲覧者が日本にいると打ち消し合って
+  // UTC が「JST」として表示される（9時間遅れ）。UTC の閲覧者だけ正しく見えるので気づきにくい。
+  function jstNow(){return new Date(Date.now()+9*3600*1000);}
   function ys(y){return Date.UTC(y,0,1)-9*3600*1000;}
   function set(id,t){var e=$(id); if(e&&e.textContent!==t) e.textContent=t;}
   function pad(n){return n<10?'0'+n:''+n;}
