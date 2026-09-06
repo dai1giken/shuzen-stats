@@ -383,8 +383,11 @@ def main() -> None:
     (HERE / "page.html").write_text(out, encoding="utf-8")
     (HERE / "index.html").write_text(HEAD.replace("__SITE__", SITE_URL) + out + "\n</body>\n</html>\n", encoding="utf-8")
 
-    n_pref = build_pref(basis)
+    # build_city を先に走らせること。build_pref がサイトマップを作るとき
+    # ディスク上の city/*.html を glob するので、逆順だと閾値で消したページが
+    # サイトマップに残る（実際に37件残った）。
     n_city = build_city(basis)
+    n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")

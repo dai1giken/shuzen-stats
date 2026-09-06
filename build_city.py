@@ -25,6 +25,7 @@ import json
 from pathlib import Path
 
 from build_pref import CSS, SITE_URL, SLUG, head, period_chart
+from pref_city import MIN_UNITS, cohort_sum, published_leaves
 
 HERE = Path(__file__).resolve().parent
 
@@ -72,18 +73,22 @@ def build(basis: dict) -> int:
     day = basis["generated"].split()[0]
 
     def coh(a):
-        # .get(k, 0) にしないこと。理由は pref_city.py の同名関数と同じ。
-        return sum(a["periods"][k] for k in cohort)
+        return cohort_sum(a, cohort)
 
-    # 都県ごとに、集計行を除いた市区町村で順位を作る
+    # 都県ごとに、集計行を除きページを作る市区町村だけで順位を作る。
+    # 順位・近隣リンク・一覧・サイトマップを全部この結果から作る。ここを一本にしないと、
+    # 閾値で落とした市区町村へのリンクが残って404になる。
     ranks: dict[str, dict[str, int]] = {}
     leaves: dict[str, list] = {}
     for pre in {c[:2] for c in areas}:
-        lv = sorted(((c, a) for c, a in areas.items()
-                     if c[:2] == pre and a["is_leaf"] and not c.endswith("000")),
-                    key=lambda kv: -coh(kv[1]))
+        lv = published_leaves(areas, cohort, pre)
         leaves[pre] = lv
         ranks[pre] = {c: i + 1 for i, (c, _) in enumerate(lv)}
+
+    # ページを作る対象。集計行（特別区部・政令市）も閾値で判定する
+    publish = {c for pre in leaves for c, _ in leaves[pre]}
+    publish |= {c for c, a in areas.items()
+                if not a["is_leaf"] and not c.endswith("000") and coh(a) >= MIN_UNITS}
 
     out = HERE / "city"
     out.mkdir(exist_ok=True)
@@ -91,6 +96,8 @@ def build(basis: dict) -> int:
 
     for code, a in areas.items():
         if code.endswith("000"):          # 都県の行はページにしない（pref/ が担当）
+            continue
+        if code not in publish:           # 閾値未満。中身が空のページを作らない
             continue
         pre = code[:2]
         name, pref_name = a["name"], a["pref"]
@@ -211,7 +218,8 @@ def build(basis: dict) -> int:
         # ページ自体は作っている。ここに出さないと内部リンクゼロのまま sitemap にだけ載る。
         # 横浜市 390,900戸 はこのサイトで最大の単位で、それが孤立していた。
         rolls = sorted((c2 for c2 in areas
-                        if c2[:2] == pre and not areas[c2]["is_leaf"] and not c2.endswith("000")),
+                        if c2[:2] == pre and not areas[c2]["is_leaf"]
+                        and not c2.endswith("000") and c2 in publish),
                        key=lambda c2: -coh(areas[c2]))
         if rolls:
             idx.append('</div>\n  <p class="colophon">集計行（順位は付けていません）：'
@@ -220,11 +228,25 @@ def build(basis: dict) -> int:
                        + '</p></section>\n')
         else:
             idx.append('</div></section>\n')
-    idx.append('  <p class="colophon">単位：戸。多い順。特別区部・政令市の集計行は、'
-               '市区町村と二重に数えることになるので順位の一覧からは外し、各県の下に別途置いています。</p>\n')
+    idx.append(f'  <p class="colophon">単位：戸。多い順。'
+               f'<strong>築26〜45年の非木造共同住宅が {MIN_UNITS:,}戸 以上の市区町村だけ</strong>を'
+               f'載せています（それ未満は個別ページを作っていません）。'
+               f'特別区部・政令市の集計行は、市区町村と二重に数えることになるので'
+               f'順位の一覧からは外し、各県の下に別途置いています。</p>\n')
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
+
+    # 閾値から外れたページを消す。ここをやらないと、ディスクに残ったファイルを
+    # ワークフローの `cp -r pref city _site/` が公開し続け、
+    # build_pref.py の sitemap 生成（city/*.html を glob する）が載せ続ける。
+    keep = {f"{c}.html" for c in written} | {"index.html"}
+    stale = sorted(p for p in out.glob("*.html") if p.name not in keep)
+    for p in stale:
+        p.unlink()
+    if stale:
+        print(f"  閾値 {MIN_UNITS:,}戸 未満のため削除: {len(stale)} 枚 "
+              f"（{'、'.join(p.stem for p in stale[:5])}…）")
 
     return len(written)
 
