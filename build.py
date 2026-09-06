@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from build_city import build as build_city
 from build_pref import SLUG, build as build_pref
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
@@ -350,7 +351,9 @@ def main() -> None:
     (HERE / "index.html").write_text(HEAD.replace("__SITE__", SITE_URL) + out + "\n</body>\n</html>\n", encoding="utf-8")
 
     n_pref = build_pref(basis)
-    print(f"pref/      {n_pref} 県 ＋ 一覧、sitemap.xml")
+    n_city = build_city(basis)
+    print(f"pref/      {n_pref} 県 ＋ 一覧")
+    print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
     print(f"  A={_fmt(a)} m² ({latest})　ピーク {peak_year} {_fmt(peak)} m² → {tokens['{{DECLINE_PCT}}']}%減")

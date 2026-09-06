@@ -70,7 +70,18 @@ h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-botto
 h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
 .lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
 .chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
 .chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
 .chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
   border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
 .tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
@@ -133,6 +144,39 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 
   <div class="prefgrid"><a href="tokyo.html"><span class="nm">東京都</span><span class="vv">297,723</span></a><a href="kanagawa.html"><span class="nm">神奈川県</span><span class="vv">228,399</span></a><a href="osaka.html"><span class="nm">大阪府</span><span class="vv">130,681</span></a><a href="hyogo.html"><span class="nm">兵庫県</span><span class="vv">120,380</span></a><a href="saitama.html"><span class="nm">埼玉県</span><span class="vv">119,384</span></a><a href="chiba.html"><span class="nm">千葉県</span><span class="vv">107,250</span></a><a href="fukuoka.html"><span class="nm">福岡県</span><span class="vv">88,166</span></a><a href="aichi.html"><span class="nm">愛知県</span><span class="vv">85,474</span></a><a href="hokkaido.html"><span class="nm">北海道</span><span class="vv">66,540</span></a><a href="kyoto.html"><span class="nm">京都府</span><span class="vv">35,253</span></a><a href="hiroshima.html"><span class="nm">広島県</span><span class="vv">30,092</span></a><a href="shizuoka.html"><span class="nm">静岡県</span><span class="vv">26,530</span></a><a href="miyagi.html"><span class="nm">宮城県</span><span class="vv">26,353</span></a><a href="nara.html"><span class="nm">奈良県</span><span class="vv">25,377</span></a><a href="shiga.html"><span class="nm">滋賀県</span><span class="vv">14,122</span></a><a href="okinawa.html"><span class="nm">沖縄県</span><span class="vv">12,465</span></a><a href="kumamoto.html"><span class="nm">熊本県</span><span class="vv">10,573</span></a><a href="ibaraki.html"><span class="nm">茨城県</span><span class="vv">9,629</span></a><a href="okayama.html"><span class="nm">岡山県</span><span class="vv">8,561</span></a><a href="yamanashi.html"><span class="nm">山梨県</span><span class="vv">7,389</span></a><a href="nagano.html"><span class="nm">長野県</span><span class="vv">6,854</span></a><a href="oita.html"><span class="nm">大分県</span><span class="vv">6,699</span></a><a href="gunma.html"><span class="nm">群馬県</span><span class="vv">6,613</span></a><a href="kagawa.html"><span class="nm">香川県</span><span class="vv">6,392</span></a><a href="niigata.html"><span class="nm">新潟県</span><span class="vv">6,105</span></a><a href="wakayama.html"><span class="nm">和歌山県</span><span class="vv">5,769</span></a><a href="fukushima.html"><span class="nm">福島県</span><span class="vv">5,589</span></a><a href="ishikawa.html"><span class="nm">石川県</span><span class="vv">5,444</span></a><a href="nagasaki.html"><span class="nm">長崎県</span><span class="vv">5,418</span></a><a href="kagoshima.html"><span class="nm">鹿児島県</span><span class="vv">4,995</span></a><a href="gifu.html"><span class="nm">岐阜県</span><span class="vv">4,920</span></a><a href="tochigi.html"><span class="nm">栃木県</span><span class="vv">4,738</span></a><a href="mie.html"><span class="nm">三重県</span><span class="vv">4,540</span></a><a href="yamaguchi.html"><span class="nm">山口県</span><span class="vv">4,508</span></a><a href="ehime.html"><span class="nm">愛媛県</span><span class="vv">4,017</span></a><a href="kochi.html"><span class="nm">高知県</span><span class="vv">3,183</span></a><a href="toyama.html"><span class="nm">富山県</span><span class="vv">3,059</span></a><a href="saga.html"><span class="nm">佐賀県</span><span class="vv">3,057</span></a><a href="miyazaki.html"><span class="nm">宮崎県</span><span class="vv">2,854</span></a><a href="yamagata.html"><span class="nm">山形県</span><span class="vv">2,662</span></a><a href="tokushima.html"><span class="nm">徳島県</span><span class="vv">2,447</span></a><a href="fukui.html"><span class="nm">福井県</span><span class="vv">2,440</span></a><a href="iwate.html"><span class="nm">岩手県</span><span class="vv">2,185</span></a><a href="shimane.html"><span class="nm">島根県</span><span class="vv">2,065</span></a><a href="tottori.html"><span class="nm">鳥取県</span><span class="vv">1,418</span></a><a href="akita.html"><span class="nm">秋田県</span><span class="vv">1,277</span></a><a href="aomori.html"><span class="nm">青森県</span><span class="vv">1,242</span></a></div>
   <p class="colophon">単位：戸。多い順。</p>
+<script>
+(function(){
+  document.querySelectorAll('.chartbox').forEach(function(box){
+    var svg=box.querySelector('svg'), tip=box.querySelector('.tip');
+    if(!svg||!tip) return;
+    var bars=[].slice.call(svg.querySelectorAll('.bar'));
+    var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+    if(!hits.length) return;
+    function show(ev,i){
+      svg.classList.add('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+      tip.className='tip on';
+      tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'+hits[i].getAttribute('data-v')+' 戸';
+      var r=box.getBoundingClientRect();
+      var left=(ev.clientX-r.left)+box.scrollLeft+14;
+      if(left+tip.offsetWidth > r.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+      tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+      tip.style.top=Math.max(4,(ev.clientY-r.top)-tip.offsetHeight-12)+'px';
+    }
+    function hide(){
+      svg.classList.remove('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+      tip.className='tip';
+    }
+    hits.forEach(function(h,i){
+      h.addEventListener('mousemove',function(ev){ show(ev,i); });
+      h.addEventListener('touchstart',function(ev){ if(ev.touches[0]) show(ev.touches[0],i); },{passive:true});
+    });
+    svg.addEventListener('mouseleave',hide);
+    svg.addEventListener('touchend',hide);
+  });
+})();
+</script>
 
   <a class="cta" href="https://dai1giken.github.io/shuzen-stats/">
     <span class="k">全国の統計へ</span>

@@ -37,6 +37,13 @@ COHORT = (1988, 2001)           # 2026年時点で築25〜38年＝2〜3回目の
 # ---- 消費者物価指数（総務省・2020年基準・総合・全国）----
 CPI_ID = "0003427113"
 
+# ---- 一都三県の市区町村別 住宅ストック（令和5年住宅・土地統計調査）----
+# 着工統計（フロー）ではなく現存ストック。修繕の対象はストックなのでこちらが正しい。
+# ただし所有関係の軸が無いため「非木造の共同住宅」までしか絞れず、賃貸が混ざる。
+CITY_ID = "0004021796"
+CITY_PREFS = {"13": "東京都", "14": "神奈川県", "11": "埼玉県", "12": "千葉県"}
+CITY_COHORT = ("1981～1990年", "1991～2000年")     # 2026年時点で築26〜45年
+
 DEFLATOR_ID = "0004055083"
 DEFLATOR_TAB = "100"          # 表章項目「建設工事費デフレーター」（後方3ヶ月平均ではない方）
 # (@cat01 コード, 画面表示名, 主役かどうか)
@@ -155,6 +162,64 @@ def fetch_cpi(months: list[str]) -> dict:
         "base": "2020年＝100",
         "url": f"https://www.e-stat.go.jp/dbview?sid={CPI_ID}",
         "values": values,
+    }
+
+
+def fetch_city() -> dict:
+    """一都三県の市区町村別に、非木造・共同住宅の住宅数を建築の時期別で取る。"""
+    meta = _call("getMetaInfo", statsDataId=CITY_ID)["GET_META_INFO"]["METADATA_INF"]
+    classes = meta["CLASS_INF"]["CLASS_OBJ"]
+    areas, periods = {}, {}
+    for c in classes:
+        if c["@id"] == "area":
+            areas = {i["@code"]: i for i in _as_list(c["CLASS"])}
+        if c["@id"] == "cat04":
+            periods = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+    order = [periods[k] for k in sorted(periods) if periods[k] != "総数"]
+
+    d = _call("getStatsData", statsDataId=CITY_ID, cdCat01="2", cdCat02="3", cdCat03="00",
+              limit=100000)
+    sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+
+    raw: dict[str, dict[str, int]] = {}
+    for v in _as_list(sd["DATA_INF"]["VALUE"]):
+        try:
+            raw.setdefault(v["@area"], {})[periods[v["@cat04"]]] = int(v["$"])
+        except (ValueError, TypeError, KeyError):
+            continue
+
+    parents = {a.get("@parentCode") for a in areas.values()}
+    out = {}
+    for code, a in areas.items():
+        if code[:2] not in CITY_PREFS or code not in raw:
+            continue
+        vals = raw[code]
+        out[code] = {
+            "name": a["@name"],
+            "pref": CITY_PREFS[code[:2]],
+            "parent": a.get("@parentCode"),
+            "is_leaf": code not in parents,          # 集計行（政令市・特別区部）を除くため
+            "total": vals.get("総数", 0),
+            "periods": {k: vals.get(k, 0) for k in order},
+        }
+
+    n_leaf = sum(1 for v in out.values() if v["is_leaf"] and len(v["name"]) and v["parent"] != None and len(v["periods"]))
+    for pre, nm in CITY_PREFS.items():
+        pr = out.get(pre + "000")
+        leaves = [v for k, v in out.items() if k[:2] == pre and v["is_leaf"] and k != pre + "000"]
+        s_leaf = sum(sum(v["periods"][k] for k in CITY_COHORT) for v in leaves)
+        s_pref = sum(pr["periods"][k] for k in CITY_COHORT) if pr else 0
+        print(f"  {nm}: 市区町村 {len(leaves):3d} ／ 築26〜45年 県値 {s_pref:,} 対 市区町村合計 {s_leaf:,} "
+              f"／ 差 {s_pref - s_leaf:,}")
+
+    return {
+        "statsDataId": CITY_ID,
+        "url": f"https://www.e-stat.go.jp/dbview?sid={CITY_ID}",
+        "survey": "令和5年住宅・土地統計調査（2023年10月1日現在）",
+        "filter": "建物の構造=非木造／建て方=共同住宅／階数=総数",
+        "cohort": list(CITY_COHORT),
+        "order": order,
+        "areas": out,
     }
 
 
@@ -312,6 +377,9 @@ def main() -> None:
 
     print("\n都道府県別 分譲マンション着工戸数（%d〜%d年度）:" % COHORT)
     basis["prefecture"] = fetch_prefecture()
+
+    print("\n一都三県の市区町村別 住宅ストック（令和5年）:")
+    basis["city"] = fetch_city()
 
     out = HERE / "basis.json"
     out.write_text(json.dumps(basis, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -70,7 +70,18 @@ h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-botto
 h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
 .lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
 .chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
 .chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
 .chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
   border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
 .tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
@@ -170,42 +181,42 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       </g>
       <text x="62" y="20" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">戸</text>
       <line x1="62" y1="268" x2="872" y2="268" stroke="var(--rule)"/>
-      <rect x="63.5" y="199.7" width="19.5" height="68.3" rx="2" fill="var(--shu)" opacity="1"><title>1988年度　1,167 戸</title></rect>
-      <rect x="86.0" y="123.2" width="19.5" height="144.8" rx="2" fill="var(--shu)" opacity="1"><title>1989年度　2,476 戸</title></rect>
-      <rect x="108.5" y="117.4" width="19.5" height="150.6" rx="2" fill="var(--shu)" opacity="1"><title>1990年度　2,575 戸</title></rect>
-      <rect x="131.0" y="145.9" width="19.5" height="122.1" rx="2" fill="var(--shu)" opacity="1"><title>1991年度　2,087 戸</title></rect>
-      <rect x="153.5" y="191.7" width="19.5" height="76.3" rx="2" fill="var(--shu)" opacity="1"><title>1992年度　1,305 戸</title></rect>
-      <rect x="176.0" y="107.1" width="19.5" height="160.9" rx="2" fill="var(--shu)" opacity="1"><title>1993年度　2,750 戸</title></rect>
-      <rect x="198.5" y="87.9" width="19.5" height="180.1" rx="2" fill="var(--shu)" opacity="1"><title>1994年度　3,078 戸</title></rect>
-      <rect x="221.0" y="116.8" width="19.5" height="151.2" rx="2" fill="var(--shu)" opacity="1"><title>1995年度　2,584 戸</title></rect>
-      <rect x="243.5" y="185.6" width="19.5" height="82.4" rx="2" fill="var(--shu)" opacity="1"><title>1996年度　1,408 戸</title></rect>
-      <rect x="266.0" y="220.3" width="19.5" height="47.7" rx="2" fill="var(--shu)" opacity="1"><title>1997年度　816 戸</title></rect>
-      <rect x="288.5" y="189.1" width="19.5" height="78.9" rx="2" fill="var(--shu)" opacity="1"><title>1998年度　1,348 戸</title></rect>
-      <rect x="311.0" y="189.5" width="19.5" height="78.5" rx="2" fill="var(--shu)" opacity="1"><title>1999年度　1,342 戸</title></rect>
-      <rect x="333.5" y="212.3" width="19.5" height="55.7" rx="2" fill="var(--shu)" opacity="1"><title>2000年度　952 戸</title></rect>
-      <rect x="356.0" y="180.9" width="19.5" height="87.1" rx="2" fill="var(--shu)" opacity="1"><title>2001年度　1,489 戸</title></rect>
-      <rect x="378.5" y="201.5" width="19.5" height="66.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2002年度　1,137 戸</title></rect>
-      <rect x="401.0" y="209.0" width="19.5" height="59.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2003年度　1,008 戸</title></rect>
-      <rect x="423.5" y="211.5" width="19.5" height="56.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2004年度　966 戸</title></rect>
-      <rect x="446.0" y="202.4" width="19.5" height="65.6" rx="2" fill="var(--ai)" opacity="0.42"><title>2005年度　1,122 戸</title></rect>
-      <rect x="468.5" y="153.1" width="19.5" height="114.9" rx="2" fill="var(--ai)" opacity="0.42"><title>2006年度　1,964 戸</title></rect>
-      <rect x="491.0" y="171.1" width="19.5" height="96.9" rx="2" fill="var(--ai)" opacity="0.42"><title>2007年度　1,657 戸</title></rect>
-      <rect x="513.5" y="224.2" width="19.5" height="43.8" rx="2" fill="var(--ai)" opacity="0.42"><title>2008年度　749 戸</title></rect>
-      <rect x="536.0" y="246.8" width="19.5" height="21.2" rx="2" fill="var(--ai)" opacity="0.42"><title>2009年度　363 戸</title></rect>
-      <rect x="558.5" y="244.6" width="19.5" height="23.4" rx="2" fill="var(--ai)" opacity="0.42"><title>2010年度　400 戸</title></rect>
-      <rect x="581.0" y="225.9" width="19.5" height="42.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2011年度　719 戸</title></rect>
-      <rect x="603.5" y="228.3" width="19.5" height="39.7" rx="2" fill="var(--ai)" opacity="0.42"><title>2012年度　678 戸</title></rect>
-      <rect x="626.0" y="231.7" width="19.5" height="36.3" rx="2" fill="var(--ai)" opacity="0.42"><title>2013年度　621 戸</title></rect>
-      <rect x="648.5" y="257.0" width="19.5" height="11.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2014年度　188 戸</title></rect>
-      <rect x="671.0" y="227.7" width="19.5" height="40.3" rx="2" fill="var(--ai)" opacity="0.42"><title>2015年度　689 戸</title></rect>
-      <rect x="693.5" y="253.5" width="19.5" height="14.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2016年度　248 戸</title></rect>
-      <rect x="716.0" y="262.3" width="19.5" height="5.7" rx="2" fill="var(--ai)" opacity="0.42"><title>2017年度　98 戸</title></rect>
-      <rect x="738.5" y="242.8" width="19.5" height="25.2" rx="2" fill="var(--ai)" opacity="0.42"><title>2018年度　431 戸</title></rect>
-      <rect x="761.0" y="243.0" width="19.5" height="25.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2019年度　428 戸</title></rect>
-      <rect x="783.5" y="245.9" width="19.5" height="22.1" rx="2" fill="var(--ai)" opacity="0.42"><title>2020年度　377 戸</title></rect>
-      <rect x="806.0" y="256.0" width="19.5" height="12.0" rx="2" fill="var(--ai)" opacity="0.42"><title>2021年度　205 戸</title></rect>
-      <rect x="828.5" y="244.5" width="19.5" height="23.5" rx="2" fill="var(--ai)" opacity="0.42"><title>2022年度　401 戸</title></rect>
-      <rect x="851.0" y="253.7" width="19.5" height="14.3" rx="2" fill="var(--ai)" opacity="0.42"><title>2023年度　244 戸</title></rect>
+      <rect class="bar" x="63.5" y="199.7" width="19.5" height="68.3" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="86.0" y="123.2" width="19.5" height="144.8" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="108.5" y="117.4" width="19.5" height="150.6" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="131.0" y="145.9" width="19.5" height="122.1" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="153.5" y="191.7" width="19.5" height="76.3" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="176.0" y="107.1" width="19.5" height="160.9" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="198.5" y="87.9" width="19.5" height="180.1" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="221.0" y="116.8" width="19.5" height="151.2" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="243.5" y="185.6" width="19.5" height="82.4" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="266.0" y="220.3" width="19.5" height="47.7" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="288.5" y="189.1" width="19.5" height="78.9" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="311.0" y="189.5" width="19.5" height="78.5" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="333.5" y="212.3" width="19.5" height="55.7" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="356.0" y="180.9" width="19.5" height="87.1" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="378.5" y="201.5" width="19.5" height="66.5" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="401.0" y="209.0" width="19.5" height="59.0" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="423.5" y="211.5" width="19.5" height="56.5" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="446.0" y="202.4" width="19.5" height="65.6" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="468.5" y="153.1" width="19.5" height="114.9" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="491.0" y="171.1" width="19.5" height="96.9" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="513.5" y="224.2" width="19.5" height="43.8" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="536.0" y="246.8" width="19.5" height="21.2" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="558.5" y="244.6" width="19.5" height="23.4" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="581.0" y="225.9" width="19.5" height="42.1" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="603.5" y="228.3" width="19.5" height="39.7" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="626.0" y="231.7" width="19.5" height="36.3" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="648.5" y="257.0" width="19.5" height="11.0" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="671.0" y="227.7" width="19.5" height="40.3" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="693.5" y="253.5" width="19.5" height="14.5" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="716.0" y="262.3" width="19.5" height="5.7" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="738.5" y="242.8" width="19.5" height="25.2" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="761.0" y="243.0" width="19.5" height="25.0" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="783.5" y="245.9" width="19.5" height="22.1" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="806.0" y="256.0" width="19.5" height="12.0" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="828.5" y="244.5" width="19.5" height="23.5" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="851.0" y="253.7" width="19.5" height="14.3" rx="2" fill="var(--ai)" opacity="0.42"/>
       <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" text-anchor="middle">
       <text x="116.8" y="286">1990</text>
       <text x="229.2" y="286">1995</text>
@@ -220,7 +231,46 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <text x="93" y="301" fill="var(--ink2)">1988〜2001年度＝2026年時点で築25〜38年</text>
       <rect x="392" y="292" width="24" height="10" rx="2" fill="var(--ai)" opacity=".42"/>
       <text x="423" y="301" fill="var(--ink2)">その他の年度</text>
+      </g>
+      <g class="hits">
+      <rect class="barhit" x="62.0" y="34" width="22.5" height="234" fill="transparent" data-y="1988年度" data-v="1,167"/>
+      <rect class="barhit" x="84.5" y="34" width="22.5" height="234" fill="transparent" data-y="1989年度" data-v="2,476"/>
+      <rect class="barhit" x="107.0" y="34" width="22.5" height="234" fill="transparent" data-y="1990年度" data-v="2,575"/>
+      <rect class="barhit" x="129.5" y="34" width="22.5" height="234" fill="transparent" data-y="1991年度" data-v="2,087"/>
+      <rect class="barhit" x="152.0" y="34" width="22.5" height="234" fill="transparent" data-y="1992年度" data-v="1,305"/>
+      <rect class="barhit" x="174.5" y="34" width="22.5" height="234" fill="transparent" data-y="1993年度" data-v="2,750"/>
+      <rect class="barhit" x="197.0" y="34" width="22.5" height="234" fill="transparent" data-y="1994年度" data-v="3,078"/>
+      <rect class="barhit" x="219.5" y="34" width="22.5" height="234" fill="transparent" data-y="1995年度" data-v="2,584"/>
+      <rect class="barhit" x="242.0" y="34" width="22.5" height="234" fill="transparent" data-y="1996年度" data-v="1,408"/>
+      <rect class="barhit" x="264.5" y="34" width="22.5" height="234" fill="transparent" data-y="1997年度" data-v="816"/>
+      <rect class="barhit" x="287.0" y="34" width="22.5" height="234" fill="transparent" data-y="1998年度" data-v="1,348"/>
+      <rect class="barhit" x="309.5" y="34" width="22.5" height="234" fill="transparent" data-y="1999年度" data-v="1,342"/>
+      <rect class="barhit" x="332.0" y="34" width="22.5" height="234" fill="transparent" data-y="2000年度" data-v="952"/>
+      <rect class="barhit" x="354.5" y="34" width="22.5" height="234" fill="transparent" data-y="2001年度" data-v="1,489"/>
+      <rect class="barhit" x="377.0" y="34" width="22.5" height="234" fill="transparent" data-y="2002年度" data-v="1,137"/>
+      <rect class="barhit" x="399.5" y="34" width="22.5" height="234" fill="transparent" data-y="2003年度" data-v="1,008"/>
+      <rect class="barhit" x="422.0" y="34" width="22.5" height="234" fill="transparent" data-y="2004年度" data-v="966"/>
+      <rect class="barhit" x="444.5" y="34" width="22.5" height="234" fill="transparent" data-y="2005年度" data-v="1,122"/>
+      <rect class="barhit" x="467.0" y="34" width="22.5" height="234" fill="transparent" data-y="2006年度" data-v="1,964"/>
+      <rect class="barhit" x="489.5" y="34" width="22.5" height="234" fill="transparent" data-y="2007年度" data-v="1,657"/>
+      <rect class="barhit" x="512.0" y="34" width="22.5" height="234" fill="transparent" data-y="2008年度" data-v="749"/>
+      <rect class="barhit" x="534.5" y="34" width="22.5" height="234" fill="transparent" data-y="2009年度" data-v="363"/>
+      <rect class="barhit" x="557.0" y="34" width="22.5" height="234" fill="transparent" data-y="2010年度" data-v="400"/>
+      <rect class="barhit" x="579.5" y="34" width="22.5" height="234" fill="transparent" data-y="2011年度" data-v="719"/>
+      <rect class="barhit" x="602.0" y="34" width="22.5" height="234" fill="transparent" data-y="2012年度" data-v="678"/>
+      <rect class="barhit" x="624.5" y="34" width="22.5" height="234" fill="transparent" data-y="2013年度" data-v="621"/>
+      <rect class="barhit" x="647.0" y="34" width="22.5" height="234" fill="transparent" data-y="2014年度" data-v="188"/>
+      <rect class="barhit" x="669.5" y="34" width="22.5" height="234" fill="transparent" data-y="2015年度" data-v="689"/>
+      <rect class="barhit" x="692.0" y="34" width="22.5" height="234" fill="transparent" data-y="2016年度" data-v="248"/>
+      <rect class="barhit" x="714.5" y="34" width="22.5" height="234" fill="transparent" data-y="2017年度" data-v="98"/>
+      <rect class="barhit" x="737.0" y="34" width="22.5" height="234" fill="transparent" data-y="2018年度" data-v="431"/>
+      <rect class="barhit" x="759.5" y="34" width="22.5" height="234" fill="transparent" data-y="2019年度" data-v="428"/>
+      <rect class="barhit" x="782.0" y="34" width="22.5" height="234" fill="transparent" data-y="2020年度" data-v="377"/>
+      <rect class="barhit" x="804.5" y="34" width="22.5" height="234" fill="transparent" data-y="2021年度" data-v="205"/>
+      <rect class="barhit" x="827.0" y="34" width="22.5" height="234" fill="transparent" data-y="2022年度" data-v="401"/>
+      <rect class="barhit" x="849.5" y="34" width="22.5" height="234" fill="transparent" data-y="2023年度" data-v="244"/>
       </g></svg>
+      <div class="tip"></div>
       <div class="chart-foot">
         出典：国土交通省「住宅着工統計調査」時系列表／<a href="https://www.e-stat.go.jp/dbview?sid=0003119736" target="_blank" rel="noopener">e-Stat statsDataId=0003119736</a><br>
         建て方=共同住宅／構造=鉄筋コンクリート造／利用関係=分譲住宅／表章項目=戸数　取得日 2026-09-06
@@ -245,6 +295,39 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <li>上の工事費は統計上の中央値であり、<strong>見積の目安ではありません</strong>。共通仮設費は含まれず、仕様・規模・立地・劣化状況も反映していません。</li>
     </ul>
   </div>
+<script>
+(function(){
+  document.querySelectorAll('.chartbox').forEach(function(box){
+    var svg=box.querySelector('svg'), tip=box.querySelector('.tip');
+    if(!svg||!tip) return;
+    var bars=[].slice.call(svg.querySelectorAll('.bar'));
+    var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+    if(!hits.length) return;
+    function show(ev,i){
+      svg.classList.add('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+      tip.className='tip on';
+      tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'+hits[i].getAttribute('data-v')+' 戸';
+      var r=box.getBoundingClientRect();
+      var left=(ev.clientX-r.left)+box.scrollLeft+14;
+      if(left+tip.offsetWidth > r.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+      tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+      tip.style.top=Math.max(4,(ev.clientY-r.top)-tip.offsetHeight-12)+'px';
+    }
+    function hide(){
+      svg.classList.remove('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+      tip.className='tip';
+    }
+    hits.forEach(function(h,i){
+      h.addEventListener('mousemove',function(ev){ show(ev,i); });
+      h.addEventListener('touchstart',function(ev){ if(ev.touches[0]) show(ev.touches[0],i); },{passive:true});
+    });
+    svg.addEventListener('mouseleave',hide);
+    svg.addEventListener('touchend',hide);
+  });
+})();
+</script>
 
   <a class="cta" href="https://dai1giken.github.io/shuzen-stats/">
     <span class="k">全国の統計へ</span>

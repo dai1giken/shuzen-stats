@@ -97,7 +97,18 @@ h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-botto
 h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
 .lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
 .chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
 .chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
 .chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
   border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
 .tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
@@ -171,7 +182,43 @@ def head(title: str, desc: str, canonical: str) -> str:
 """
 
 
-FOOT = f"""
+TIP_JS = '''<script>
+(function(){
+  document.querySelectorAll('.chartbox').forEach(function(box){
+    var svg=box.querySelector('svg'), tip=box.querySelector('.tip');
+    if(!svg||!tip) return;
+    var bars=[].slice.call(svg.querySelectorAll('.bar'));
+    var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+    if(!hits.length) return;
+    function show(ev,i){
+      svg.classList.add('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+      tip.className='tip on';
+      tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'+hits[i].getAttribute('data-v')+' 戸';
+      var r=box.getBoundingClientRect();
+      var left=(ev.clientX-r.left)+box.scrollLeft+14;
+      if(left+tip.offsetWidth > r.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+      tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+      tip.style.top=Math.max(4,(ev.clientY-r.top)-tip.offsetHeight-12)+'px';
+    }
+    function hide(){
+      svg.classList.remove('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+      tip.className='tip';
+    }
+    hits.forEach(function(h,i){
+      h.addEventListener('mousemove',function(ev){ show(ev,i); });
+      h.addEventListener('touchstart',function(ev){ if(ev.touches[0]) show(ev.touches[0],i); },{passive:true});
+    });
+    svg.addEventListener('mouseleave',hide);
+    svg.addEventListener('touchend',hide);
+  });
+})();
+</script>
+'''
+
+
+FOOT = TIP_JS + f"""
   <a class="cta" href="{SITE_URL}">
     <span class="k">全国の統計へ</span>
     <span class="n">大規模修繕統計ビューア</span>
@@ -230,9 +277,9 @@ def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
         inside = lo <= y_ <= hi
         x = x0 + i * slot + 1.5
         yy = Y(v)
-        s.append(f'<rect x="{x:.1f}" y="{yy:.1f}" width="{bw:.1f}" height="{ybase - yy:.1f}" rx="2" '
-                 f'fill="{"var(--shu)" if inside else "var(--ai)"}" opacity="{1 if inside else 0.42}">'
-                 f'<title>{yr}　{v:,} 戸</title></rect>')
+        s.append(f'<rect class="bar" x="{x:.1f}" y="{yy:.1f}" width="{bw:.1f}" '
+                 f'height="{ybase - yy:.1f}" rx="2" '
+                 f'fill="{"var(--shu)" if inside else "var(--ai)"}" opacity="{1 if inside else 0.42}"/>')
 
     s.append(f'<g font-family="{MONO}" font-size="11" fill="var(--ink3)" text-anchor="middle">')
     for i, yr in enumerate(years):
@@ -244,8 +291,17 @@ def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
     s.append(f'<text x="{x0 + 31}" y="301" fill="var(--ink2)">{lo}〜{hi}年度＝2026年時点で築{2026-hi}〜{2026-lo}年</text>')
     s.append(f'<rect x="{x0 + 330}" y="292" width="24" height="10" rx="2" fill="var(--ai)" opacity=".42"/>')
     s.append(f'<text x="{x0 + 361}" y="301" fill="var(--ink2)">その他の年度</text>')
+    s.append('</g>')
+
+    # SVG の <title> は表示が遅く、細い棒では当たり判定も外れる。UIとして当てにしない。
+    # 透明な矩形を重ねて JS で出す（本体ページの Fig.3 と同じ作り）。
+    s.append('<g class="hits">')
+    for i, (yr, v) in enumerate(zip(years, vals)):
+        s.append(f'<rect class="barhit" x="{x0 + i * slot:.1f}" y="{ytop}" width="{slot:.1f}" '
+                 f'height="{ybase - ytop}" fill="transparent" data-y="{yr}" data-v="{v:,}"/>')
     s.append('</g></svg>')
     return "\n      ".join(s)
+
 
 
 def build(basis: dict) -> int:
@@ -319,6 +375,7 @@ def build(basis: dict) -> int:
     <p class="lede">朱色の期間が、2026年時点で築{2026-hi}〜{2026-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
     <div class="chartbox">
       {year_chart(series, lo, hi)}
+      <div class="tip"></div>
       <div class="chart-foot">
         出典：国土交通省「住宅着工統計調査」時系列表／<a href="{pref["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={pref["statsDataId"]}</a><br>
         {pref["filter"]}　取得日 {basis["generated"].split()[0]}
@@ -387,6 +444,15 @@ def build(basis: dict) -> int:
     for slug in written:
         sm.append(f'<url><loc>{SITE_URL}pref/{slug}.html</loc><lastmod>{day}</lastmod>'
                   f'<priority>0.6</priority></url>')
+    # 市区町村ページ（build_city が先に生成している前提。無ければ黙って飛ばす）
+    city_dir = HERE / "city"
+    if city_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}city/</loc><lastmod>{day}</lastmod><priority>0.7</priority></url>')
+        for f in sorted(city_dir.glob("*.html")):
+            if f.name == "index.html":
+                continue
+            sm.append(f'<url><loc>{SITE_URL}city/{f.name}</loc><lastmod>{day}</lastmod>'
+                      f'<priority>0.5</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 
