@@ -111,12 +111,6 @@ def build(basis: dict) -> int:
     areas = city["areas"]
     cohort = city["cohort"]
     day = basis["generated"].split()[0]
-    d = basis["deflator"]
-    prim = d["series"][d["primary"]]
-    sv = basis["survey"]
-    factor = prim[-1] / 100.0
-    third = next(r for r in sv["per_unit"] if r["label"] == "3回目以上")
-    month = d["months"][-1]
 
     def coh(a):
         return sum(a["periods"].get(k, 0) for k in cohort)
@@ -182,11 +176,6 @@ def build(basis: dict) -> int:
       <span class="k">{pref_name}内の順位</span>
       {rank_html}
     </div>
-    <div class="kpi">
-      <span class="k">工事費の目安</span>
-      <div class="v">{third["median"]*factor:.0f}<small>万円／戸</small></div>
-      <p>3回目以上の中央値を{month}の物価に換算した<strong>全国値</strong>。市区町村別の工事費指数は存在しません。</p>
-    </div>
   </div>
 
   <section>
@@ -225,7 +214,6 @@ def build(basis: dict) -> int:
       <li><strong>分譲と賃貸の区別はありません。</strong>この統計表には所有関係の軸が無く、絞り込めるのは「非木造の共同住宅」までです。賃貸マンションも含まれています。</li>
       <li><strong>標本調査にもとづく推計値です。</strong>全数調査ではありません。また小規模な町村は個別に公表されないため、市区町村の合計は県の値と一致しません（一都三県で0.1〜0.5%の差）。</li>
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
-      <li><strong>工事費の指数は全国値しかありません。</strong>上の金額は統計上の中央値であり、<strong>見積の目安ではありません</strong>。共通仮設費は含まれず、仕様・規模・立地・劣化状況も反映していません。</li>
     </ul>
   </div>
 ''')

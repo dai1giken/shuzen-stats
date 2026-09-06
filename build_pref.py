@@ -314,12 +314,6 @@ def build(basis: dict) -> int:
     by_year = pref["by_year"]
     lo, hi = pref["cohort"]
     national = pref["national"]
-    d = basis["deflator"]
-    prim = d["series"][d["primary"]]
-    sv = basis["survey"]
-    factor = prim[-1] / 100.0
-    third = next(r for r in sv["per_unit"] if r["label"] == "3回目以上")
-    month = d["months"][-1]
 
     ranked = sorted(units.items(), key=lambda kv: -kv[1])
     rank = {name: i + 1 for i, (name, _) in enumerate(ranked)}
@@ -367,11 +361,6 @@ def build(basis: dict) -> int:
       <div class="v">{r}<small>位 / 47</small></div>
       <p>全国 {national:,}戸 に占める割合は {share:.1f}%。</p>
     </div>
-    <div class="kpi">
-      <span class="k">工事費の目安</span>
-      <div class="v">{third["median"]*factor:.0f}<small>万円／戸</small></div>
-      <p>3回目以上の中央値を{month}の物価に換算した<strong>全国値</strong>。県別の工事費指数は存在しません。</p>
-    </div>
   </div>
 
   <section>
@@ -408,8 +397,6 @@ def build(basis: dict) -> int:
     <ul>
       <li><strong>着工戸数（フロー）であって、現存する住宅の数（ストック）ではありません。</strong>その後の取り壊しや用途変更は反映されていません。</li>
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
-      <li><strong>工事費の指数は全国値しかありません。</strong>県別・市区町村別の建設工事費デフレーターは公表されていないため、金額に関する数字はすべて全国共通です。</li>
-      <li>上の工事費は統計上の中央値であり、<strong>見積の目安ではありません</strong>。共通仮設費は含まれず、仕様・規模・立地・劣化状況も反映していません。</li>
     </ul>
   </div>
 ''')
