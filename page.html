@@ -1,8 +1,5 @@
-<title>大規模修繕統計ビューア</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
-
+<!-- title と font の link は build.py の HEAD 定数へ移した。
+     ここに置くと build.py:HEAD と連結したとき <body> の中に落ちる。 -->
 <style>
 :root{
   --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
@@ -321,7 +318,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <div class="srcband">
     <span class="tagcol">SOURCE ／ 出典</span>
     <span class="body">
-      <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン</span>
+      <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン<br>総務省　住宅・土地統計調査 ・ 消費者物価指数</span>
       <strong>このページに載っている数値は、すべて上記の政府統計の公表値です。</strong>
       e-Stat の API から取得し、単位換算と経過秒による按分のほかに加工はしていません。
       当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
@@ -986,10 +983,305 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
     </div>
   </section>
 
-  <!-- ===== 都道府県タイルマップ ===== -->
+  <!-- ===== 都道府県タイルマップ（1）現存ストック ===== -->
   <section id="map">
-    <h2><span class="idx">Fig. 5</span>都道府県別　分譲マンションの着工戸数（1988〜2001年度）</h2>
-    <p class="lede">1988〜2001年度に着工した分譲マンション（共同住宅・鉄筋コンクリート造・分譲住宅）の戸数です。2026年時点で築25〜38年、Fig.3 の2回目から3回目の周期にあたります。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <h2><span class="idx">Fig. 5</span>都道府県別　築26〜45年の非木造共同住宅（現存ストック）</h2>
+    <p class="lede">2023年10月1日時点で現存する非木造共同住宅のうち、1981〜2000年に建築されたものの戸数です。2026年時点で築26〜45年、Fig.3 の2回目から3回目の周期にあたります。<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 総務省</span><span><strong>令和5年住宅・土地統計調査（2023年10月1日現在）</strong>　e-Stat API 取得・2026-09-06</span></div>
+      <svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の築26〜45年の非木造共同住宅の戸数タイルマップ。東京都1,578,400戸、大阪府867,200戸、神奈川県851,200戸、愛知県521,400戸、兵庫県494,100戸 の順に多い。">
+      <text x="30" y="18" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" letter-spacing="1">単位：万戸　　少ない ← → 多い</text>
+      <rect x="30" y="28" width="49" height="14" fill="var(--b0)"/>
+      <rect x="82" y="28" width="49" height="14" fill="var(--b1)"/>
+      <rect x="134" y="28" width="49" height="14" fill="var(--b2)"/>
+      <rect x="186" y="28" width="49" height="14" fill="var(--b3)"/>
+      <rect x="238" y="28" width="49" height="14" fill="var(--b4)"/>
+      <rect x="290" y="28" width="49" height="14" fill="var(--b5)"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">
+      <text x="30" y="56">0</text>
+      <text x="82" y="56" text-anchor="middle">2.6</text>
+      <text x="134" y="56" text-anchor="middle">5.1</text>
+      <text x="186" y="56" text-anchor="middle">6.3</text>
+      <text x="238" y="56" text-anchor="middle">8.3</text>
+      <text x="290" y="56" text-anchor="middle">37.6</text>
+      </g>
+      <a href="pref/hokkaido.html" aria-label="北海道の大規模修繕統計">
+      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">北海</text>
+      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">33.0</text>
+      </a>
+      <a href="pref/aomori.html" aria-label="青森県の大規模修繕統計">
+      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">青森</text>
+      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.0</text>
+      </a>
+      <a href="pref/akita.html" aria-label="秋田県の大規模修繕統計">
+      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">秋田</text>
+      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.6</text>
+      </a>
+      <a href="pref/iwate.html" aria-label="岩手県の大規模修繕統計">
+      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">岩手</text>
+      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.2</text>
+      </a>
+      <a href="pref/yamagata.html" aria-label="山形県の大規模修繕統計">
+      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">山形</text>
+      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.8</text>
+      </a>
+      <a href="pref/miyagi.html" aria-label="宮城県の大規模修繕統計">
+      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">宮城</text>
+      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">11.4</text>
+      </a>
+      <a href="pref/ishikawa.html" aria-label="石川県の大規模修繕統計">
+      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">石川</text>
+      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.2</text>
+      </a>
+      <a href="pref/toyama.html" aria-label="富山県の大規模修繕統計">
+      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">富山</text>
+      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.1</text>
+      </a>
+      <a href="pref/niigata.html" aria-label="新潟県の大規模修繕統計">
+      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">新潟</text>
+      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.3</text>
+      </a>
+      <a href="pref/fukushima.html" aria-label="福島県の大規模修繕統計">
+      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">福島</text>
+      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.2</text>
+      </a>
+      <a href="pref/shimane.html" aria-label="島根県の大規模修繕統計">
+      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">島根</text>
+      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.9</text>
+      </a>
+      <a href="pref/tottori.html" aria-label="鳥取県の大規模修繕統計">
+      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">鳥取</text>
+      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.6</text>
+      </a>
+      <a href="pref/hyogo.html" aria-label="兵庫県の大規模修繕統計">
+      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">兵庫</text>
+      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">49.4</text>
+      </a>
+      <a href="pref/kyoto.html" aria-label="京都府の大規模修繕統計">
+      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">京</text>
+      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">18.9</text>
+      </a>
+      <a href="pref/fukui.html" aria-label="福井県の大規模修繕統計">
+      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">福井</text>
+      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.3</text>
+      </a>
+      <a href="pref/gifu.html" aria-label="岐阜県の大規模修繕統計">
+      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岐阜</text>
+      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.3</text>
+      </a>
+      <a href="pref/nagano.html" aria-label="長野県の大規模修繕統計">
+      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">長野</text>
+      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      </a>
+      <a href="pref/gunma.html" aria-label="群馬県の大規模修繕統計">
+      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">群馬</text>
+      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.1</text>
+      </a>
+      <a href="pref/tochigi.html" aria-label="栃木県の大規模修繕統計">
+      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">栃木</text>
+      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6.2</text>
+      </a>
+      <a href="pref/ibaraki.html" aria-label="茨城県の大規模修繕統計">
+      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">茨城</text>
+      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">8.8</text>
+      </a>
+      <a href="pref/yamaguchi.html" aria-label="山口県の大規模修繕統計">
+      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">山口</text>
+      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.7</text>
+      </a>
+      <a href="pref/hiroshima.html" aria-label="広島県の大規模修繕統計">
+      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">広島</text>
+      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">19.5</text>
+      </a>
+      <a href="pref/okayama.html" aria-label="岡山県の大規模修繕統計">
+      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岡山</text>
+      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">8.1</text>
+      </a>
+      <a href="pref/osaka.html" aria-label="大阪府の大規模修繕統計">
+      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">大阪</text>
+      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">86.7</text>
+      </a>
+      <a href="pref/shiga.html" aria-label="滋賀県の大規模修繕統計">
+      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">滋賀</text>
+      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.6</text>
+      </a>
+      <a href="pref/mie.html" aria-label="三重県の大規模修繕統計">
+      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">三重</text>
+      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6.2</text>
+      </a>
+      <a href="pref/aichi.html" aria-label="愛知県の大規模修繕統計">
+      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">愛知</text>
+      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">52.1</text>
+      </a>
+      <a href="pref/yamanashi.html" aria-label="山梨県の大規模修繕統計">
+      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">山梨</text>
+      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">2.9</text>
+      </a>
+      <a href="pref/saitama.html" aria-label="埼玉県の大規模修繕統計">
+      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">埼玉</text>
+      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">49.3</text>
+      </a>
+      <a href="pref/chiba.html" aria-label="千葉県の大規模修繕統計">
+      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">千葉</text>
+      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">37.6</text>
+      </a>
+      <a href="pref/fukuoka.html" aria-label="福岡県の大規模修繕統計">
+      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">福岡</text>
+      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">45.6</text>
+      </a>
+      <a href="pref/ehime.html" aria-label="愛媛県の大規模修繕統計">
+      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">愛媛</text>
+      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      </a>
+      <a href="pref/kagawa.html" aria-label="香川県の大規模修繕統計">
+      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">香川</text>
+      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.1</text>
+      </a>
+      <a href="pref/wakayama.html" aria-label="和歌山県の大規模修繕統計">
+      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">和歌</text>
+      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.1</text>
+      </a>
+      <a href="pref/nara.html" aria-label="奈良県の大規模修繕統計">
+      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">奈良</text>
+      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      </a>
+      <a href="pref/shizuoka.html" aria-label="静岡県の大規模修繕統計">
+      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">静岡</text>
+      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">17.0</text>
+      </a>
+      <a href="pref/kanagawa.html" aria-label="神奈川県の大規模修繕統計">
+      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">神奈</text>
+      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">85.1</text>
+      </a>
+      <a href="pref/tokyo.html" aria-label="東京都の大規模修繕統計">
+      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">東京</text>
+      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">157.8</text>
+      </a>
+      <a href="pref/saga.html" aria-label="佐賀県の大規模修繕統計">
+      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">佐賀</text>
+      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.3</text>
+      </a>
+      <a href="pref/nagasaki.html" aria-label="長崎県の大規模修繕統計">
+      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">長崎</text>
+      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.7</text>
+      </a>
+      <a href="pref/oita.html" aria-label="大分県の大規模修繕統計">
+      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">大分</text>
+      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.5</text>
+      </a>
+      <a href="pref/kochi.html" aria-label="高知県の大規模修繕統計">
+      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">高知</text>
+      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.3</text>
+      </a>
+      <a href="pref/tokushima.html" aria-label="徳島県の大規模修繕統計">
+      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">徳島</text>
+      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">2.6</text>
+      </a>
+      <a href="pref/kumamoto.html" aria-label="熊本県の大規模修繕統計">
+      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">熊本</text>
+      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7.3</text>
+      </a>
+      <a href="pref/miyazaki.html" aria-label="宮崎県の大規模修繕統計">
+      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">宮崎</text>
+      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.1</text>
+      </a>
+      <a href="pref/kagoshima.html" aria-label="鹿児島県の大規模修繕統計">
+      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">鹿児</text>
+      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">8.3</text>
+      </a>
+      <a href="pref/okinawa.html" aria-label="沖縄県の大規模修繕統計">
+      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">沖縄</text>
+      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">11.0</text>
+      </a>
+      <text x="610" y="576" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">単位：万戸</text>
+      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">例）東京 157.8 ＝ 1,578,400戸</text>
+      <text x="30" y="778" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">太枠＝東京・神奈・埼玉・千葉（一都三県）</text>
+      </svg>
+      <div class="chart-foot">
+        <a href="https://www.e-stat.go.jp/dbview?sid=0004021796" target="_blank" rel="noopener">e-Stat statsDataId=0004021796</a>　建物の構造=非木造／建て方=共同住宅／階数=総数<br>
+        全国値 8,282,500 戸に対し、47都道府県の合計は 8,282,400 戸。差 100 戸は標本調査によるものです。<br>
+        <strong>タイルをクリックすると、その都道府県のページへ移動します。</strong>
+      </div>
+    </div>
+    <p class="lede"><a href="pref/">47都道府県の一覧を見る →</a>　／　<a href="city/">一都三県の市区町村別を見る →</a></p>
+    <div class="figgrid">
+      <div class="keynum">
+        <span class="k">National</span>
+        <div class="v">8,282,500<small>戸</small></div>
+        <p>1981〜2000年建築の非木造共同住宅の全国合計。2026年時点で築26〜45年です。</p>
+      </div>
+      <div class="keynum hi">
+        <span class="k">一都三県</span>
+        <div class="v">39.8<small>%</small></div>
+        <p>東京・神奈川・埼玉・千葉の合計 3,298,500 戸。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">最多</span>
+        <div class="v">1,578,400<small>戸</small></div>
+        <p>東京都。次いで大阪府、神奈川県、愛知県、兵庫県の順です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 都道府県タイルマップ（2）分譲マンションの着工＝別の統計 ===== -->
+  <section id="map-flow">
+    <h2><span class="idx">Fig. 6</span>都道府県別　分譲マンションの着工戸数（1988〜2001年度）</h2>
+    <div class="warn">
+      <h4>ここから下は別の統計です</h4>
+      <ul>
+        <li>Fig.5 は<strong>現存ストック</strong>〔2023年10月1日時点で建っている住宅の数〕ですが、こちらは<strong>着工戸数（フロー）</strong>〔その年度に着工した数〕です。その後の取り壊しや用途変更は反映されていません。</li>
+        <li>絞り込みは<strong>「分譲マンション」まで届きます</strong>（共同住宅・鉄筋コンクリート造・分譲住宅）。賃貸は入りません。Fig.5 で失われる分譲／賃貸の区別が、ここでは効きます。</li>
+        <li>期間の取り方も違い、こちらは<strong>1988〜2001年度着工＝2026年時点で築25〜38年</strong>です。<strong>Fig.5 とは直接比べられません。</strong></li>
+      </ul>
+    </div>
+    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。</p>
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>住宅着工統計調査</strong>　e-Stat API 取得・2026-09-06</span></div>
       <svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の分譲マンション着工戸数タイルマップ。東京都297,723戸、神奈川県228,399戸、大阪府130,681戸、兵庫県120,380戸、埼玉県119,384戸 の順に多い。">
@@ -1008,262 +1300,167 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <text x="238" y="56" text-anchor="middle">12</text>
       <text x="290" y="56" text-anchor="middle">85</text>
       </g>
-      <a href="pref/hokkaido.html" aria-label="北海道の大規模修繕統計">
       <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">北海</text>
       <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">67</text>
-      </a>
-      <a href="pref/aomori.html" aria-label="青森県の大規模修繕統計">
       <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">青森</text>
       <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      </a>
-      <a href="pref/akita.html" aria-label="秋田県の大規模修繕統計">
       <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">秋田</text>
       <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      </a>
-      <a href="pref/iwate.html" aria-label="岩手県の大規模修繕統計">
       <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">岩手</text>
       <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      </a>
-      <a href="pref/yamagata.html" aria-label="山形県の大規模修繕統計">
       <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">山形</text>
       <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">3</text>
-      </a>
-      <a href="pref/miyagi.html" aria-label="宮城県の大規模修繕統計">
       <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">宮城</text>
       <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">26</text>
-      </a>
-      <a href="pref/ishikawa.html" aria-label="石川県の大規模修繕統計">
       <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">石川</text>
       <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      </a>
-      <a href="pref/toyama.html" aria-label="富山県の大規模修繕統計">
       <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">富山</text>
       <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      </a>
-      <a href="pref/niigata.html" aria-label="新潟県の大規模修繕統計">
       <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">新潟</text>
       <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      </a>
-      <a href="pref/fukushima.html" aria-label="福島県の大規模修繕統計">
       <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">福島</text>
       <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      </a>
-      <a href="pref/shimane.html" aria-label="島根県の大規模修繕統計">
       <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">島根</text>
       <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      </a>
-      <a href="pref/tottori.html" aria-label="鳥取県の大規模修繕統計">
       <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">鳥取</text>
       <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      </a>
-      <a href="pref/hyogo.html" aria-label="兵庫県の大規模修繕統計">
       <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)"/>
       <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">兵庫</text>
       <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">120</text>
-      </a>
-      <a href="pref/kyoto.html" aria-label="京都府の大規模修繕統計">
       <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">京</text>
       <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">35</text>
-      </a>
-      <a href="pref/fukui.html" aria-label="福井県の大規模修繕統計">
       <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">福井</text>
       <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      </a>
-      <a href="pref/gifu.html" aria-label="岐阜県の大規模修繕統計">
       <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">岐阜</text>
       <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      </a>
-      <a href="pref/nagano.html" aria-label="長野県の大規模修繕統計">
       <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">長野</text>
       <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      </a>
-      <a href="pref/gunma.html" aria-label="群馬県の大規模修繕統計">
       <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">群馬</text>
       <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      </a>
-      <a href="pref/tochigi.html" aria-label="栃木県の大規模修繕統計">
       <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">栃木</text>
       <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      </a>
-      <a href="pref/ibaraki.html" aria-label="茨城県の大規模修繕統計">
       <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">茨城</text>
       <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">10</text>
-      </a>
-      <a href="pref/yamaguchi.html" aria-label="山口県の大規模修繕統計">
       <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">山口</text>
       <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      </a>
-      <a href="pref/hiroshima.html" aria-label="広島県の大規模修繕統計">
       <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">広島</text>
       <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">30</text>
-      </a>
-      <a href="pref/okayama.html" aria-label="岡山県の大規模修繕統計">
       <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岡山</text>
       <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">9</text>
-      </a>
-      <a href="pref/osaka.html" aria-label="大阪府の大規模修繕統計">
       <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
       <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">大阪</text>
       <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">131</text>
-      </a>
-      <a href="pref/shiga.html" aria-label="滋賀県の大規模修繕統計">
       <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">滋賀</text>
       <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">14</text>
-      </a>
-      <a href="pref/mie.html" aria-label="三重県の大規模修繕統計">
       <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">三重</text>
       <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      </a>
-      <a href="pref/aichi.html" aria-label="愛知県の大規模修繕統計">
       <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
       <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">愛知</text>
       <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">85</text>
-      </a>
-      <a href="pref/yamanashi.html" aria-label="山梨県の大規模修繕統計">
       <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">山梨</text>
       <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      </a>
-      <a href="pref/saitama.html" aria-label="埼玉県の大規模修繕統計">
       <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
       <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">埼玉</text>
       <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">119</text>
-      </a>
-      <a href="pref/chiba.html" aria-label="千葉県の大規模修繕統計">
       <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
       <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">千葉</text>
       <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">107</text>
-      </a>
-      <a href="pref/fukuoka.html" aria-label="福岡県の大規模修繕統計">
       <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)"/>
       <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">福岡</text>
       <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">88</text>
-      </a>
-      <a href="pref/ehime.html" aria-label="愛媛県の大規模修繕統計">
       <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">愛媛</text>
       <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4</text>
-      </a>
-      <a href="pref/kagawa.html" aria-label="香川県の大規模修繕統計">
       <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">香川</text>
       <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      </a>
-      <a href="pref/wakayama.html" aria-label="和歌山県の大規模修繕統計">
       <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">和歌</text>
       <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      </a>
-      <a href="pref/nara.html" aria-label="奈良県の大規模修繕統計">
       <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">奈良</text>
       <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">25</text>
-      </a>
-      <a href="pref/shizuoka.html" aria-label="静岡県の大規模修繕統計">
       <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">静岡</text>
       <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">27</text>
-      </a>
-      <a href="pref/kanagawa.html" aria-label="神奈川県の大規模修繕統計">
       <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
       <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">神奈</text>
       <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">228</text>
-      </a>
-      <a href="pref/tokyo.html" aria-label="東京都の大規模修繕統計">
       <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
       <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">東京</text>
       <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">298</text>
-      </a>
-      <a href="pref/saga.html" aria-label="佐賀県の大規模修繕統計">
       <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">佐賀</text>
       <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      </a>
-      <a href="pref/nagasaki.html" aria-label="長崎県の大規模修繕統計">
       <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">長崎</text>
       <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      </a>
-      <a href="pref/oita.html" aria-label="大分県の大規模修繕統計">
       <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">大分</text>
       <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      </a>
-      <a href="pref/kochi.html" aria-label="高知県の大規模修繕統計">
       <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">高知</text>
       <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      </a>
-      <a href="pref/tokushima.html" aria-label="徳島県の大規模修繕統計">
       <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b0)"/>
       <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">徳島</text>
       <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      </a>
-      <a href="pref/kumamoto.html" aria-label="熊本県の大規模修繕統計">
       <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)"/>
       <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">熊本</text>
       <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">11</text>
-      </a>
-      <a href="pref/miyazaki.html" aria-label="宮崎県の大規模修繕統計">
       <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b1)"/>
       <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">宮崎</text>
       <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      </a>
-      <a href="pref/kagoshima.html" aria-label="鹿児島県の大規模修繕統計">
       <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b2)"/>
       <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">鹿児</text>
       <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      </a>
-      <a href="pref/okinawa.html" aria-label="沖縄県の大規模修繕統計">
       <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)"/>
       <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">沖縄</text>
       <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">12</text>
-      </a>
       <text x="610" y="576" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">単位：千戸</text>
-      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">例）東京 298 ＝ 29.8万戸</text>
+      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">例）東京 298 ＝ 297,723戸</text>
       <text x="30" y="778" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">太枠＝東京・神奈・埼玉・千葉（一都三県）</text>
       </svg>
       <div class="chart-foot">
         <a href="https://www.e-stat.go.jp/dbview?sid=0003119736" target="_blank" rel="noopener">e-Stat statsDataId=0003119736</a>　建て方＝共同住宅／構造＝鉄筋コンクリート造／利用関係＝分譲住宅／表章項目＝戸数<br>
         全国値 1,560,831 戸に対し、47都道府県の合計は差 0 戸で一致します。<br>
-        <strong>タイルをクリックすると、その都道府県のページへ移動します。</strong>
+        タイルはリンクではありません。都道府県ページの見出し数字は Fig.5 のストックなので、ここから直接は送っていません。
       </div>
     </div>
-    <p class="lede"><a href="pref/">47都道府県の一覧を見る →</a></p>
     <div class="figgrid">
       <div class="keynum">
         <span class="k">National</span>
         <div class="v">1,560,831<small>戸</small></div>
         <p>1988〜2001年度の全国合計。2026年時点で築25〜38年です。</p>
       </div>
-      <div class="keynum hi">
+      <div class="keynum">
         <span class="k">一都三県</span>
         <div class="v">48.2<small>%</small></div>
-        <p>東京・神奈川・埼玉・千葉の合計 752,756 戸。全国の約半分がこの4都県に集まっています。</p>
+        <p>東京・神奈川・埼玉・千葉の合計 752,756 戸。</p>
       </div>
       <div class="keynum">
         <span class="k">最多</span>
@@ -1343,7 +1540,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
 
   <!-- ===== 着工床面積 ===== -->
   <section id="starts">
-    <h2><span class="idx">Fig. 6</span>建築物着工床面積の推移（年度別）</h2>
+    <h2><span class="idx">Fig. 7</span>建築物着工床面積の推移（年度別）</h2>
     <p class="lede">建築物着工統計の年度別床面積、全国・全用途・全構造。ピークは2006年度の1.88億m²、2023年度は1.08億m²です。棒にカーソルを重ねると実数が出ます。</p>
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>建築着工統計調査</strong>　e-Stat API 取得・2026-09-06</span></div>
@@ -1569,7 +1766,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   "@type": "Dataset",
   "name": "大規模修繕統計ビューア",
   "alternateName": "Japan Major Repair Statistics Viewer",
-  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。",
+  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、住宅・土地統計調査、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。都道府県別・一都三県の市区町村別の修繕適齢期の住戸数を含む。",
   "inLanguage": "ja",
   "dateModified": "2026-09-06",
   "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -1580,7 +1777,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   },
   "spatialCoverage": {"@type": "Country", "name": "日本"},
   "temporalCoverage": "2016年4月/2026年6月",
-  "keywords": ["大規模修繕", "修繕積立金", "建設工事費デフレーター", "建築補修", "マンション", "分譲マンション", "建築着工統計", "工事費", "修繕周期"],
+  "keywords": ["大規模修繕", "修繕積立金", "建設工事費デフレーター", "建築補修", "マンション", "分譲マンション", "建築着工統計", "住宅・土地統計調査", "非木造共同住宅", "工事費", "修繕周期", "都道府県別", "市区町村別"],
   "variableMeasured": [
     {"@type": "PropertyValue", "name": "建設工事費デフレーター（建築補修）", "value": "127.2", "unitText": "2020年度＝100", "measurementTechnique": "e-Stat API statsDataId=0004055083"},
     {"@type": "PropertyValue", "name": "消費者物価指数（総合・全国）", "value": "113.6", "unitText": "2020年＝100", "measurementTechnique": "e-Stat API statsDataId=0003427113"},
@@ -1592,6 +1789,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
     "https://www.e-stat.go.jp/dbview?sid=0003427113",
     "https://www.e-stat.go.jp/dbview?sid=0003119730",
     "https://www.e-stat.go.jp/dbview?sid=0003119736",
+    "https://www.e-stat.go.jp/dbview?sid=0004021796",
     "https://www.mlit.go.jp/jutakukentiku/house/content/001619430.pdf",
     "https://www.mlit.go.jp/jutakukentiku/house/content/001750161.pdf"
   ]

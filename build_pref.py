@@ -8,17 +8,25 @@
     pref/index.html         一覧
     sitemap.xml             本体＋一覧＋47枚
 
-載せられるものと載せられないものが、はっきり分かれている。
+--- 見出し数字はストック。着工は Ref. に降りた -------------------------
+以前はこのページの見出しが着工統計（フロー・分譲マンション・1988〜2001年度）で、
+下部に差し込む市区町村の内訳が住宅・土地統計（ストック・非木造共同住宅・
+1981〜2000年建築）だった。**同じページの上と下で、同じ東京都が5.3倍ちがっていた**
+（297,723戸 と 1,578,400戸）。原因は3つ ―― ストックかフローか／分譲のみか賃貸込みか／
+14年幅か20年幅か。注意書きで境目は示していたが、読者は注記より数字を先に見る。
 
-  載せられる … 都道府県別の分譲マンション着工戸数（1988年度〜）。
-               修繕適齢期のコホートを県単位で出せるのはこの表だけ。
-  載せられない … 工事費の指数。県別・市区町村別のデフレーターは存在しない。
-               だから県ページで言えるのは「量」だけで、「いくら」は全国共通になる。
+そこで見出しをストックへ寄せ、上下を同じ統計・同じ定義に揃えた。
+着工統計は「年度別の推移」というストックに出せないものを持っているので、
+Ref. セクションとして残してある（3点の違いをその場に書いている）。
 
-市区町村別の着工統計は2011〜2024年しかなく、修繕適齢期のコホートが作れない。
-そこで一都三県の市区町村は、着工ではなく令和5年住宅・土地統計調査（ストック）を
-使っている（build_city.py）。県ページの下部にもその内訳を差し込むが、上下で
-出典も定義も違うので、境目は pref_city.py が明示している。
+  ストックで載せられる … 47都道府県ぶんの現存戸数と、一都三県の市区町村の内訳。
+                       同じ statsDataId=0004021796 から両方が取れる。
+  ストックで失うもの   … この表には所有関係の軸が無く、絞り込めるのは
+                       「非木造の共同住宅」まで。賃貸が混ざる。ページに明記すること。
+  どちらでも載せられない … 工事費の指数。県別・市区町村別のデフレーターは存在しない。
+
+市区町村別の着工統計は収録期間が短く、修繕適齢期のコホートが作れない。
+だから「着工で統一する」という道は最初から無い。
 """
 from __future__ import annotations
 
@@ -156,7 +164,7 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 """
 
 
-def head(title: str, desc: str, canonical: str) -> str:
+def head(title: str, desc: str, canonical: str, crumb: str = "都道府県別") -> str:
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -181,7 +189,7 @@ def head(title: str, desc: str, canonical: str) -> str:
   <header class="masthead">
     <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b>↗</a>
     <span class="spacer"></span>
-    <span class="crumb"><a href="{SITE_URL}">大規模修繕統計ビューア</a> ／ 都道府県別</span>
+    <span class="crumb"><a href="{SITE_URL}">大規模修繕統計ビューア</a> ／ {crumb}</span>
   </header>
 """
 
@@ -243,6 +251,54 @@ FOOT = TIP_JS + f"""
 </body>
 </html>
 """
+
+
+def period_chart(periods: dict[str, int], cohort: list[str]) -> str:
+    """建築の時期別の住宅数。コホートの帯だけ朱で塗る。"""
+    labels = list(periods)
+    vals = [periods[k] for k in labels]
+    n = len(labels)
+    x0, x1, ytop, ybase = 96, 872, 34, 250
+    ymax = max(vals) or 1
+    step = 10 ** (len(str(int(ymax))) - 1)
+    top = -(-ymax // step) * step
+    slot = (x1 - x0) / n
+    bw = slot - 10
+
+    def Y(v):
+        return ybase - v / top * (ybase - ytop)
+
+    s = [f'<svg viewBox="0 0 900 320" role="img" aria-label="建築の時期別の非木造共同住宅数。'
+         + "、".join(f"{k}は{v:,}戸" for k, v in periods.items()) + '。">']
+    s.append('<g stroke="var(--rule-soft)" stroke-width="1">')
+    for k in range(1, 5):
+        y = ybase - (ybase - ytop) * k / 4
+        s.append(f'<line x1="{x0}" y1="{y:.1f}" x2="{x1}" y2="{y:.1f}"/>')
+    s.append('</g>')
+    s.append(f'<g font-family="{MONO}" font-size="11" fill="var(--ink3)" text-anchor="end">')
+    for k in range(0, 5):
+        y = ybase - (ybase - ytop) * k / 4
+        s.append(f'<text x="{x0 - 9}" y="{y + 4:.1f}">{int(top * k / 4):,}</text>')
+    s.append('</g>')
+    s.append(f'<text x="{x0}" y="20" font-family="{MONO}" font-size="10.5" fill="var(--ink3)">戸</text>')
+    s.append(f'<line x1="{x0}" y1="{ybase}" x2="{x1}" y2="{ybase}" stroke="var(--rule)"/>')
+
+    for i, (lb, v) in enumerate(zip(labels, vals)):
+        on = lb in cohort
+        x = x0 + i * slot + 5
+        yy = Y(v)
+        s.append(f'<rect x="{x:.1f}" y="{yy:.1f}" width="{bw:.1f}" height="{ybase - yy:.1f}" rx="3" '
+                 f'fill="{"var(--shu)" if on else "var(--ai)"}" opacity="{1 if on else 0.42}"/>')
+        s.append(f'<text x="{x + bw/2:.1f}" y="{yy - 7:.1f}" text-anchor="middle" font-family="{MONO}" '
+                 f'font-size="11.5" fill="{"var(--shu)" if on else "var(--ink3)"}">{v:,}</text>')
+        s.append(f'<text x="{x + bw/2:.1f}" y="{ybase + 17}" text-anchor="middle" font-family="{MONO}" '
+                 f'font-size="10.5" fill="var(--ink3)">{lb.replace("年", "").replace("～", "-")}</text>')
+
+    s.append(f'<g font-family="{MONO}" font-size="11">')
+    s.append(f'<rect x="{x0}" y="290" width="24" height="10" rx="2" fill="var(--shu)"/>')
+    s.append(f'<text x="{x0 + 31}" y="299" fill="var(--ink2)">1981〜2000年建築＝2026年時点で築26〜45年</text>')
+    s.append('</g></svg>')
+    return "\n      ".join(s)
 
 
 def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
@@ -308,14 +364,40 @@ def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
 
 
 
+def stock_by_pref(basis: dict) -> tuple[dict[str, int], dict[str, str], int, int]:
+    """住宅・土地統計（ストック）から、都道府県別の築26〜45年の戸数を取り出す。
+
+    返り値は (都道府県名→戸数, 都道府県名→areaコード, 全国行の値, 47県の合計)。
+    全国行と47県合計は一致しない（標本調査なので）。差はページに書く。
+    """
+    city = basis["city"]
+    areas, cohort = city["areas"], city["cohort"]
+
+    def coh(a):
+        return sum(a["periods"][k] for k in cohort)
+
+    codes = {a["name"]: c for c, a in areas.items()
+             if c.endswith("000") and c != "00000"}
+    if len(codes) != 47:
+        sys.exit(f"都道府県の合計行が {len(codes)} 件です（期待47件）。"
+                 f"ストック表の area 軸が変わった可能性があります。")
+    vals = {nm: coh(areas[c]) for nm, c in codes.items()}
+    nat = coh(areas["00000"]) if "00000" in areas else 0
+    return vals, codes, nat, sum(vals.values())
+
+
 def build(basis: dict) -> int:
     pref = basis["prefecture"]
-    units = pref["units"]
+    units = pref["units"]                 # 着工（フロー）。副次セクションで使う
     by_year = pref["by_year"]
     lo, hi = pref["cohort"]
-    national = pref["national"]
 
-    ranked = sorted(units.items(), key=lambda kv: -kv[1])
+    city = basis["city"]
+    stock, codes, nat_stock, sum47 = stock_by_pref(basis)
+    national = nat_stock or sum47         # 見出し数字の母数はストックの全国値
+    day = basis["generated"].split()[0]
+
+    ranked = sorted(stock.items(), key=lambda kv: -kv[1])
     rank = {name: i + 1 for i, (name, _) in enumerate(ranked)}
 
     out = HERE / "pref"
@@ -326,12 +408,18 @@ def build(basis: dict) -> int:
         slug = SLUG[name]
         r = rank[name]
         share = val / national * 100
+        area = city["areas"][codes[name]]
+        total = area["total"]
+        tshare = val / total * 100 if total else 0
+        flow = units[name]                       # 着工（フロー）。Ref. セクション用
         series = {k: v for k, v in by_year[name].items()}
         canonical = f"{SITE_URL}pref/{slug}.html"
-        title = f"{name}の大規模修繕統計｜修繕適齢期の分譲マンション {val:,}戸"
-        desc = (f"{name}で{lo}〜{hi}年度に着工した分譲マンションは{val:,}戸。"
-                f"2026年時点で築{2026-hi}〜{2026-lo}年、大規模修繕の2〜3回目にあたります。"
-                f"全国{r}位、全国の{share:.1f}%。国土交通省の公表統計をそのまま並べています。")
+        # 日本語SERPは約32字で切れる。定義は h1 と description が担う
+        title = f"{name}の大規模修繕統計｜築26〜45年 {val:,}戸"
+        desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{val:,}戸。"
+                f"2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。"
+                f"全国{r}位、全国の{share:.1f}%。分譲と賃貸の区別はありません。"
+                f"総務省「令和5年住宅・土地統計調査」の公表値。")
 
         # 近隣＝順位の前後
         i = r - 1
@@ -340,21 +428,23 @@ def build(basis: dict) -> int:
         h = [head(title, desc, canonical)]
         h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
-    <strong>このページの数値は、すべて国土交通省の公表値です。</strong>
-    住宅着工統計調査（e-Stat API）から取得し、期間の合計以外の加工はしていません。
+    <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
+    e-Stat の API から取得し、期間の合計以外の加工はしていません。
     当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+    なお<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。
+    絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。
   </div>
 
-  <span class="toplabel">国土交通省 公表統計 ／ 都道府県別</span>
+  <span class="toplabel">総務省 公表統計 ／ 都道府県別</span>
   <h1>{name}の大規模修繕統計
-    <span class="sub">{lo}〜{hi}年度に{name}で着工した分譲マンションは <strong>{val:,}戸</strong>。2026年時点で築{2026-hi}〜{2026-lo}年、大規模修繕の2回目から3回目にあたる住戸です。</span>
+    <span class="sub">{name}の非木造共同住宅のうち、<strong>1981〜2000年に建築されたものは {val:,}戸</strong>。2026年時点で築26〜45年、大規模修繕の2回目から3回目にあたります。</span>
   </h1>
 
   <div class="kpis">
     <div class="kpi hi">
-      <span class="k">修繕適齢期の住戸</span>
+      <span class="k">築26〜45年の非木造共同住宅</span>
       <div class="v">{val:,}<small>戸</small></div>
-      <p>{lo}〜{hi}年度に着工した分譲マンション（共同住宅・鉄筋コンクリート造）。</p>
+      <p>1981〜2000年建築。{name}の非木造共同住宅 {total:,}戸 の {tshare:.1f}%。分譲・賃貸の区別はありません。</p>
     </div>
     <div class="kpi">
       <span class="k">全国順位</span>
@@ -364,14 +454,13 @@ def build(basis: dict) -> int:
   </div>
 
   <section>
-    <h2><span class="idx">Fig.</span>{name}の分譲マンション着工戸数（年度別）</h2>
-    <p class="lede">朱色の期間が、2026年時点で築{2026-hi}〜{2026-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
+    <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
+    <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、2026年時点で築26〜45年にあたります。</p>
     <div class="chartbox">
-      {year_chart(series, lo, hi)}
-      <div class="tip"></div>
+      {period_chart(area["periods"], city["cohort"])}
       <div class="chart-foot">
-        出典：国土交通省「住宅着工統計調査」時系列表／<a href="{pref["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={pref["statsDataId"]}</a><br>
-        {pref["filter"]}　取得日 {basis["generated"].split()[0]}
+        出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a><br>
+        {city["filter"]}　取得日 {day}
       </div>
     </div>
   </section>
@@ -391,12 +480,35 @@ def build(basis: dict) -> int:
   </section>
 ''')
         h.append(city_section(basis, name))
-        h.append(f'''
+        h.append(f'''  <section>
+    <h2><span class="idx">Ref.</span>{name}の分譲マンション着工戸数（年度別・別統計）</h2>
+    <div class="srcband" style="margin-top:16px">
+      <b>ここだけ別の統計です</b>
+      上のストックは2023年10月1日時点の断面なので、年ごとの動きは出せません。
+      年度別の推移が見られるのは<strong>国土交通省「住宅着工統計調査」</strong>のほうです。
+      <strong>{lo}〜{hi}年度に{name}で着工した分譲マンションは {flow:,}戸</strong>
+      （共同住宅・鉄筋コンクリート造・分譲住宅）。上の {val:,}戸 とは
+      <strong>着工か現存か・分譲のみか賃貸込みか・{hi-lo+1}年幅か20年幅か</strong>の3点が違うため、
+      直接は比べられません。
+    </div>
+    <p class="lede">朱色の期間が、2026年時点で築{2026-hi}〜{2026-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
+    <div class="chartbox">
+      {year_chart(series, lo, hi)}
+      <div class="tip"></div>
+      <div class="chart-foot">
+        出典：国土交通省「住宅着工統計調査」時系列表／<a href="{pref["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={pref["statsDataId"]}</a><br>
+        {pref["filter"]}　取得日 {day}
+      </div>
+    </div>
+  </section>
+
   <div class="warn">
-    <h4>この数字は「いま建っている数」ではありません</h4>
+    <h4>この数字が指しているもの</h4>
     <ul>
-      <li><strong>着工戸数（フロー）であって、現存する住宅の数（ストック）ではありません。</strong>その後の取り壊しや用途変更は反映されていません。</li>
+      <li><strong>分譲と賃貸の区別はありません。</strong>この統計表には所有関係の軸が無く、絞り込めるのは「非木造の共同住宅」までです。賃貸マンションも含まれています。</li>
+      <li><strong>標本調査にもとづく推計値です。</strong>全数調査ではありません。全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、差 {nat_stock - sum47:,}戸 があります。</li>
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
+      <li>Ref. の着工戸数は<strong>フロー</strong>で、その後の取り壊しや用途変更は反映されていません。上のストックとは別の統計です。</li>
     </ul>
   </div>
 ''')
@@ -407,24 +519,27 @@ def build(basis: dict) -> int:
     # ---- 一覧 ----
     canonical = f"{SITE_URL}pref/"
     idx = [head("都道府県別の大規模修繕統計｜全47都道府県",
-                f"修繕適齢期（{lo}〜{hi}年度着工）の分譲マンション戸数を都道府県別に。全国{national:,}戸。国土交通省の公表統計。",
+                f"築26〜45年（1981〜2000年建築）の非木造共同住宅の戸数を都道府県別に。全国{national:,}戸。"
+                f"分譲と賃貸の区別はありません。総務省「令和5年住宅・土地統計調査」の公表値。",
                 canonical)]
     idx.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
-    <strong>このページの数値は、すべて国土交通省の公表値です。</strong>
-    住宅着工統計調査（e-Stat API）から取得しています。
+    <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
+    e-Stat の API から取得しています。絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。
   </div>
 
-  <span class="toplabel">国土交通省 公表統計 ／ 都道府県別</span>
+  <span class="toplabel">総務省 公表統計 ／ 都道府県別</span>
   <h1>都道府県別の大規模修繕統計
-    <span class="sub">{lo}〜{hi}年度に着工した分譲マンションの戸数を、都道府県別に並べたものです。2026年時点で築{2026-hi}〜{2026-lo}年、大規模修繕の2回目から3回目にあたります。全国では <strong>{national:,}戸</strong>。</span>
+    <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数を、都道府県別に並べたものです。全国では <strong>{national:,}戸</strong>。分譲と賃貸の区別はありません。</span>
   </h1>
 
   <div class="prefgrid">''')
     for nm, vv in ranked:
         idx.append(f'<a href="{SLUG[nm]}.html"><span class="nm">{nm}</span>'
                    f'<span class="vv">{vv:,}</span></a>')
-    idx.append('</div>\n  <p class="colophon">単位：戸。多い順。</p>\n')
+    idx.append(f'</div>\n  <p class="colophon">単位：戸。多い順。'
+               f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'
+               f'差 {nat_stock - sum47:,}戸 があります（標本調査のため）。</p>\n')
     idx.append(FOOT)
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
 

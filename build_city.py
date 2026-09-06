@@ -24,7 +24,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import CSS, SITE_URL, SLUG, head, MONO
+from build_pref import CSS, SITE_URL, SLUG, head, period_chart
 
 HERE = Path(__file__).resolve().parent
 
@@ -64,53 +64,6 @@ FOOT_T = """
 """
 
 
-def period_chart(periods: dict[str, int], cohort: list[str]) -> str:
-    """建築の時期別の住宅数。コホートの帯だけ朱で塗る。"""
-    labels = list(periods)
-    vals = [periods[k] for k in labels]
-    n = len(labels)
-    x0, x1, ytop, ybase = 96, 872, 34, 250
-    ymax = max(vals) or 1
-    step = 10 ** (len(str(int(ymax))) - 1)
-    top = -(-ymax // step) * step
-    slot = (x1 - x0) / n
-    bw = slot - 10
-
-    def Y(v):
-        return ybase - v / top * (ybase - ytop)
-
-    s = [f'<svg viewBox="0 0 900 320" role="img" aria-label="建築の時期別の非木造共同住宅数。'
-         + "、".join(f"{k}は{v:,}戸" for k, v in periods.items()) + '。">']
-    s.append('<g stroke="var(--rule-soft)" stroke-width="1">')
-    for k in range(1, 5):
-        y = ybase - (ybase - ytop) * k / 4
-        s.append(f'<line x1="{x0}" y1="{y:.1f}" x2="{x1}" y2="{y:.1f}"/>')
-    s.append('</g>')
-    s.append(f'<g font-family="{MONO}" font-size="11" fill="var(--ink3)" text-anchor="end">')
-    for k in range(0, 5):
-        y = ybase - (ybase - ytop) * k / 4
-        s.append(f'<text x="{x0 - 9}" y="{y + 4:.1f}">{int(top * k / 4):,}</text>')
-    s.append('</g>')
-    s.append(f'<text x="{x0}" y="20" font-family="{MONO}" font-size="10.5" fill="var(--ink3)">戸</text>')
-    s.append(f'<line x1="{x0}" y1="{ybase}" x2="{x1}" y2="{ybase}" stroke="var(--rule)"/>')
-
-    for i, (lb, v) in enumerate(zip(labels, vals)):
-        on = lb in cohort
-        x = x0 + i * slot + 5
-        yy = Y(v)
-        s.append(f'<rect x="{x:.1f}" y="{yy:.1f}" width="{bw:.1f}" height="{ybase - yy:.1f}" rx="3" '
-                 f'fill="{"var(--shu)" if on else "var(--ai)"}" opacity="{1 if on else 0.42}"/>')
-        s.append(f'<text x="{x + bw/2:.1f}" y="{yy - 7:.1f}" text-anchor="middle" font-family="{MONO}" '
-                 f'font-size="11.5" fill="{"var(--shu)" if on else "var(--ink3)"}">{v:,}</text>')
-        s.append(f'<text x="{x + bw/2:.1f}" y="{ybase + 17}" text-anchor="middle" font-family="{MONO}" '
-                 f'font-size="10.5" fill="var(--ink3)">{lb.replace("年", "").replace("～", "-")}</text>')
-
-    s.append(f'<g font-family="{MONO}" font-size="11">')
-    s.append(f'<rect x="{x0}" y="290" width="24" height="10" rx="2" fill="var(--shu)"/>')
-    s.append(f'<text x="{x0 + 31}" y="299" fill="var(--ink2)">1981〜2000年建築＝2026年時点で築26〜45年</text>')
-    s.append('</g></svg>')
-    return "\n      ".join(s)
-
 
 def build(basis: dict) -> int:
     city = basis["city"]
@@ -149,13 +102,12 @@ def build(basis: dict) -> int:
         pref_v = coh(areas[pre + "000"]) if pre + "000" in areas else 0
         pshare = v / pref_v * 100 if pref_v else 0
         canonical = f"{SITE_URL}city/{code}.html"
-        full = f"{pref_name}{name}" if not name.endswith(("都", "県")) else name
-        title = f"{name}（{pref_name}）の大規模修繕統計｜築26〜45年の共同住宅 {v:,}戸"
+        title = f"{name}（{pref_name}）の大規模修繕統計｜築26〜45年 {v:,}戸"
         desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{v:,}戸。"
                 f"2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。"
-                f"令和5年住宅・土地統計調査（国土交通省・総務省）の公表値。")
+                f"総務省「令和5年住宅・土地統計調査」の公表値。")
 
-        h = [head(title, desc, canonical)]
+        h = [head(title, desc, canonical, crumb="市区町村別")]
         rank_html = (f'<div class="v">{r}<small>位 / {len(leaves[pre])}</small></div>'
                      f'<p>{pref_name}の市区町村のうち。{u}全体 {pref_v:,}戸 の {pshare:.1f}%。</p>'
                      if r else
@@ -233,8 +185,9 @@ def build(basis: dict) -> int:
     # ---- 一覧 ----
     canonical = f"{SITE_URL}city/"
     idx = [head("一都三県の市区町村別 大規模修繕統計",
-                "東京・神奈川・埼玉・千葉の市区町村別に、築26〜45年の非木造共同住宅の戸数を並べています。令和5年住宅・土地統計調査。",
-                canonical)]
+                "東京・神奈川・埼玉・千葉の市区町村別に、築26〜45年の非木造共同住宅の戸数を並べています。"
+                "総務省「令和5年住宅・土地統計調査」の公表値。",
+                canonical, crumb="市区町村別")]
     idx.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて{city["survey"]}の公表値です。</strong>
@@ -254,8 +207,21 @@ def build(basis: dict) -> int:
         for c2, a2 in leaves[pre]:
             idx.append(f'<a href="{c2}.html"><span class="nm">{a2["name"]}</span>'
                        f'<span class="vv">{coh(a2):,}</span></a>')
-        idx.append('</div></section>\n')
-    idx.append('  <p class="colophon">単位：戸。多い順。集計行（特別区部・政令市）は一覧から除いています。</p>\n')
+        # 集計行（特別区部・政令市）は市区町村と二重に数えるので順位一覧には入れられないが、
+        # ページ自体は作っている。ここに出さないと内部リンクゼロのまま sitemap にだけ載る。
+        # 横浜市 390,900戸 はこのサイトで最大の単位で、それが孤立していた。
+        rolls = sorted((c2 for c2 in areas
+                        if c2[:2] == pre and not areas[c2]["is_leaf"] and not c2.endswith("000")),
+                       key=lambda c2: -coh(areas[c2]))
+        if rolls:
+            idx.append('</div>\n  <p class="colophon">集計行（順位は付けていません）：'
+                       + "　".join(f'<a href="{c2}.html">{areas[c2]["name"]}</a> {coh(areas[c2]):,}'
+                                   for c2 in rolls)
+                       + '</p></section>\n')
+        else:
+            idx.append('</div></section>\n')
+    idx.append('  <p class="colophon">単位：戸。多い順。特別区部・政令市の集計行は、'
+               '市区町村と二重に数えることになるので順位の一覧からは外し、各県の下に別途置いています。</p>\n')
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """都道府県ページの下部へ差し込む「市区町村の内訳」ブロック。
 
-上（着工統計・フロー・分譲マンション）と下（住宅・土地統計・ストック・非木造共同住宅）で
-**出典も定義も期間の取り方も違う**。混ぜて読まれると誤解になるので、境目を必ず明示する。
-そのための注意書きが、このモジュールの中身のほとんどを占めている。
+**以前は、上（着工統計・フロー・分譲マンション）と下（住宅・土地統計・ストック・
+非木造共同住宅）で出典も定義も期間も違い、同じ東京都が5.3倍ちがっていた。**
+「ここから下は別の統計です」という帯の注意書きが、このモジュールの中身のほとんどだった。
+
+都道府県ページの見出し数字をストック側へ統一したので、上下は同じ統計・同じ定義になり、
+帯は要らなくなって消した。**上下で出典が違う状態に戻すなら、帯も戻すこと。**
 
 build_pref.py から呼ばれる。逆向きに import しないこと（循環参照になる）。
 """
@@ -36,23 +39,13 @@ def city_section(basis: dict, pref_name: str) -> str:
 
     pref_v = coh(areas[pre + "000"]) if pre + "000" in areas else 0
     total = sum(coh(a) for _, a in leaves)
-    survey = city["survey"]
 
     h = []
     h.append('  <section>')
     h.append(f'    <h2><span class="idx">City</span>{pref_name}の市区町村別</h2>')
-    h.append('    <div class="srcband" style="margin-top:16px">')
-    h.append('      <b>ここから下は別の統計です</b>')
-    h.append('      上の戸数は<strong>着工統計</strong>')
-    h.append('      〔その年度に着工した分譲マンションの数〕ですが、ここから下は')
-    h.append(f'      <strong>{survey}</strong>')
-    h.append('      〔2023年10月1日時点で現存する住宅の数〕です。')
-    h.append('      絞り込みも「分譲マンション」ではなく<strong>「非木造の共同住宅」まで</strong>で、')
-    h.append('      賃貸が混ざります。期間の取り方も違い、こちらは')
-    h.append('      <strong>1981〜2000年建築＝2026年時点で築26〜45年</strong>です。')
-    h.append('    </div>')
     h.append(f'    <p class="lede">{pref_name}の {len(leaves)} 市区町村を、'
              '築26〜45年の非木造共同住宅が多い順に並べています。'
+             f'<strong>上の {pref_v:,}戸 と同じ統計・同じ定義</strong>です。'
              '市区町村名をクリックすると個別のページへ移動します。</p>')
     h.append('    <div class="prefgrid">')
     for code, a in leaves:

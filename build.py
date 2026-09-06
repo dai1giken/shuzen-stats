@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
-from build_pref import SLUG, build as build_pref
+from build_pref import SLUG, build as build_pref, stock_by_pref
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
@@ -209,14 +209,18 @@ HEAD = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="政府統計を秒単位に按分して、日本の新設着工床面積と築40年超マンション戸数を表示します。算式と基準値をすべて公開しています。株式会社第一技研。">
-<meta property="og:title" content="建設ストック時計｜株式会社第一技研">
-<meta property="og:description" content="いま日本でどれだけの建物が建ち、どれだけの建物が修繕の齢を迎えているか。">
+<title>大規模修繕統計ビューア</title>
+<meta name="description" content="大規模修繕にかかわる政府統計を、加工せず読める形に並べたページ。工事費指数・修繕周期・積立金と、都道府県別の修繕適齢期の住戸数。算式と基準値をすべて公開しています。株式会社第一技研。">
+<meta property="og:title" content="大規模修繕統計ビューア｜株式会社第一技研">
+<meta property="og:description" content="いま日本でどれだけの建物が修繕の齢を迎えているか。政府統計の公表値だけで並べています。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="__SITE__">
 <meta property="og:image" content="__SITE__ogp.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="__SITE__">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
 <style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -244,6 +248,17 @@ def main() -> None:
     pref = basis["prefecture"]
     tokyo3 = ("東京都", "神奈川県", "埼玉県", "千葉県")
     metro = sum(pref["units"][k] for k in tokyo3)
+
+    # ---- 現存ストック（住宅・土地統計）。Fig.5 と都道府県ページの見出し数字はこちら ----
+    city = basis["city"]
+    stock, _codes, nat_stock, sum47 = stock_by_pref(basis)
+    stock_metro = sum(stock[k] for k in tokyo3)
+    stock_rank = sorted(stock.items(), key=lambda kv: -kv[1])
+    # 「次いで○○、○○の順です」は順位が変われば変わる。散文に直書きしない
+    stock_next = "、".join(nm for nm, _ in stock_rank[1:5])
+    flow_rank = sorted(pref["units"].items(), key=lambda kv: -kv[1])
+    flow_next = "、".join(nm for nm, _ in flow_rank[1:5])
+
     dmonths, dser = d["months"], d["series"]
     prim = dser[d["primary"]]
     sv = basis["survey"]
@@ -285,8 +300,26 @@ def main() -> None:
         "{{CHART_CPI}}": cpi_chart(dmonths, prim, cpi["values"],
                                    "改装・改修工事費", "消費者物価（総合）"),
         "{{CHART_CYCLE}}": cycle_chart(),
+        # ストックのタイルだけをリンクにする。都道府県ページの見出し数字がストックなので、
+        # フローのタイルから送ると定義の壁を越えたまま着地することになる
+        "{{CHART_STOCK}}": cartogram(stock, highlight=tokyo3,
+                                     links={k: f"pref/{v}.html" for k, v in SLUG.items()},
+                                     label="築26〜45年の非木造共同住宅の戸数", scale="万戸"),
         "{{CHART_MAP}}": cartogram(pref["units"], highlight=tokyo3,
-                                   links={k: f"pref/{v}.html" for k, v in SLUG.items()}),
+                                   label="分譲マンション着工戸数", scale="千戸"),
+        "{{STOCK_SURVEY}}": city["survey"],
+        "{{STOCK_SID}}": city["statsDataId"],
+        "{{STOCK_URL}}": city["url"],
+        "{{STOCK_FILTER}}": city["filter"],
+        "{{STOCK_TOTAL}}": _fmt(nat_stock),
+        "{{STOCK_SUM47}}": _fmt(sum47),
+        "{{STOCK_DIFF}}": _fmt(nat_stock - sum47),
+        "{{STOCK_METRO}}": _fmt(stock_metro),
+        "{{STOCK_METRO_PCT}}": f"{stock_metro / nat_stock * 100:.1f}",
+        "{{STOCK_TOP1}}": stock_rank[0][0],
+        "{{STOCK_TOP1_UNITS}}": _fmt(stock_rank[0][1]),
+        "{{STOCK_NEXT}}": stock_next,
+        "{{TOP_NEXT}}": flow_next,
         "{{PREF_FROM}}": str(pref["cohort"][0]),
         "{{PREF_TO}}": str(pref["cohort"][1]),
         "{{PREF_AGE_FROM}}": str(2026 - pref["cohort"][1]),
@@ -361,8 +394,11 @@ def main() -> None:
     print(f"  戸あたり工事金額 3回目中央値 {third['median']}→{third['median']*factor:.0f} 万円/戸"
           f"（×{factor:.3f}）　積立金12年分 {reserve12:.0f} 万円/戸")
     print(f"  CPI {cpi['values'][-1]} vs デフレーター {prim[-1]}　差 {prim[-1]-cpi['values'][-1]:.1f} pt")
-    print(f"  修繕適齢期コホート {_fmt(pref['national'])} 戸　一都三県 {_fmt(metro)} 戸"
-          f"（{tokens['{{METRO_PCT}}']}%）")
+    print(f"  修繕適齢期コホート（着工・フロー）{_fmt(pref['national'])} 戸　"
+          f"一都三県 {_fmt(metro)} 戸（{tokens['{{METRO_PCT}}']}%）")
+    print(f"  現存ストック 全国行 {_fmt(nat_stock)} 戸　47都道府県合計 {_fmt(sum47)} 戸　"
+          f"差 {_fmt(nat_stock - sum47)} 戸　一都三県 {_fmt(stock_metro)} 戸"
+          f"（{tokens['{{STOCK_METRO_PCT}}']}%）")
 
 
 if __name__ == "__main__":
