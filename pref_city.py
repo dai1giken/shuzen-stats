@@ -23,7 +23,9 @@ def city_section(basis: dict, pref_name: str) -> str:
         return ""
 
     def coh(a: dict) -> int:
-        return sum(a["periods"].get(k, 0) for k in cohort)
+        # .get(k, 0) にしないこと。コホートのラベルが periods に無いのは
+        # 区分が変わったということで、0 として黙って足すと全ページが 0 戸になる。
+        return sum(a["periods"][k] for k in cohort)
 
     leaves = sorted(
         ((c, a) for c, a in areas.items()

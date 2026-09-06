@@ -119,7 +119,8 @@ def build(basis: dict) -> int:
     day = basis["generated"].split()[0]
 
     def coh(a):
-        return sum(a["periods"].get(k, 0) for k in cohort)
+        # .get(k, 0) にしないこと。理由は pref_city.py の同名関数と同じ。
+        return sum(a["periods"][k] for k in cohort)
 
     # 都県ごとに、集計行を除いた市区町村で順位を作る
     ranks: dict[str, dict[str, int]] = {}
