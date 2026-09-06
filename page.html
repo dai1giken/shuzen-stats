@@ -1,0 +1,1864 @@
+<title>大規模修繕統計ビューア</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
+  --ink:#191D16; --ink2:#4C5348; --ink3:#7D8578;
+  --rule:#D2D6CB; --rule-soft:#E2E5DC;
+  --shu:#BE3A22; --ai:#2C5468;
+  --c1:#C43A1E; --c2:#1B6FA8; --c3:#3E8E3C; --c4:#8B49BE; --c5:#A87C00;
+  --b0:#F7E7E2; --b0f:#191D16; --b1:#EFC9BE; --b1f:#191D16; --b2:#E2A38F; --b2f:#191D16;
+  --b3:#D07A61; --b3f:#191D16; --b4:#B94A2E; --b4f:#FFFFFF; --b5:#8C2B17; --b5f:#FFFFFF;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+    --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+    --rule:#2F342C; --rule-soft:#242920;
+    --shu:#E4664A; --ai:#7FB2CD;
+    --c1:#E05F42; --c2:#3F97C9; --c3:#63A93F; --c4:#A874D8; --c5:#B08A16;
+    --b0:#2E1F1A; --b0f:#D9DCD3; --b1:#472A21; --b1f:#E3E6DD; --b2:#683B2C; --b2f:#EDEFE7;
+    --b3:#8F4C36; --b3f:#F4F1EA; --b4:#C2664A; --b4f:#17140F; --b5:#E88A6B; --b5f:#17140F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920;
+  --shu:#E4664A; --ai:#7FB2CD;
+  --c1:#E05F42; --c2:#3F97C9; --c3:#63A93F; --c4:#A874D8; --c5:#B08A16;
+  --b0:#2E1F1A; --b0f:#D9DCD3; --b1:#472A21; --b1f:#E3E6DD; --b2:#683B2C; --b2f:#EDEFE7;
+  --b3:#8F4C36; --b3f:#F4F1EA; --b4:#C2664A; --b4f:#17140F; --b5:#E88A6B; --b5f:#17140F;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--jp);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;
+  background-image:
+    repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 56px),
+    repeating-linear-gradient(to bottom,var(--rule-soft) 0 1px,transparent 1px 56px);
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 96px}
+
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--ink);padding:26px 0 10px}
+.mark{font-family:var(--cond);font-weight:700;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--shu)}
+.mark .jp{font-family:var(--jp);letter-spacing:.08em}
+.masthead .spacer{flex:1 1 100px}
+.stamp{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);font-variant-numeric:tabular-nums}
+
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(36px,6.6vw,66px);line-height:.98;margin:32px 0 0;text-wrap:balance}
+h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:clamp(14px,1.7vw,17px);line-height:1.7;color:var(--ink2);margin-top:16px;max-width:64ch}
+
+
+/* 出典バンド（ページ最上位の位置づけ表示） */
+.srcband{
+  margin-top:18px;border:1px solid var(--ai);border-left-width:4px;background:var(--surface);
+  display:grid;grid-template-columns:auto 1fr;gap:0;
+}
+@media (max-width:720px){.srcband{grid-template-columns:1fr}}
+.srcband .tagcol{
+  display:flex;align-items:center;gap:8px;padding:13px 16px;background:var(--ai);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:#fff;white-space:nowrap;font-weight:500;
+}
+.srcband .body{padding:12px 18px;font-size:13px;line-height:1.85;color:var(--ink2)}
+.srcband .body strong{color:var(--ink)}
+.srcband .body .list{font-family:var(--mono);font-size:12px;color:var(--ink);display:block;margin-bottom:3px}
+
+.toplabel{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ai);margin:30px 0 10px;display:block;font-weight:500;
+}
+.by{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3)}
+.by b{color:var(--ink2);font-weight:500;letter-spacing:.02em;font-family:var(--jp)}
+h1 .tagline{display:block;font-family:var(--cond);font-weight:600;font-size:clamp(17px,2.4vw,24px);line-height:1.3;color:var(--shu);margin-top:14px;letter-spacing:.01em}
+
+/* 図ごとの出典見出し */
+.chart-head{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+  padding:0 8px 12px;margin-bottom:6px;border-bottom:1px solid var(--rule-soft);
+  font-size:12.5px;color:var(--ink2);
+}
+.srcchip{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:#fff;background:var(--ai);
+  padding:2px 8px;border-radius:2px;white-space:nowrap;
+}
+
+/* ============ 指数パネル ============ */
+.index{margin-top:36px;border-top:2px solid var(--ink);background:var(--surface);border-bottom:1px solid var(--rule)}
+.index-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 20px;border-bottom:1px solid var(--rule-soft)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3)}
+.live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;color:var(--shu)}
+.pip{width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 1s steps(2,end) infinite}
+@keyframes pulse{0%,49%{opacity:1}50%,100%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pip{animation:none}}
+
+.index-body{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.15fr);gap:0}
+@media (max-width:820px){.index-body{grid-template-columns:1fr}}
+.index-main{padding:24px 20px 20px;border-right:1px solid var(--rule-soft)}
+@media (max-width:820px){.index-main{border-right:0;border-bottom:1px solid var(--rule-soft)}}
+.idxnum{display:flex;align-items:flex-end;gap:10px}
+.idxnum b{font-family:var(--mono);font-weight:600;font-size:clamp(52px,10vw,88px);line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.idxnum span{font-family:var(--mono);font-size:13px;color:var(--ink3);padding-bottom:.9em;line-height:1.5}
+.deltas{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--mono);font-size:12px;padding:4px 9px;border:1px solid var(--rule);border-radius:2px;background:var(--raise);font-variant-numeric:tabular-nums}
+.chip i{font-style:normal;font-size:10px}
+.chip em{font-style:normal;color:var(--ink3);font-size:11px}
+.chip.up{color:var(--shu);border-color:currentColor}
+.chip.down{color:var(--ai);border-color:currentColor}
+.spark{margin-top:16px;display:block;width:100%;height:52px}
+
+/* シミュレータ */
+.sim{padding:24px 20px 20px;background:var(--sunk)}
+.sim h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--shu);margin:0 0 12px;font-weight:500}
+.simrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;line-height:2.4}
+.sim select,.sim input[type=range]{font-family:var(--mono)}
+.sim select{font-size:13px;padding:3px 6px;background:var(--raise);color:var(--ink);border:1px solid var(--rule);border-radius:2px}
+.sim input[type=range]{flex:1 1 200px;min-width:160px;accent-color:var(--shu);height:22px}
+.simamt{font-family:var(--mono);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;color:var(--ink);min-width:6.5ch;text-align:right}
+.simout{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
+.simout .big{font-family:var(--mono);font-weight:600;font-size:clamp(28px,5.4vw,42px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--shu)}
+.simout .u{font-family:var(--mono);font-size:14px;color:var(--ink2)}
+.simout .diff{font-family:var(--mono);font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.simnote{margin:10px 0 0;font-size:12px;line-height:1.7;color:var(--ink3)}
+
+
+/* 比較バー */
+.bars{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.barrow{display:grid;grid-template-columns:5.6em 1fr 6.4em;gap:10px;align-items:center}
+.barrow .k{font-family:var(--mono);font-size:11px;color:var(--ink3);text-align:right;line-height:1.35}
+.bartrack{position:relative;height:32px;background:var(--raise);border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.barfill{position:absolute;left:0;top:0;bottom:0;background:var(--ai);transition:width .28s ease}
+.barfill.now{background:var(--shu)}
+@media (prefers-reduced-motion:reduce){.barfill{transition:none}}
+.barrow .v{font-family:var(--mono);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums;text-align:right}
+.barrow .v small{font-weight:500;font-size:11px;color:var(--ink3);margin-left:2px}
+.simhead{font-size:14px;line-height:1.8;margin:0}
+.simhead b{font-family:var(--mono);font-weight:600}
+
+/* ============ 秒進行カウンター ============ */
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-top:0}
+.dial{background:var(--surface);padding:16px 18px 18px;display:flex;flex-direction:column;gap:3px}
+.dial .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.dial .jplabel{font-size:12.5px;color:var(--ink2);line-height:1.5}
+.dial .val{font-family:var(--mono);font-weight:600;font-size:27px;line-height:1.2;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:5px}
+.dial .val small{font-size:13px;font-weight:500;color:var(--ink2);letter-spacing:0;margin-left:3px}
+.dial .foot{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:1px;font-variant-numeric:tabular-nums}
+.caveat{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--rule);border-top:0;background:var(--sunk);padding:12px 20px;font-size:12.5px;line-height:1.75;color:var(--ink2)}
+.caveat .flag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--shu);border:1px solid currentColor;border-radius:2px;padding:1px 7px;white-space:nowrap;margin-top:3px}
+
+/* ============ 節 ============ */
+section{margin-top:64px}
+h2{font-family:var(--cond);font-weight:600;font-size:26px;margin:0;padding-bottom:9px;border-bottom:1px solid var(--ink);display:flex;align-items:baseline;gap:12px;text-wrap:balance}
+h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
+.lede{max-width:66ch;color:var(--ink2);margin:16px 0 0}
+
+/* ============ エクスプローラ ============ */
+.explorer{margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+.exp-chart{padding:16px 12px 8px;border-bottom:1px solid var(--rule-soft);position:relative;overflow-x:auto}
+.exp-chart svg{display:block;min-width:660px;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.16);white-space:nowrap;opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
+.tip .r{display:flex;align-items:center;gap:7px}
+.tip .sw{width:8px;height:8px;border-radius:1px;flex:none}
+.exp-hint{padding:9px 16px;border-bottom:1px solid var(--rule-soft);font-family:var(--mono);font-size:11.5px;color:var(--ink3);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.exp-hint .n{color:var(--shu)}
+
+.exp-table{overflow-x:auto}
+.exp-table table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+.exp-table th,.exp-table td{padding:8px 12px;border-bottom:1px solid var(--rule-soft);text-align:right;white-space:nowrap}
+.exp-table th:first-child,.exp-table td:first-child{text-align:left}
+.exp-table thead th{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink3);font-weight:500;
+  background:var(--sunk);border-bottom:1px solid var(--rule);cursor:pointer;user-select:none;position:sticky;top:0;
+}
+.exp-table thead th:hover{color:var(--ink)}
+.exp-table thead th .ar{opacity:.35;margin-left:3px}
+.exp-table thead th.on .ar{opacity:1;color:var(--shu)}
+.exp-table tbody tr{cursor:pointer}
+.exp-table tbody tr:hover{background:var(--sunk)}
+.exp-table tbody tr.sel{background:var(--sunk)}
+.exp-table td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.exp-table td.name{display:flex;align-items:center;gap:9px}
+.exp-table .box{width:12px;height:12px;border:1.5px solid var(--ink3);border-radius:2px;flex:none;background:transparent}
+.exp-table tr.sel .box{border-color:transparent}
+.exp-table .up{color:var(--shu)}
+.exp-table .down{color:var(--ai)}
+.exp-table .sparkcell{width:120px;padding-right:14px}
+.exp-table .sparkcell svg{display:block;width:110px;height:24px}
+.exp-foot{padding:10px 16px;font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.8;border-top:1px solid var(--rule-soft)}
+
+
+.figgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:22px}
+.keynum{background:var(--surface);padding:18px 20px}
+.keynum .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.keynum .v{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:6px 0 4px}
+.keynum .v small{font-size:14px;font-weight:500;color:var(--ink2);margin-left:3px}
+.keynum p{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+.keynum.hi .v{color:var(--shu)}
+
+
+/* 計算ツール */
+.calc{margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+.calc-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule-soft)}
+.calc-in label{background:var(--surface);padding:12px 16px;display:flex;flex-direction:column;gap:5px}
+.calc-in .cap{font-size:12px;color:var(--ink2);line-height:1.5}
+.calc-in input,.calc-in select{
+  font-family:var(--mono);font-size:16px;font-variant-numeric:tabular-nums;
+  padding:6px 8px;background:var(--raise);color:var(--ink);border:1px solid var(--rule);border-radius:2px;width:100%;
+}
+.calc-out{padding:20px 16px 18px;border-top:1px solid var(--rule);background:var(--sunk)}
+.calc-out .years{font-family:var(--mono);font-size:12.5px;color:var(--ink3);margin:0 0 14px}
+.calc-diff{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.calc-diff .lab{font-size:13px;color:var(--ink2)}
+.calc-diff .big{font-family:var(--mono);font-weight:600;font-size:clamp(26px,4.6vw,38px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.calc-diff .big.short{color:var(--shu)}
+.calc-diff .big.over{color:var(--ai)}
+.calc-note{padding:12px 16px;border-top:1px solid var(--rule-soft);font-size:12px;line-height:1.8;color:var(--ink3)}
+
+
+/* 強い注記（読み飛ばされては困るもの） */
+.warn{margin-top:1px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
+.warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:17px;color:var(--shu);letter-spacing:.01em}
+.warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
+.warn li{margin-bottom:5px}
+.warn li:last-child{margin-bottom:0}
+.warn strong{color:var(--ink)}
+.warn-inline{margin-top:14px;padding:11px 14px;border-left:3px solid var(--shu);background:var(--sunk);font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.warn-inline strong{color:var(--ink)}
+
+/* ============ 静的チャート ============ */
+.chartbox{margin-top:22px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox svg{display:block;min-width:640px;width:100%;height:auto}
+.chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
+.chartbox{position:relative}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.38}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+
+
+/* 分布表 */
+.tablebox tr.conv td{color:var(--shu);border-bottom:1px solid var(--rule)}
+.tablebox tr.conv td.when{color:var(--ink3)}
+.tablebox tr.grp td{border-bottom:0}
+.tablebox td.when{font-family:var(--mono);font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.tablebox tr.na td{color:var(--ink3)}
+.tablebox th.barcol,.tablebox td.barcol{width:34%;min-width:120px}
+.distbar{display:block;height:11px;border-radius:2px;background:var(--shu);min-width:2px}
+.tnote{margin:9px 2px 0;font-size:12.5px;line-height:1.8;color:var(--ink3)}
+.tnote strong{color:var(--ink)}
+
+/* ============ 表・注記 ============ */
+.tablebox{margin-top:22px;overflow-x:auto;border:1px solid var(--rule)}
+.tablebox table{border-collapse:collapse;width:100%;min-width:680px;background:var(--surface);font-size:13.5px}
+.tablebox th,.tablebox td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+.tablebox thead th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
+.tablebox tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.sym{font-family:var(--mono);color:var(--ai);white-space:nowrap}
+a{color:var(--ai);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;padding:1px 7px;border:1px solid currentColor;border-radius:2px;white-space:nowrap}
+.tag.ok{color:var(--ai)}
+.tag.est{color:var(--shu)}
+
+.formula{margin-top:20px;background:var(--sunk);border-left:3px solid var(--shu);padding:16px 20px;font-family:var(--mono);font-size:12.5px;line-height:2.1;overflow-x:auto;white-space:nowrap;color:var(--ink2)}
+.formula b{color:var(--ink);font-weight:600}
+
+.cite{margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+.cite h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--shu);margin:0;padding:12px 16px;border-bottom:1px solid var(--rule-soft);font-weight:500}
+.cite pre{margin:0;padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap;word-break:break-all;background:var(--sunk)}
+.cite .row{padding:12px 16px;border-top:1px solid var(--rule-soft);font-size:13px;color:var(--ink2);line-height:1.8}
+
+.notes{margin-top:64px;border-top:1px solid var(--ink);padding-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:26px}
+.notes h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--shu);margin:0 0 8px;font-weight:500}
+.notes p{margin:0;font-size:13px;line-height:1.85;color:var(--ink2)}
+.license{margin-top:22px;border:1px solid var(--shu);border-left-width:4px;background:var(--surface);padding:14px 18px;font-size:13px;line-height:1.85;color:var(--ink2)}
+.license b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--shu);margin-bottom:6px;font-weight:500}
+.license strong{color:var(--ink)}
+.credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);font-size:13px;line-height:1.8;color:var(--ink2)}
+.colophon{margin-top:30px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="by">制作・提供　<b>株式会社第一技研</b></span>
+    <span class="spacer"></span>
+    <span class="stamp" id="stamp">JST —</span>
+  </header>
+
+  <div class="srcband">
+    <span class="tagcol">SOURCE ／ 出典</span>
+    <span class="body">
+      <span class="list">国土交通省　建設工事費デフレーター ・ 建築着工統計調査 ・ マンションを巡る現状／長期修繕計画作成ガイドライン</span>
+      <strong>このページに載っている数値は、すべて上記の政府統計の公表値です。</strong>
+      e-Stat の API から取得し、単位換算と経過秒による按分のほかに加工はしていません。
+      当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+    </span>
+  </div>
+
+  <span class="toplabel">国土交通省 公表統計</span>
+  <h1>大規模修繕統計ビューア
+    <span class="tagline">政府統計が、そのまま読める。</span>
+    <span class="sub">国土交通省が公表している建設・住宅の統計を、加工せず読める形へ並べ直しただけの公開ページです。修繕にかかるお金が過去からいくら上がったのか、修繕の時期を迎えた住戸がどこにどれだけあるのかを、公表値のまま確かめられます。</span>
+  </h1>
+
+  <!-- ===== 指数パネル ===== -->
+  <div class="index">
+    <div class="index-head">
+      <span class="eyebrow">Index ／ 建設工事費デフレーター「建築補修」</span>
+      <span class="live"><span class="pip"></span>月次更新・最新 2026年6月</span>
+    </div>
+
+    <div class="index-body">
+      <div class="index-main">
+        <div class="idxnum">
+          <b id="idxval">127.2</b>
+          <span>2020年度＝100<br>改装・改修工事の物価</span>
+        </div>
+        <div class="deltas" id="deltas"></div>
+        <svg class="spark" id="spark" viewBox="0 0 320 52" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+
+      <div class="sim">
+        <h3>当時の見積は、いま いくらか</h3>
+
+        <div class="simrow">
+          <select id="simYear" aria-label="比較する時点"></select>
+          <span>に</span>
+          <input type="range" id="simAmt" min="100" max="10000" step="50" value="1000" aria-label="金額（万円）">
+          <span class="simamt" id="simAmtOut">1,000</span><span>万円</span>
+        </div>
+        <p class="simhead" id="simHead"></p>
+
+        <div class="bars">
+          <div class="barrow">
+            <span class="k" id="barK1">当時</span>
+            <span class="bartrack"><span class="barfill" id="bar1"></span></span>
+            <span class="v" id="barV1">—<small>万円</small></span>
+          </div>
+          <div class="barrow">
+            <span class="k" id="barK2">2026年6月</span>
+            <span class="bartrack"><span class="barfill now" id="bar2"></span></span>
+            <span class="v" id="barV2">—<small>万円</small></span>
+          </div>
+        </div>
+
+        <p class="simnote" id="simNote"></p>
+        <div class="warn-inline"><strong>物価の指数を掛けただけの参考値です。</strong>実際の見積は仕様・規模・立地・劣化状況で変わります。当社の単価や見積を反映したものではありません。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 戸あたり工事金額 ===== -->
+  <section id="cost">
+    <h2><span class="idx">Fig. 1</span>戸あたり工事金額の分布（2026年6月の物価に換算）</h2>
+    <p class="lede">国土交通省「令和3年度 マンション大規模修繕工事に関する実態調査」（2022-06-17公表・n=818）が示した戸あたり工事金額の<strong>ばらつき</strong>を、建設工事費デフレーター「建築補修」で2026年6月の物価に置き直したものです。換算倍率は <strong>×1.272</strong>。調査対象工事はおおむね2018〜2021年の受注。その中心を2020年度と置き、デフレーター基準年（2020年度＝100）に対応させている。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>令和3年度 マンション大規模修繕工事に関する実態調査</strong>　×　建設工事費デフレーター「建築補修」</span></div>
+      <svg viewBox="0 0 900 336" role="img" aria-label="回数別の戸あたり工事金額。1回目の中央値は調査時点110.2万円、換算後140万円、2回目の中央値は調査時点106.1万円、換算後135万円、3回目以上の中央値は調査時点97.0万円、換算後123万円。">
+      <g stroke="var(--rule-soft)" stroke-width="1">
+      <line x1="132.0" y1="46" x2="132.0" y2="282"/>
+      <line x1="298.8" y1="46" x2="298.8" y2="282"/>
+      <line x1="465.6" y1="46" x2="465.6" y2="282"/>
+      <line x1="632.5" y1="46" x2="632.5" y2="282"/>
+      <line x1="799.3" y1="46" x2="799.3" y2="282"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="middle">
+      <text x="132.0" y="38">0</text>
+      <text x="298.8" y="38">50</text>
+      <text x="465.6" y="38">100</text>
+      <text x="632.5" y="38">150</text>
+      <text x="799.3" y="38">200</text>
+      </g>
+      <text x="866" y="20" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">万円／戸</text>
+      <text x="118" y="76" text-anchor="end" font-size="14" font-weight="600" fill="var(--ink)">1回目</text>
+      <text x="118" y="96" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">n=331</text>
+      <rect x="435.3" y="56" width="143.8" height="22" rx="2" fill="var(--ai)" opacity="0.3"/>
+      <line x1="499.7" y1="56" x2="499.7" y2="78" stroke="var(--ai)" stroke-width="3"/>
+      <text x="588.1" y="72" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--ai)">110</text>
+      <text x="426.3" y="72" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">調査時点</text>
+      <rect x="517.8" y="84" width="182.9" height="22" rx="2" fill="var(--shu)" opacity="0.55"/>
+      <line x1="599.7" y1="84" x2="599.7" y2="106" stroke="var(--shu)" stroke-width="3"/>
+      <text x="709.7" y="100" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--shu)">140</text>
+      <text x="508.8" y="100" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">2026年6月</text>
+      <text x="118" y="154" text-anchor="end" font-size="14" font-weight="600" fill="var(--ink)">2回目</text>
+      <text x="118" y="174" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">n=194</text>
+      <rect x="424.9" y="134" width="140.1" height="22" rx="2" fill="var(--ai)" opacity="0.3"/>
+      <line x1="486.0" y1="134" x2="486.0" y2="156" stroke="var(--ai)" stroke-width="3"/>
+      <text x="574.1" y="150" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--ai)">106</text>
+      <text x="415.9" y="150" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">調査時点</text>
+      <rect x="504.6" y="162" width="178.2" height="22" rx="2" fill="var(--shu)" opacity="0.55"/>
+      <line x1="582.3" y1="162" x2="582.3" y2="184" stroke="var(--shu)" stroke-width="3"/>
+      <text x="691.9" y="178" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--shu)">135</text>
+      <text x="495.6" y="178" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">2026年6月</text>
+      <text x="118" y="232" text-anchor="end" font-size="14" font-weight="600" fill="var(--ink)">3回目以上</text>
+      <text x="118" y="252" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">n=242</text>
+      <rect x="388.2" y="212" width="163.1" height="22" rx="2" fill="var(--ai)" opacity="0.3"/>
+      <line x1="455.6" y1="212" x2="455.6" y2="234" stroke="var(--ai)" stroke-width="3"/>
+      <text x="560.4" y="228" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--ai)">97</text>
+      <text x="379.2" y="228" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">調査時点</text>
+      <rect x="457.9" y="240" width="207.5" height="22" rx="2" fill="var(--shu)" opacity="0.55"/>
+      <line x1="543.7" y1="240" x2="543.7" y2="262" stroke="var(--shu)" stroke-width="3"/>
+      <text x="674.5" y="256" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="var(--shu)">123</text>
+      <text x="448.9" y="256" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">2026年6月</text>
+      <g font-family="IBM Plex Mono, monospace" font-size="11.5">
+      <rect x="132" y="293" width="26" height="11" rx="2" fill="var(--ai)" opacity=".30"/>
+      <text x="165" y="302" fill="var(--ink2)">調査時点（下位25%〜上位25%／縦線＝中央値）</text>
+      <rect x="462" y="293" width="26" height="11" rx="2" fill="var(--shu)" opacity=".55"/>
+      <text x="495" y="302" fill="var(--ink2)">2026年6月の物価に換算（×1.272）</text>
+      </g>
+      </svg>
+      <div class="chart-foot">
+        出典：<a href="https://www.mlit.go.jp/jutakukentiku/house/content/001619430.pdf" target="_blank" rel="noopener">令和3年度 マンション大規模修繕工事に関する実態調査（報告書PDF）</a>　n=818　／　換算に使った指数は <a href="https://www.e-stat.go.jp/dbview?sid=0004055083" target="_blank" rel="noopener">e-Stat statsDataId=0004055083</a><br>
+        原典の定義および換算方法は、下の注意書きのとおりです。
+      </div>
+    </div>
+
+    <div class="warn">
+      <h4>この金額は、見積の目安ではありません</h4>
+      <ul>
+        <li><strong>工事金額に共通仮設費は含まれていません。</strong>原典の集計定義によるもので、実際の見積に含まれる費用はこれより広い範囲になります。設計コンサルタント業務の費用も別です。</li>
+        <li><strong>換算は指数の比だけで行っています。</strong>仕様・規模・立地・劣化状況・工期・足場の条件といった、金額を決める要素は一切反映していません。</li>
+        <li>大規模修繕の金額は建物ごとに大きく異なります。原典の分布でも <strong>200万円／戸を超える工事が2.8%</strong>、75万円／戸を下回る工事が15.1% あります。</li>
+        <li><strong>個別の見積がこの範囲を外れていることは、それ自体では何も意味しません。</strong>実際の金額は現地調査にもとづく仕様で決まるものであり、このページの数字を根拠に高い・安いを判断することはできません。</li>
+      </ul>
+    </div>
+
+    <div class="tablebox">
+      <table>
+      <thead><tr><th>回数</th><th>件数</th><th>時点</th><th>下位25%</th><th>中央値</th><th>上位25%</th><th>平均</th><th>下位25%〜上位25%の幅</th></tr></thead>
+      <tbody>
+      <tr class="grp"><td rowspan="2"><strong>1回目</strong></td><td rowspan="2" class="num">331</td><td class="when">調査時点</td><td class="num">90.9</td><td class="num">110.2</td><td class="num">134.0</td><td class="num">151.6</td><td class="num">43.1</td></tr>
+      <tr class="conv"><td class="when">2026年6月換算</td><td class="num">116</td><td class="num"><strong>140</strong></td><td class="num">170</td><td class="num">193</td><td class="num">55</td></tr>
+      <tr class="grp"><td rowspan="2"><strong>2回目</strong></td><td rowspan="2" class="num">194</td><td class="when">調査時点</td><td class="num">87.8</td><td class="num">106.1</td><td class="num">129.8</td><td class="num">112.4</td><td class="num">42.0</td></tr>
+      <tr class="conv"><td class="when">2026年6月換算</td><td class="num">112</td><td class="num"><strong>135</strong></td><td class="num">165</td><td class="num">143</td><td class="num">53</td></tr>
+      <tr class="grp"><td rowspan="2"><strong>3回目以上</strong></td><td rowspan="2" class="num">242</td><td class="when">調査時点</td><td class="num">76.8</td><td class="num">97.0</td><td class="num">125.7</td><td class="num">106.1</td><td class="num">48.9</td></tr>
+      <tr class="conv"><td class="when">2026年6月換算</td><td class="num">98</td><td class="num"><strong>123</strong></td><td class="num">160</td><td class="num">135</td><td class="num">62</td></tr>
+      </tbody></table></div>
+      <p class="tnote">単位はすべて 万円／戸。平均が上位25%より大きい回があるのは、高額側に少数の外れ値があるためです。</p>
+      <div class="tablebox" style="margin-top:14px">
+      <table><thead><tr><th>戸あたり工事金額（調査時点）</th><th>2026年6月の物価なら</th><th>割合</th><th class="barcol">分布</th></tr></thead><tbody>
+      <tr><td>25万円以下</td><td>32万円以下</td><td class="num">2.1%</td><td class="barcol"><span class="distbar" style="width:7.8%"></span></td></tr>
+      <tr><td>〜50万円</td><td>32〜64万円</td><td class="num">3.5%</td><td class="barcol"><span class="distbar" style="width:13.0%"></span></td></tr>
+      <tr><td>〜75万円</td><td>64〜95万円</td><td class="num">9.5%</td><td class="barcol"><span class="distbar" style="width:35.2%"></span></td></tr>
+      <tr><td>〜100万円</td><td>95〜127万円</td><td class="num">24.7%</td><td class="barcol"><span class="distbar" style="width:91.5%"></span></td></tr>
+      <tr><td>〜125万円</td><td>127〜159万円</td><td class="num">27.0%</td><td class="barcol"><span class="distbar" style="width:100.0%"></span></td></tr>
+      <tr><td>〜150万円</td><td>159〜191万円</td><td class="num">17.4%</td><td class="barcol"><span class="distbar" style="width:64.4%"></span></td></tr>
+      <tr><td>〜175万円</td><td>191〜223万円</td><td class="num">6.8%</td><td class="barcol"><span class="distbar" style="width:25.2%"></span></td></tr>
+      <tr><td>〜200万円</td><td>223〜254万円</td><td class="num">2.3%</td><td class="barcol"><span class="distbar" style="width:8.5%"></span></td></tr>
+      <tr><td>200万円超</td><td>254万円超</td><td class="num">2.8%</td><td class="barcol"><span class="distbar" style="width:10.4%"></span></td></tr>
+      <tr class="na"><td>無回答</td><td>—</td><td class="num">3.8%</td><td class="barcol"><span class="distbar" style="width:0.0%"></span></td></tr>
+      </tbody></table></div>
+      <p class="tnote">n=818。<strong>75〜150万円／戸に 69.1%</strong> が入ります（2026年6月の物価なら 95〜191万円／戸）。一方で 200万円／戸を超える工事も 2.8% あります。</p>
+
+    <div class="figgrid">
+      <div class="keynum hi">
+        <span class="k">3回目以上・中央値</span>
+        <div class="v">123<small>万円／戸</small></div>
+        <p>調査時点では 97 万円／戸。2026年6月の物価に置き直すと上の値になります。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">よくある幅</span>
+        <div class="v">98–160<small>万円／戸</small></div>
+        <p>3回目以上の下位25%〜上位25%（換算後）。1回目の中央値は 140 万円／戸です。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">修繕積立金</span>
+        <div class="v">13,378<small>円／月・戸</small></div>
+        <p>令和5年度 マンション総合調査の平均。12年間積み立てた場合の単純合計は 193 万円／戸。積立金は大規模修繕以外の修繕にも充てられます。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 計算ツール ===== -->
+  <section id="calc">
+    <h2><span class="idx">Tool</span>修繕積立金と工事費を並べる</h2>
+    <p class="lede">入力した積立条件と、Fig.1 の統計上の中央値に戸数を掛けた額を、並べて表示するだけの計算機です。<strong>これは見積でも、必要額の算定でも、助言でもありません。</strong>統計の中央値は、個別のマンションに必要な金額とは無関係です。</p>
+
+    <div class="calc">
+      <div class="calc-in">
+        <label><span class="cap">総戸数</span><input type="number" id="cUnits" min="4" max="2000" step="1" value="50"></label>
+        <label><span class="cap">現在の築年数</span><input type="number" id="cAge" min="0" max="60" step="1" value="30"></label>
+        <label><span class="cap">次回の実施（築何年）</span><input type="number" id="cNext" min="1" max="60" step="1" value="36"></label>
+        <label><span class="cap">次回が何回目か</span><select id="cTimes"></select></label>
+        <label><span class="cap">現在の積立金残高（万円）</span><input type="number" id="cBal" min="0" max="999999" step="10" value="3000"></label>
+        <label><span class="cap">月額の修繕積立金（円／戸）</span><input type="number" id="cMon" min="0" max="100000" step="100" value="13378"></label>
+      </div>
+
+      <div class="calc-out">
+        <p class="years" id="cYears">—</p>
+        <div class="bars">
+          <div class="barrow">
+            <span class="k">積立見込</span>
+            <span class="bartrack"><span class="barfill" id="cBar1"></span></span>
+            <span class="v" id="cVal1">—<small>万円</small></span>
+          </div>
+          <div class="barrow">
+            <span class="k">中央値×戸数</span>
+            <span class="bartrack"><span class="barfill now" id="cBar2"></span></span>
+            <span class="v" id="cVal2">—<small>万円</small></span>
+          </div>
+        </div>
+        <div class="calc-diff">
+          <span class="lab" id="cDiffLab">差額</span>
+          <span class="big" id="cDiff">—</span><span class="lab">万円</span>
+          <span class="lab" id="cPerUnit">—</span>
+        </div>
+      </div>
+
+      <div class="calc-note" id="cNote">—</div>
+      <div class="warn">
+        <h4>この結果で発注や交渉の判断はできません</h4>
+        <ul>
+          <li>右の額は <strong>統計の中央値 × 戸数</strong> にすぎず、そのマンションに必要な工事費ではありません。共通仮設費も含まれていません。</li>
+          <li>積立見込は単純な足し算で、利息・値上げ・一時金・借入・他の修繕への支出を含みません。</li>
+          <li>実際の必要額は<strong>長期修繕計画と現地調査</strong>で決まります。差額が出ても、それ自体は過不足を示しません。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 消費者物価との比較 ===== -->
+  <section id="cpi">
+    <h2><span class="idx">Fig. 2</span>改装・改修工事費と、消費者物価</h2>
+    <p class="lede">2020年（度）を100とした指数の推移です。2026年6月時点で、消費者物価は <strong>113.6</strong>（+13.6%）、改装・改修工事費は <strong>127.2</strong>（+27.2%）。差は 13.6 ポイントです。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省・総務省</span><span><strong>建設工事費デフレーター</strong>／<strong>消費者物価指数</strong>　e-Stat API 取得・2026-09-06</span></div>
+      <svg viewBox="0 0 900 330" role="img" aria-label="改装・改修工事費と消費者物価の推移。2026年6月時点で工事費は127.2、消費者物価は113.6。">
+      <g stroke="var(--rule-soft)" stroke-width="1">
+      <line x1="62" y1="288.0" x2="792" y2="288.0"/>
+      <line x1="62" y1="256.2" x2="792" y2="256.2"/>
+      <line x1="62" y1="224.5" x2="792" y2="224.5"/>
+      <line x1="62" y1="192.8" x2="792" y2="192.8"/>
+      <line x1="62" y1="161.0" x2="792" y2="161.0"/>
+      <line x1="62" y1="129.2" x2="792" y2="129.2"/>
+      <line x1="62" y1="97.5" x2="792" y2="97.5"/>
+      <line x1="62" y1="65.8" x2="792" y2="65.8"/>
+      <line x1="62" y1="34.0" x2="792" y2="34.0"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="end">
+      <text x="52" y="292.0">90</text>
+      <text x="52" y="260.2">95</text>
+      <text x="52" y="228.5">100</text>
+      <text x="52" y="196.8">105</text>
+      <text x="52" y="165.0">110</text>
+      <text x="52" y="133.2">115</text>
+      <text x="52" y="101.5">120</text>
+      <text x="52" y="69.8">125</text>
+      <text x="52" y="38.0">130</text>
+      </g>
+      <line x1="62" y1="224.5" x2="792" y2="224.5" stroke="var(--ink3)" stroke-width="1" stroke-dasharray="4 4"/>
+      <line x1="62" y1="288" x2="792" y2="288" stroke="var(--rule)"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="middle">
+      <text x="115.9" y="308">2017</text>
+      <text x="259.5" y="308">2019</text>
+      <text x="403.1" y="308">2021</text>
+      <text x="546.7" y="308">2023</text>
+      <text x="690.3" y="308">2025</text>
+      </g>
+      <path d="M 62.0 269.6 L 68.0 272.1 L 74.0 270.2 L 80.0 265.8 L 85.9 270.9 L 91.9 272.1 L 97.9 267.0 L 103.9 263.9 L 109.9 269.6 L 115.9 268.3 L 121.8 264.5 L 127.8 263.2 L 133.8 261.3 L 139.8 260.7 L 145.8 262.0 L 151.8 262.6 L 157.7 258.2 L 163.7 257.5 L 169.7 255.0 L 175.7 254.3 L 181.7 252.4 L 187.7 258.2 L 193.6 252.4 L 199.6 250.5 L 205.6 249.9 L 211.6 243.6 L 217.6 235.9 L 223.6 225.1 L 229.5 250.5 L 235.5 241.0 L 241.5 241.0 L 247.5 246.7 L 253.5 228.3 L 259.5 236.6 L 265.4 239.1 L 271.4 237.2 L 277.4 234.0 L 283.4 232.8 L 289.4 232.8 L 295.4 227.0 L 301.3 229.6 L 307.3 222.0 L 313.3 221.3 L 319.3 222.6 L 325.3 211.2 L 331.3 218.1 L 337.2 220.1 L 343.2 219.4 L 349.2 225.1 L 355.2 230.8 L 361.2 216.9 L 367.2 226.4 L 373.1 225.1 L 379.1 227.0 L 385.1 226.4 L 391.1 228.3 L 397.1 223.9 L 403.1 223.2 L 409.0 219.4 L 415.0 223.2 L 421.0 218.1 L 427.0 215.0 L 433.0 222.6 L 439.0 210.5 L 445.0 204.8 L 450.9 197.8 L 456.9 192.8 L 462.9 190.2 L 468.9 194.0 L 474.9 182.0 L 480.9 179.4 L 486.8 175.0 L 492.8 169.3 L 498.8 171.8 L 504.8 155.3 L 510.8 167.4 L 516.8 157.8 L 522.7 162.3 L 528.7 147.0 L 534.7 135.0 L 540.7 143.2 L 546.7 141.3 L 552.7 143.2 L 558.6 136.9 L 564.6 138.1 L 570.6 137.5 L 576.6 136.2 L 582.6 136.9 L 588.6 129.9 L 594.5 131.2 L 600.5 124.2 L 606.5 127.3 L 612.5 130.5 L 618.5 125.4 L 624.5 125.4 L 630.4 116.5 L 636.4 112.1 L 642.4 98.8 L 648.4 103.2 L 654.4 96.9 L 660.4 101.3 L 666.3 101.9 L 672.3 100.0 L 678.3 91.2 L 684.3 89.9 L 690.3 96.9 L 696.3 90.5 L 702.2 98.8 L 708.2 89.2 L 714.2 88.6 L 720.2 82.9 L 726.2 60.0 L 732.2 85.4 L 738.1 83.5 L 744.1 84.2 L 750.1 81.0 L 756.1 74.6 L 762.1 75.3 L 768.1 74.6 L 774.0 61.3 L 780.0 53.7 L 786.0 49.2 L 792.0 51.8 " fill="none" stroke="var(--shu)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="792.0" cy="51.8" r="4" fill="var(--shu)" stroke="var(--surface)" stroke-width="1.5"/>
+      <text x="802.0" y="55.8" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--shu)">127.2</text>
+      <text x="802.0" y="71.8" font-size="11.5" fill="var(--ink2)">改装・改修工事費</text>
+      <path d="M 62.0 236.6 L 68.0 235.9 L 74.0 236.6 L 80.0 237.8 L 85.9 237.8 L 91.9 237.2 L 97.9 233.4 L 103.9 233.4 L 109.9 234.7 L 115.9 235.9 L 121.8 236.6 L 127.8 236.6 L 133.8 234.0 L 139.8 233.4 L 145.8 234.0 L 151.8 235.3 L 157.7 234.0 L 163.7 232.1 L 169.7 232.1 L 175.7 230.2 L 181.7 228.3 L 187.7 227.7 L 193.6 227.7 L 199.6 229.6 L 205.6 230.2 L 211.6 228.9 L 217.6 229.6 L 223.6 229.6 L 229.5 225.8 L 235.5 225.1 L 241.5 223.2 L 247.5 224.5 L 253.5 226.4 L 259.5 226.4 L 265.4 226.4 L 271.4 226.4 L 277.4 224.5 L 283.4 224.5 L 289.4 225.8 L 295.4 225.8 L 301.3 224.5 L 307.3 223.9 L 313.3 222.0 L 319.3 221.3 L 325.3 221.3 L 331.3 221.3 L 337.2 222.6 L 343.2 222.6 L 349.2 223.2 L 355.2 223.9 L 361.2 225.1 L 367.2 224.5 L 373.1 223.9 L 379.1 225.1 L 385.1 225.8 L 391.1 227.7 L 397.1 228.9 L 403.1 225.8 L 409.0 225.8 L 415.0 225.1 L 421.0 230.2 L 427.0 228.3 L 433.0 227.7 L 439.0 226.4 L 445.0 226.4 L 450.9 223.9 L 456.9 225.1 L 462.9 223.9 L 468.9 223.9 L 474.9 222.6 L 480.9 220.1 L 486.8 217.5 L 492.8 215.0 L 498.8 213.1 L 504.8 213.1 L 510.8 209.9 L 516.8 207.4 L 522.7 204.8 L 528.7 201.0 L 534.7 199.7 L 540.7 198.5 L 546.7 194.7 L 552.7 199.1 L 558.6 196.6 L 564.6 192.1 L 570.6 192.1 L 576.6 191.5 L 582.6 188.3 L 588.6 187.0 L 594.5 185.1 L 600.5 179.4 L 606.5 180.7 L 612.5 181.3 L 618.5 180.7 L 624.5 180.7 L 630.4 178.8 L 636.4 175.6 L 642.4 173.1 L 648.4 172.4 L 654.4 169.9 L 660.4 166.7 L 666.3 168.0 L 672.3 164.2 L 678.3 161.0 L 684.3 156.6 L 690.3 153.4 L 696.3 155.9 L 702.2 154.0 L 708.2 151.5 L 714.2 149.6 L 720.2 150.2 L 726.2 148.9 L 732.2 147.7 L 738.1 148.3 L 744.1 143.2 L 750.1 140.7 L 756.1 142.0 L 762.1 142.6 L 768.1 147.0 L 774.0 143.9 L 780.0 142.0 L 786.0 138.8 L 792.0 138.1 " fill="none" stroke="var(--c2)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="792.0" cy="138.1" r="4" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/>
+      <text x="802.0" y="142.1" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--c2)">113.6</text>
+      <text x="802.0" y="158.1" font-size="11.5" fill="var(--ink2)">消費者物価（総合）</text>
+      <text x="62" y="20" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" letter-spacing="1">2020年（度）＝100</text>
+      <text x="62" y="328" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">工事費＝国土交通省 建設工事費デフレーター「建築補修」（2020年度基準）　物価＝総務省 消費者物価指数 総合・全国（2020年基準）</text>
+      </svg>
+      <div class="chart-foot">
+        <a href="https://www.e-stat.go.jp/dbview?sid=0004055083" target="_blank" rel="noopener">e-Stat statsDataId=0004055083</a>（工事費・2020年度基準）／
+        <a href="https://www.e-stat.go.jp/dbview?sid=0003427113" target="_blank" rel="noopener">e-Stat statsDataId=0003427113</a>（消費者物価・2020年基準・総合・全国）<br>
+        基準期間が年度と暦年で異なるため、厳密に同一の基準点ではありません。指数の水準ではなく、動きの比較としてご覧ください。
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 修繕サイクル ===== -->
+  <section id="cycle">
+    <h2><span class="idx">Fig. 3</span>大規模修繕の実施周期と、築40年の位置</h2>
+    <p class="lede">国土交通省「長期修繕計画作成ガイドライン」（令和6年6月改定）は、大規模修繕工事の実施周期を<strong>12〜15年程度</strong>を目安としています。築40年は、3回目の周期の途中にあたります。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>長期修繕計画作成ガイドライン</strong>　令和6年6月改定</span></div>
+      <svg viewBox="0 0 900 244" role="img" aria-label="マンションの築年数と大規模修繕の周期。1回目は築12〜15年、2回目は築24〜30年、3回目は築36〜45年ごろ。築40年は3回目の周期の途中にあたる。">
+      <rect x="66" y="84" width="796" height="40" rx="3" fill="var(--rule-soft)"/>
+      <rect x="257.0" y="84" width="47.8" height="40" rx="3" fill="var(--shu)"/>
+      <text x="280.9" y="74" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)" font-weight="500">1回目</text>
+      <text x="280.9" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">築12〜15年</text>
+      <rect x="448.1" y="84" width="95.5" height="40" rx="3" fill="var(--shu)"/>
+      <text x="495.8" y="74" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)" font-weight="500">2回目</text>
+      <text x="495.8" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">築24〜30年</text>
+      <rect x="639.1" y="84" width="143.3" height="40" rx="3" fill="var(--shu)"/>
+      <text x="710.8" y="74" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)" font-weight="500">3回目</text>
+      <text x="710.8" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">築36〜45年</text>
+      <line x1="702.8" y1="40" x2="702.8" y2="84" stroke="var(--shu)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <line x1="702.8" y1="84" x2="702.8" y2="124" stroke="var(--surface)" stroke-width="2"/>
+      <line x1="702.8" y1="124" x2="702.8" y2="182" stroke="var(--shu)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="702.8" y="30" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--shu)" font-weight="500">築40年 ＝ 3回目の途中</text>
+      <line x1="66" y1="168" x2="862" y2="168" stroke="var(--rule)"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="middle">
+      <line x1="66.0" y1="168" x2="66.0" y2="174" stroke="var(--rule)"/>
+      <text x="66.0" y="190">築0年</text>
+      <line x1="225.2" y1="168" x2="225.2" y2="174" stroke="var(--rule)"/>
+      <text x="225.2" y="190">築10年</text>
+      <line x1="384.4" y1="168" x2="384.4" y2="174" stroke="var(--rule)"/>
+      <text x="384.4" y="190">築20年</text>
+      <line x1="543.6" y1="168" x2="543.6" y2="174" stroke="var(--rule)"/>
+      <text x="543.6" y="190">築30年</text>
+      <line x1="702.8" y1="168" x2="702.8" y2="174" stroke="var(--rule)"/>
+      <text x="702.8" y="190">築40年</text>
+      <line x1="862.0" y1="168" x2="862.0" y2="174" stroke="var(--rule)"/>
+      <text x="862.0" y="190">築50年</text>
+      </g>
+      <path d="M 66 218 L 66 212 L 543.6 212 L 543.6 218" fill="none" stroke="var(--ai)" stroke-width="1.5"/>
+      <text x="304.8" y="234" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ai)">長期修繕計画は「30年以上かつ大規模修繕2回以上」を含む期間で作成</text>
+      </svg>
+      <div class="chart-foot">出典：国土交通省「<a href="https://www.mlit.go.jp/jutakukentiku/house/content/001747006.pdf" target="_blank" rel="noopener">長期修繕計画標準様式・長期修繕計画作成ガイドライン</a>」（平成20年6月／令和6年6月改定）。周期は部材や仕様により異なる目安であり、すべてのマンションに一律に当てはまる数字ではありません。</div>
+    </div>
+  </section>
+
+  <!-- ===== 築40年超ストック ===== -->
+  <section id="stock">
+    <h2><span class="idx">Fig. 4</span>築40年を超えた分譲マンションの住戸数</h2>
+    <p class="lede">築40年を超えた分譲マンションの住戸数。●ひとつが5万戸です。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>マンションを巡る現状</strong>　2025年8月5日公表</span></div>
+      <svg viewBox="0 0 900 340" role="img" aria-label="築40年超の分譲マンション住戸数。2024年末は148.0万戸、2034年末は293.2万戸、2044年末は482.9万戸。">
+      <text x="51.8" y="24" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">2024年末<tspan fill="var(--ai)">　実績</tspan></text>
+      <text x="51.8" y="60" font-family="IBM Plex Mono, monospace" font-size="30" font-weight="600" letter-spacing="-1" fill="var(--ink)">148.0<tspan font-size="14" font-weight="500" fill="var(--ink2)">万戸</tspan></text>
+      <circle cx="59.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="83.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="107.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="131.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="155.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="179.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="203.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="227.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="251.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="275.2" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="59.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="83.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="107.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="131.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="155.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="179.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="203.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="227.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="251.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="275.2" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="59.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="83.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="107.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="131.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="155.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="179.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="203.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="227.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="251.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="275.2" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="59.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="228" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="204" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="59.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="83.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="107.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="131.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="155.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="179.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="203.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="227.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="251.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="275.2" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <text x="334.5" y="24" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">2034年末<tspan fill="var(--ai)">　見通し</tspan></text>
+      <text x="334.5" y="60" font-family="IBM Plex Mono, monospace" font-size="30" font-weight="600" letter-spacing="-1" fill="var(--ink)">293.2<tspan font-size="14" font-weight="500" fill="var(--ink2)">万戸</tspan></text>
+      <circle cx="342.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="342.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="342.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="342.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="342.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="342.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="366.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="390.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="414.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="438.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="462.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="486.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="510.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="534.0" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="558.0" cy="180" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="342.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="366.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="390.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="414.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="438.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="462.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="486.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="510.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="534.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="558.0" cy="156" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="342.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="366.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="390.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="414.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="438.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="462.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="486.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="510.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="534.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="558.0" cy="132" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="342.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="366.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="390.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="414.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="438.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="462.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="486.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="510.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="534.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="558.0" cy="108" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="342.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="366.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="390.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="414.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="438.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="462.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="486.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="510.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="534.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="558.0" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <text x="617.2" y="24" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">2044年末<tspan fill="var(--ai)">　見通し</tspan></text>
+      <text x="617.2" y="60" font-family="IBM Plex Mono, monospace" font-size="30" font-weight="600" letter-spacing="-1" fill="var(--ink)">482.9<tspan font-size="14" font-weight="500" fill="var(--ink2)">万戸</tspan></text>
+      <circle cx="624.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="300" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="276" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="252" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="228" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="204" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="180" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="156" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="132" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="816.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="840.8" cy="108" r="7.5" fill="var(--shu)"/>
+      <circle cx="624.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="648.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="672.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="696.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="720.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="744.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="768.8" cy="84" r="7.5" fill="var(--shu)"/>
+      <circle cx="792.8" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="816.8" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <circle cx="840.8" cy="84" r="7.5" fill="var(--rule-soft)"/>
+      <text x="51.8" y="332" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">● ひとつ＝5万戸　　塗りつぶし＝築40年超の住戸</text>
+      </svg>
+      <div class="chart-foot">出典：国土交通省「マンションを巡る現状」（2025年8月5日公表）。2034年末・2044年末は国土交通省による見通しであり、当社の予測ではありません。</div>
+    </div>
+    <div class="figgrid">
+      <div class="keynum">
+        <span class="k">Now</span>
+        <div class="v">148<small>万戸</small></div>
+        <p>2024年末の実績。分譲マンション全ストック 713.1万戸の <strong>20.8%</strong> が築40年を超えています。</p>
+      </div>
+      <div class="keynum hi">
+        <span class="k">+20 years</span>
+        <div class="v">482.9<small>万戸</small></div>
+        <p>2044年末の見通し。20年で <strong>3.26倍</strong>。1世帯2.2人で換算すると1,000万人を超える規模です。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">Pace</span>
+        <div class="v"><span id="mansion2">0</span><small>戸</small></div>
+        <p>今年ここまでに築40年を超えた住戸（推計）。<span id="mansionRate2">—</span>のペースです。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 都道府県タイルマップ ===== -->
+  <section id="map">
+    <h2><span class="idx">Fig. 5</span>都道府県別　分譲マンションの着工戸数（1988〜2001年度）</h2>
+    <p class="lede">1988〜2001年度に着工した分譲マンション（共同住宅・鉄筋コンクリート造・分譲住宅）の戸数です。2026年時点で築25〜38年、Fig.3 の2回目から3回目の周期にあたります。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>住宅着工統計調査</strong>　e-Stat API 取得・2026-09-06</span></div>
+      <svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の分譲マンション着工戸数タイルマップ。東京都297,723戸、神奈川県228,399戸、大阪府130,681戸、兵庫県120,380戸、埼玉県119,384戸 の順に多い。">
+      <text x="30" y="18" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" letter-spacing="1">単位：千戸　　少ない ← → 多い</text>
+      <rect x="30" y="28" width="49" height="14" fill="var(--b0)"/>
+      <rect x="82" y="28" width="49" height="14" fill="var(--b1)"/>
+      <rect x="134" y="28" width="49" height="14" fill="var(--b2)"/>
+      <rect x="186" y="28" width="49" height="14" fill="var(--b3)"/>
+      <rect x="238" y="28" width="49" height="14" fill="var(--b4)"/>
+      <rect x="290" y="28" width="49" height="14" fill="var(--b5)"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">
+      <text x="30" y="56">0</text>
+      <text x="82" y="56" text-anchor="middle">3</text>
+      <text x="134" y="56" text-anchor="middle">5</text>
+      <text x="186" y="56" text-anchor="middle">7</text>
+      <text x="238" y="56" text-anchor="middle">12</text>
+      <text x="290" y="56" text-anchor="middle">85</text>
+      </g>
+      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">北海</text>
+      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">67</text>
+      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">青森</text>
+      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
+      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">秋田</text>
+      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
+      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">岩手</text>
+      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
+      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">山形</text>
+      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">3</text>
+      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">宮城</text>
+      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">26</text>
+      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">石川</text>
+      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
+      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">富山</text>
+      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
+      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">新潟</text>
+      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
+      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">福島</text>
+      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
+      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">島根</text>
+      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
+      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">鳥取</text>
+      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
+      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">兵庫</text>
+      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">120</text>
+      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">京</text>
+      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">35</text>
+      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">福井</text>
+      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
+      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">岐阜</text>
+      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
+      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">長野</text>
+      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
+      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">群馬</text>
+      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
+      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">栃木</text>
+      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
+      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">茨城</text>
+      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">10</text>
+      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">山口</text>
+      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
+      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">広島</text>
+      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">30</text>
+      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岡山</text>
+      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">9</text>
+      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">大阪</text>
+      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">131</text>
+      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">滋賀</text>
+      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">14</text>
+      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">三重</text>
+      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
+      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">愛知</text>
+      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">85</text>
+      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">山梨</text>
+      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
+      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">埼玉</text>
+      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">119</text>
+      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">千葉</text>
+      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">107</text>
+      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)"/>
+      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">福岡</text>
+      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">88</text>
+      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">愛媛</text>
+      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4</text>
+      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">香川</text>
+      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
+      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">和歌</text>
+      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
+      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">奈良</text>
+      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">25</text>
+      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">静岡</text>
+      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">27</text>
+      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">神奈</text>
+      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">228</text>
+      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">東京</text>
+      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">298</text>
+      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">佐賀</text>
+      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
+      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">長崎</text>
+      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
+      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">大分</text>
+      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
+      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">高知</text>
+      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
+      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b0)"/>
+      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">徳島</text>
+      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
+      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)"/>
+      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">熊本</text>
+      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">11</text>
+      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b1)"/>
+      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">宮崎</text>
+      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
+      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b2)"/>
+      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">鹿児</text>
+      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
+      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)"/>
+      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">沖縄</text>
+      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">12</text>
+      <text x="30" y="778" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">太枠＝東京・神奈・埼玉・千葉（一都三県）</text>
+      </svg>
+      <div class="chart-foot">
+        <a href="https://www.e-stat.go.jp/dbview?sid=0003119736" target="_blank" rel="noopener">e-Stat statsDataId=0003119736</a>　建て方＝共同住宅／構造＝鉄筋コンクリート造／利用関係＝分譲住宅／表章項目＝戸数<br>
+        全国値 1,560,831 戸に対し、47都道府県の合計は差 0 戸で一致します。
+      </div>
+    </div>
+    <div class="figgrid">
+      <div class="keynum">
+        <span class="k">National</span>
+        <div class="v">1,560,831<small>戸</small></div>
+        <p>1988〜2001年度の全国合計。2026年時点で築25〜38年です。</p>
+      </div>
+      <div class="keynum hi">
+        <span class="k">一都三県</span>
+        <div class="v">48.2<small>%</small></div>
+        <p>東京・神奈川・埼玉・千葉の合計 752,756 戸。全国の約半分がこの4都県に集まっています。</p>
+      </div>
+      <div class="keynum">
+        <span class="k">最多</span>
+        <div class="v">297,723<small>戸</small></div>
+        <p>東京都。次いで神奈川県、大阪府、兵庫県、埼玉県の順です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 秒進行カウンター ===== -->
+  <div class="counters">
+    <div class="dial">
+      <span class="label">Counter 01</span>
+      <span class="jplabel">今年ここまでの<br>全建築物 着工床面積</span>
+      <span class="val"><span id="area">0</span><small>m²</small></span>
+      <span class="foot" id="rate">—</span>
+    </div>
+    <div class="dial">
+      <span class="label">Counter 02</span>
+      <span class="jplabel">今年、築40年を超えた<br>分譲マンションの住戸</span>
+      <span class="val"><span id="mansion">0</span><small>戸</small></span>
+      <span class="foot" id="mansionRate">—</span>
+    </div>
+    <div class="dial">
+      <span class="label">Equivalent</span>
+      <span class="jplabel">同上を東京ドーム<br>（46,755 m²）で割ると</span>
+      <span class="val"><span id="dome">0</span><small>個分</small></span>
+      <span class="foot" id="today">—</span>
+    </div>
+    <div class="dial">
+      <span class="label">Elapsed</span>
+      <span class="jplabel">2026年の経過</span>
+      <span class="val"><span id="pct">0.0</span><small>%</small></span>
+      <span class="foot" id="daysLeft">—</span>
+    </div>
+  </div>
+  <div class="caveat">
+    <span class="flag">過大側</span>
+    <span>カウンターは<strong>2023年度の確定値のペース</strong>で進めています。着工床面積はピーク（2006年度）から42%減る一貫した減少傾向にあるため、<strong>2026年の実績はこの表示を下回る可能性が高い</strong>と考えられます。誤差の向きを先に示しておきます。</span>
+  </div>
+
+  <!-- ===== エクスプローラ ===== -->
+  <section id="explorer">
+    <h2><span class="idx">Explorer</span>工事種別ごとの建設工事費デフレーター</h2>
+    <p class="lede">建設工事費デフレーター（2020年度＝100）の月次系列です。行をクリックするとグラフに重なります（最大5系列）。列見出しをクリックすると並べ替わります。改装・改修工事は「建築補修」の行です。</p>
+
+    <div class="explorer">
+      <div class="exp-chart" id="chartWrap">
+        <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>建設工事費デフレーター</strong>　2020年度＝100・e-Stat API 取得・2026-09-06</span></div>
+        <svg id="chart" viewBox="0 0 960 380" role="img" aria-labelledby="chartTitle"><title id="chartTitle">建設工事費デフレーターの月次推移</title></svg>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="exp-hint">
+        <span>行をクリックで系列を追加／解除</span>
+        <span>選択中 <span class="n" id="selCount">0</span> / 5</span>
+        <span id="rangeLabel"></span>
+      </div>
+      <div class="exp-table">
+        <table>
+          <thead><tr>
+            <th data-k="name">工事種別<span class="ar">↕</span></th>
+            <th data-k="last">2026年6月<span class="ar">↕</span></th>
+            <th data-k="mom">前月比<span class="ar">↕</span></th>
+            <th data-k="yoy">前年同月比<span class="ar">↕</span></th>
+            <th data-k="base">基準年比<span class="ar">↕</span></th>
+            <th data-k="ten">2016年4月比<span class="ar">↕</span></th>
+            <th class="sparkcell">10年の推移</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="exp-foot">
+        出典：国土交通省「建設工事費デフレーター」2020年度＝100／<a href="https://www.e-stat.go.jp/dbview?sid=0004055083" target="_blank" rel="noopener">e-Stat statsDataId=0004055083</a>　表章項目「建設工事費デフレーター」（後方3ヶ月平均値ではない方）　取得日 2026-09-06
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 着工床面積 ===== -->
+  <section id="starts">
+    <h2><span class="idx">Fig. 6</span>建築物着工床面積の推移（年度別）</h2>
+    <p class="lede">建築物着工統計の年度別床面積、全国・全用途・全構造。ピークは2006年度の1.88億m²、2023年度は1.08億m²です。棒にカーソルを重ねると実数が出ます。</p>
+    <div class="chartbox">
+      <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>建築着工統計調査</strong>　e-Stat API 取得・2026-09-06</span></div>
+      <svg viewBox="0 0 900 340" role="img" aria-label="建築物着工床面積の年度別推移。2003年度1.77億平方メートルから2006年度のピーク1.88億平方メートルを経て、2023年度は1.08億平方メートル。">
+      <g stroke="var(--rule-soft)" stroke-width="1" fill="none">
+      <line x1="80" y1="226.0" x2="872" y2="226.0"/>
+      <line x1="80" y1="164.0" x2="872" y2="164.0"/>
+      <line x1="80" y1="102.0" x2="872" y2="102.0"/>
+      <line x1="80" y1="40.0" x2="872" y2="40.0"/>
+      </g>
+      <line x1="80" y1="288" x2="872" y2="288" stroke="var(--rule)" stroke-width="1"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)" text-anchor="end">
+      <text x="68" y="292.0">0</text>
+      <text x="68" y="230.0">50</text>
+      <text x="68" y="168.0">100</text>
+      <text x="68" y="106.0">150</text>
+      <text x="68" y="44.0">200</text>
+      </g>
+      <text x="80" y="22" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" letter-spacing="1">百万m²</text>
+      <path class="bar" d="M 81.5 288 L 81.5 73.1 Q 81.5 69.1 85.5 69.1 L 112.2 69.1 Q 116.2 69.1 116.2 73.1 L 116.2 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 119.2 288 L 119.2 65.4 Q 119.2 61.4 123.2 61.4 L 149.9 61.4 Q 153.9 61.4 153.9 65.4 L 153.9 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 156.9 288 L 156.9 61.8 Q 156.9 57.8 160.9 57.8 L 187.6 57.8 Q 191.6 57.8 191.6 61.8 L 191.6 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 194.6 288 L 194.6 59.4 Q 194.6 55.4 198.6 55.4 L 225.4 55.4 Q 229.4 55.4 229.4 59.4 L 229.4 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 232.4 288 L 232.4 97.0 Q 232.4 93.0 236.4 93.0 L 263.1 93.0 Q 267.1 93.0 267.1 97.0 L 267.1 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 270.1 288 L 270.1 104.3 Q 270.1 100.3 274.1 100.3 L 300.8 100.3 Q 304.8 100.3 304.8 104.3 L 304.8 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 307.8 288 L 307.8 151.6 Q 307.8 147.6 311.8 147.6 L 338.5 147.6 Q 342.5 147.6 342.5 151.6 L 342.5 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 345.5 288 L 345.5 140.4 Q 345.5 136.4 349.5 136.4 L 376.2 136.4 Q 380.2 136.4 380.2 140.4 L 380.2 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 383.2 288 L 383.2 134.2 Q 383.2 130.2 387.2 130.2 L 413.9 130.2 Q 417.9 130.2 417.9 134.2 L 417.9 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 420.9 288 L 420.9 124.0 Q 420.9 120.0 424.9 120.0 L 451.6 120.0 Q 455.6 120.0 455.6 124.0 L 455.6 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 458.6 288 L 458.6 107.7 Q 458.6 103.7 462.6 103.7 L 489.4 103.7 Q 493.4 103.7 493.4 107.7 L 493.4 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 496.4 288 L 496.4 129.8 Q 496.4 125.8 500.4 125.8 L 527.1 125.8 Q 531.1 125.8 531.1 129.8 L 531.1 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 534.1 288 L 534.1 131.5 Q 534.1 127.5 538.1 127.5 L 564.8 127.5 Q 568.8 127.5 568.8 131.5 L 568.8 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 571.8 288 L 571.8 125.6 Q 571.8 121.6 575.8 121.6 L 602.5 121.6 Q 606.5 121.6 606.5 125.6 L 606.5 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 609.5 288 L 609.5 127.0 Q 609.5 123.0 613.5 123.0 L 640.2 123.0 Q 644.2 123.0 644.2 127.0 L 644.2 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 647.2 288 L 647.2 129.5 Q 647.2 125.5 651.2 125.5 L 677.9 125.5 Q 681.9 125.5 681.9 129.5 L 681.9 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 684.9 288 L 684.9 137.1 Q 684.9 133.1 688.9 133.1 L 715.6 133.1 Q 719.6 133.1 719.6 137.1 L 719.6 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 722.6 288 L 722.6 150.3 Q 722.6 146.3 726.6 146.3 L 753.4 146.3 Q 757.4 146.3 757.4 150.3 L 757.4 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 760.4 288 L 760.4 140.1 Q 760.4 136.1 764.4 136.1 L 791.1 136.1 Q 795.1 136.1 795.1 140.1 L 795.1 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 798.1 288 L 798.1 144.8 Q 798.1 140.8 802.1 140.8 L 828.8 140.8 Q 832.8 140.8 832.8 144.8 L 832.8 288 Z" fill="var(--ai)"/>
+      <path class="bar" d="M 835.8 288 L 835.8 157.7 Q 835.8 153.7 839.8 153.7 L 866.5 153.7 Q 870.5 153.7 870.5 157.7 L 870.5 288 Z" fill="var(--shu)"/>
+      <text x="212.0" y="45.4" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="500" fill="var(--ink)">1.88億</text>
+      <text x="870.5" y="143.7" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="500" fill="var(--shu)">1.08億</text>
+      <g font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">
+      <text x="80.0" y="310" text-anchor="start">2003</text>
+      <text x="287.4" y="310" text-anchor="middle">2008</text>
+      <text x="476.0" y="310" text-anchor="middle">2013</text>
+      <text x="664.6" y="310" text-anchor="middle">2018</text>
+      <text x="872.0" y="310" text-anchor="end">2023</text>
+      <text x="872.0" y="310" text-anchor="end">2023</text>
+      </g>
+      <text x="80" y="332" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)">年度　　■ 最新年度（2023年度）　棒にカーソルを重ねると実数が出ます</text>
+      <g class="hits">
+      <rect class="barhit" x="80.0" y="40" width="37.7" height="248" fill="transparent" data-y="2003年度" data-v="176,532,917"/>
+      <rect class="barhit" x="117.7" y="40" width="37.7" height="248" fill="transparent" data-y="2004年度" data-v="182,774,003"/>
+      <rect class="barhit" x="155.4" y="40" width="37.7" height="248" fill="transparent" data-y="2005年度" data-v="185,680,730"/>
+      <rect class="barhit" x="193.1" y="40" width="37.7" height="248" fill="transparent" data-y="2006年度" data-v="187,614,047"/>
+      <rect class="barhit" x="230.9" y="40" width="37.7" height="248" fill="transparent" data-y="2007年度" data-v="157,221,530"/>
+      <rect class="barhit" x="268.6" y="40" width="37.7" height="248" fill="transparent" data-y="2008年度" data-v="151,393,221"/>
+      <rect class="barhit" x="306.3" y="40" width="37.7" height="248" fill="transparent" data-y="2009年度" data-v="113,196,104"/>
+      <rect class="barhit" x="344.0" y="40" width="37.7" height="248" fill="transparent" data-y="2010年度" data-v="122,283,007"/>
+      <rect class="barhit" x="381.7" y="40" width="37.7" height="248" fill="transparent" data-y="2011年度" data-v="127,292,010"/>
+      <rect class="barhit" x="419.4" y="40" width="37.7" height="248" fill="transparent" data-y="2012年度" data-v="135,454,057"/>
+      <rect class="barhit" x="457.1" y="40" width="37.7" height="248" fill="transparent" data-y="2013年度" data-v="148,635,889"/>
+      <rect class="barhit" x="494.9" y="40" width="37.7" height="248" fill="transparent" data-y="2014年度" data-v="130,790,921"/>
+      <rect class="barhit" x="532.6" y="40" width="37.7" height="248" fill="transparent" data-y="2015年度" data-v="129,424,092"/>
+      <rect class="barhit" x="570.3" y="40" width="37.7" height="248" fill="transparent" data-y="2016年度" data-v="134,186,801"/>
+      <rect class="barhit" x="608.0" y="40" width="37.7" height="248" fill="transparent" data-y="2017年度" data-v="133,029,356"/>
+      <rect class="barhit" x="645.7" y="40" width="37.7" height="248" fill="transparent" data-y="2018年度" data-v="131,079,408"/>
+      <rect class="barhit" x="683.4" y="40" width="37.7" height="248" fill="transparent" data-y="2019年度" data-v="124,932,929"/>
+      <rect class="barhit" x="721.1" y="40" width="37.7" height="248" fill="transparent" data-y="2020年度" data-v="114,299,670"/>
+      <rect class="barhit" x="758.9" y="40" width="37.7" height="248" fill="transparent" data-y="2021年度" data-v="122,467,980"/>
+      <rect class="barhit" x="796.6" y="40" width="37.7" height="248" fill="transparent" data-y="2022年度" data-v="118,722,364"/>
+      <rect class="barhit" x="834.3" y="40" width="37.7" height="248" fill="transparent" data-y="2023年度" data-v="108,315,608"/>
+      </g>
+      </svg>
+      <div class="tip" id="tip3"></div>
+      <div class="chart-foot">
+        出典：国土交通省「建築着工統計調査」建築物着工統計 時系列表（年度次）／
+        <a href="https://www.e-stat.go.jp/dbview?sid=0003119730" target="_blank" rel="noopener">e-Stat statsDataId=0003119730</a>　全国・用途「計」・構造「計」・表章項目「床面積の合計」<br>
+        取得日 2026-09-06　API提供の最新年度は2023年度（それより後はDB未提供）
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Method ===== -->
+  <section id="method">
+    <h2><span class="idx">Method</span>算式・基準値・再現手順</h2>
+    <p class="lede">独自の加重や補正は置いていません。公表統計をこの式で按分・換算しただけの数字です。下表の値と取得日があれば、誰でも同じ結果を再現できます。</p>
+
+    <div class="formula">
+      <b>Counter 01</b> ＝ ( A ÷ 31,536,000 秒 ) × 2026年1月1日 00:00 JST からの経過秒<br>
+      <b>Counter 02</b> ＝ ( ( C − B ) ÷ 10年 ÷ 31,536,000 秒 ) × 同上経過秒<br>
+      <b>金額換算</b> ＝ 当時の金額 × ( 2026年6月の指数 ÷ 比較時点の指数 )
+    </div>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>記号</th><th>内容</th><th>値</th><th>出所</th><th>状態</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="sym">P</td>
+            <td>建設工事費デフレーター「建築補修」（2026年6月）</td>
+            <td class="num">127.2</td>
+            <td><a href="https://www.e-stat.go.jp/dbview?sid=0004055083" target="_blank" rel="noopener">e-Stat API statsDataId=0004055083</a></td>
+            <td><span class="tag ok">API直取得</span></td>
+          </tr>
+          <tr>
+            <td class="sym">A</td>
+            <td>全建築物の年度着工床面積（2023年度・確定値）</td>
+            <td class="num">108,315,608 m²</td>
+            <td><a href="https://www.e-stat.go.jp/dbview?sid=0003119730" target="_blank" rel="noopener">e-Stat API statsDataId=0003119730</a></td>
+            <td><span class="tag ok">API直取得</span></td>
+          </tr>
+          <tr>
+            <td class="sym">B</td>
+            <td>築40年超の分譲マンション戸数（2024年末）</td>
+            <td class="num">1,480,000 戸</td>
+            <td><a href="https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk5_000058.html" target="_blank" rel="noopener">国交省「マンションに関する統計・データ等」</a></td>
+            <td><span class="tag est">一次資料未突合</span></td>
+          </tr>
+          <tr>
+            <td class="sym">C</td>
+            <td>同（2034年末 見通し）</td>
+            <td class="num">2,932,000 戸</td>
+            <td>同上</td>
+            <td><span class="tag est">一次資料未突合</span></td>
+          </tr>
+          <tr>
+            <td class="sym">D</td>
+            <td>東京ドーム建築面積（換算用）</td>
+            <td class="num">46,755 m²</td>
+            <td>東京ドーム公表値</td>
+            <td><span class="tag est">一次資料未突合</span></td>
+          </tr>
+          <tr>
+            <td class="sym">—</td>
+            <td>年内の月変動（季節性）</td>
+            <td class="num">考慮しない</td>
+            <td>年度値を秒数で均等按分</td>
+            <td><span class="tag est">推計・単純化</span></td>
+          </tr>
+          <tr>
+            <td class="sym">—</td>
+            <td>2023年度より後の着工実績</td>
+            <td class="num">未反映</td>
+            <td>e-Stat のDB提供が2023年度までのため</td>
+            <td><span class="tag est">取得不可</span></td>
+          </tr>
+          <tr>
+            <td class="sym">検算</td>
+            <td>構造別の合計と「計」の差（2023年度）</td>
+            <td class="num">978,731 m²</td>
+            <td>木造＋RC＋SRC＋S を「計」から引いた残り＝コンクリートブロック造・その他</td>
+            <td><span class="tag ok">整合</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cite">
+      <h3>引用・再現のために</h3>
+      <div class="row">このページの数値は、e-Stat の API を叩けばそのまま再現できます。指数の系列を取り出す呼び出しは次のとおりです（<code>APPID</code> はご自身のもの）。</div>
+      <pre>https://api.e-stat.go.jp/rest/3.0/app/json/getStatsData
+  ?appId=APPID
+  &amp;statsDataId=0004055083
+  &amp;cdTab=100          # 表章項目：建設工事費デフレーター
+  &amp;cdCat01=260        # 工事種別：建設総合_建築補修</pre>
+      <div class="row"><strong>引用表記の例</strong>（転載は出典明記のみで可。上の「転載について」を参照）</div>
+      <pre>株式会社第一技研「建設ストック時計」2026-09-06取得
+原典：国土交通省「建設工事費デフレーター」（2020年度＝100）
+　　　国土交通省「建築着工統計調査」
+　　　国土交通省「マンションを巡る現状」</pre>
+    </div>
+  </section>
+
+  <div class="notes">
+    <div>
+      <h3>このページの位置づけ</h3>
+      <p>公表統計の可視化のみを目的としています。特定の工事・発注時期・事業者を推奨するものではなく、統計の解釈や助言を提供するものでもありません。各数値の正確な定義は、それぞれの統計の原典をご確認ください。</p>
+    </div>
+    <div>
+      <h3>指数の読み方</h3>
+      <p>デフレーターは<strong>工事の物価</strong>を表す指数で、金額そのものではありません。2020年度＝100なので、127.2は基準年より27.2%高い水準という意味です。工事量の増減は含みません。</p>
+    </div>
+    <div>
+      <h3>カウンターの性質</h3>
+      <p>秒単位の数字は実測ではありません。年度の確定値を経過秒で割った<strong>按分推計</strong>であり、いま現場で実際に着工されている量ではありません。世界人口時計と同じ作りです。</p>
+    </div>
+    <div>
+      <h3>IR情報ではありません</h3>
+      <p>本ページは株式会社第一技研が公開する統計コンテンツです。親会社である株式会社ニッソウ（証券コード 1444）の IR 情報・適時開示ではなく、業績見通しを示すものでもありません。</p>
+    </div>
+    <div>
+      <h3>将来予測はしません</h3>
+      <p>掲載するのは公表済みの実績値と、統計作成者自身が公表した見通しのみです。当社独自の将来予測、および工事の発注時期を促す表現は掲載しません。基準改定時は接続せず断絶として扱います。</p>
+    </div>
+  </div>
+
+  <div class="license">
+    <b>Reuse ／ 転載について</b>
+    <strong>本ページの図表・数値は、出典の明記だけで自由に転載できます。</strong>
+    記事・資料・スライド・管理組合の総会資料などにご利用ください。事前のご連絡は不要です。
+    表記は「大規模修繕統計ビューア（株式会社第一技研）／原典：各図に記載の政府統計」で結構です。
+    加工・再集計も可能ですが、その場合は加工した旨を明記してください。
+    なお、原典である政府統計そのものの利用条件は各府省の定めに従ってください。
+  </div>
+
+  <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。</p>
+
+  <p class="colophon">試作 v0.3 ／ 基準値取得 2026-09-06（e-Stat API 3.0）／ 株式会社第一技研</p>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "大規模修繕統計ビューア",
+  "alternateName": "Japan Major Repair Statistics Viewer",
+  "description": "マンションの大規模修繕にかかわる日本の政府統計（建設工事費デフレーター「建築補修」、建築着工統計、住宅着工統計、マンション大規模修繕工事に関する実態調査、マンション総合調査）を、加工せず読める形へ並べ直した公開データページ。",
+  "inLanguage": "ja",
+  "dateModified": "2026-09-06",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": {
+    "@type": "Organization",
+    "name": "株式会社第一技研",
+    "url": "https://www.dai1giken.co.jp/"
+  },
+  "spatialCoverage": {"@type": "Country", "name": "日本"},
+  "temporalCoverage": "2016年4月/2026年6月",
+  "keywords": ["大規模修繕", "修繕積立金", "建設工事費デフレーター", "建築補修", "マンション", "分譲マンション", "建築着工統計", "工事費", "修繕周期"],
+  "variableMeasured": [
+    {"@type": "PropertyValue", "name": "建設工事費デフレーター（建築補修）", "value": "127.2", "unitText": "2020年度＝100", "measurementTechnique": "e-Stat API statsDataId=0004055083"},
+    {"@type": "PropertyValue", "name": "消費者物価指数（総合・全国）", "value": "113.6", "unitText": "2020年＝100", "measurementTechnique": "e-Stat API statsDataId=0003427113"},
+    {"@type": "PropertyValue", "name": "戸あたり工事金額（3回目以上・中央値・2026年6月換算）", "value": "123", "unitText": "万円／戸"},
+    {"@type": "PropertyValue", "name": "修繕積立金（月・戸あたり平均）", "value": "13,378", "unitText": "円"}
+  ],
+  "isBasedOn": [
+    "https://www.e-stat.go.jp/dbview?sid=0004055083",
+    "https://www.e-stat.go.jp/dbview?sid=0003427113",
+    "https://www.e-stat.go.jp/dbview?sid=0003119730",
+    "https://www.e-stat.go.jp/dbview?sid=0003119736",
+    "https://www.mlit.go.jp/jutakukentiku/house/content/001619430.pdf",
+    "https://www.mlit.go.jp/jutakukentiku/house/content/001750161.pdf"
+  ]
+}
+</script>
+<script id="basis" type="application/json">{"clock":{"annual_floor_area_m2":108315608,"b_2024":1480000,"c_2034":2932000,"dome_m2":46755},"deflator":{"months":["2016年4月","2016年5月","2016年6月","2016年7月","2016年8月","2016年9月","2016年10月","2016年11月","2016年12月","2017年1月","2017年2月","2017年3月","2017年4月","2017年5月","2017年6月","2017年7月","2017年8月","2017年9月","2017年10月","2017年11月","2017年12月","2018年1月","2018年2月","2018年3月","2018年4月","2018年5月","2018年6月","2018年7月","2018年8月","2018年9月","2018年10月","2018年11月","2018年12月","2019年1月","2019年2月","2019年3月","2019年4月","2019年5月","2019年6月","2019年7月","2019年8月","2019年9月","2019年10月","2019年11月","2019年12月","2020年1月","2020年2月","2020年3月","2020年4月","2020年5月","2020年6月","2020年7月","2020年8月","2020年9月","2020年10月","2020年11月","2020年12月","2021年1月","2021年2月","2021年3月","2021年4月","2021年5月","2021年6月","2021年7月","2021年8月","2021年9月","2021年10月","2021年11月","2021年12月","2022年1月","2022年2月","2022年3月","2022年4月","2022年5月","2022年6月","2022年7月","2022年8月","2022年9月","2022年10月","2022年11月","2022年12月","2023年1月","2023年2月","2023年3月","2023年4月","2023年5月","2023年6月","2023年7月","2023年8月","2023年9月","2023年10月","2023年11月","2023年12月","2024年1月","2024年2月","2024年3月","2024年4月","2024年5月","2024年6月","2024年7月","2024年8月","2024年9月","2024年10月","2024年11月","2024年12月","2025年1月","2025年2月","2025年3月","2025年4月","2025年5月","2025年6月","2025年7月","2025年8月","2025年9月","2025年10月","2025年11月","2025年12月","2026年1月","2026年2月","2026年3月","2026年4月","2026年5月","2026年6月"],"series":{"建築補修（改装・改修）":[92.9,92.5,92.8,93.5,92.7,92.5,93.3,93.8,92.9,93.1,93.7,93.9,94.2,94.3,94.1,94.0,94.7,94.8,95.2,95.3,95.6,94.7,95.6,95.9,96.0,97.0,98.2,99.9,95.9,97.4,97.4,96.5,99.4,98.1,97.7,98.0,98.5,98.7,98.7,99.6,99.2,100.4,100.5,100.3,102.1,101.0,100.7,100.8,99.9,99.0,101.2,99.7,99.9,99.6,99.7,99.4,100.1,100.2,100.8,100.2,101.0,101.5,100.3,102.2,103.1,104.2,105.0,105.4,104.8,106.7,107.1,107.8,108.7,108.3,110.9,109.0,110.5,109.8,112.2,114.1,112.8,113.1,112.8,113.8,113.6,113.7,113.9,113.8,114.9,114.7,115.8,115.3,114.8,115.6,115.6,117.0,117.7,119.8,119.1,120.1,119.4,119.3,119.6,121.0,121.2,120.1,121.1,119.8,121.3,121.4,122.3,125.9,121.9,122.2,122.1,122.6,123.6,123.5,123.6,125.7,126.9,127.6,127.2],"建設総合":[92.6,92.1,92.3,93.1,92.3,92.2,93.0,93.5,92.8,93.0,93.6,93.8,94.1,94.0,93.6,93.6,94.4,94.6,95.0,95.2,95.6,94.7,95.6,96.0,96.0,97.1,98.4,100.1,96.0,97.4,97.6,96.7,99.8,98.3,97.9,98.3,98.7,98.9,98.8,99.7,99.1,100.4,100.5,100.2,102.2,101.0,100.6,100.7,99.9,99.0,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.3,100.9,100.4,101.3,102.0,101.0,102.9,104.1,105.3,106.2,106.4,106.0,107.8,108.2,108.9,109.8,109.4,111.7,109.4,110.9,110.0,111.9,113.7,112.4,112.3,111.9,112.9,112.6,112.6,112.8,112.5,113.6,113.4,114.5,114.1,113.5,114.4,114.4,116.0,116.8,118.9,118.1,119.1,118.3,118.2,118.3,119.7,119.9,118.8,119.8,118.5,120.1,120.1,121.1,124.7,120.7,121.1,121.0,121.5,122.6,122.5,122.5,124.5,125.7,126.4,125.9],"建築総合":[92.9,92.4,92.6,93.3,92.6,92.5,93.2,93.8,92.9,93.1,93.8,93.9,94.3,94.2,93.9,93.9,94.5,94.8,95.2,95.3,95.7,94.8,95.7,96.2,96.3,97.2,98.4,100.2,96.1,97.6,97.7,96.7,99.8,98.4,97.9,98.4,98.8,99.0,99.0,99.7,99.1,100.4,100.5,100.3,102.1,101.0,100.6,100.7,100.0,99.1,101.2,99.6,99.8,99.5,99.7,99.4,100.1,100.2,100.8,100.4,101.4,102.3,101.8,104.1,105.6,107.2,108.3,108.5,108.2,109.9,110.2,111.0,111.8,111.6,113.7,111.5,112.8,111.8,113.4,115.1,113.7,113.4,112.9,113.7,113.3,113.3,113.4,113.1,114.0,113.8,114.9,114.5,114.0,114.9,114.9,116.4,117.2,119.2,118.3,119.3,118.6,118.4,118.5,119.9,120.1,119.0,119.9,118.7,120.5,120.5,121.4,124.9,121.1,121.4,121.3,121.9,122.9,122.7,122.8,124.6,125.7,126.4,126.0],"住宅総合":[93.3,92.7,93.0,93.7,93.0,92.8,93.6,94.0,93.3,93.5,94.1,94.3,94.7,94.6,94.2,94.2,94.9,95.1,95.5,95.6,96.0,95.0,95.9,96.5,96.5,97.4,98.7,100.4,96.3,97.7,97.8,96.8,99.9,98.4,98.1,98.4,98.9,99.1,99.1,99.8,99.3,100.6,100.5,100.2,102.2,101.0,100.7,100.8,100.0,99.1,101.1,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.9,100.6,101.7,103.0,103.1,105.9,107.8,109.9,111.2,111.4,111.1,112.7,113.0,113.7,114.7,114.6,116.7,114.5,115.6,114.4,115.8,117.3,115.8,115.2,114.4,115.0,114.4,114.3,114.2,113.8,114.6,114.5,115.5,115.1,114.6,115.6,115.5,116.9,117.6,119.6,118.7,119.7,119.0,118.9,118.8,120.0,120.3,119.2,120.2,119.0,120.8,120.8,121.6,125.1,121.5,121.9,121.9,122.4,123.5,123.3,123.2,125.2,126.3,127.1,126.9],"木造住宅":[93.8,93.2,93.4,94.2,93.4,93.3,94.1,94.6,93.6,93.8,94.5,94.6,95.0,94.8,94.5,94.5,95.1,95.3,95.7,95.8,96.0,95.0,96.0,96.5,96.4,97.5,98.7,100.4,96.0,97.5,97.5,96.6,99.9,98.3,97.9,98.3,98.7,98.9,98.9,99.7,99.1,100.5,100.4,100.0,102.1,101.0,100.5,100.7,100.1,99.3,101.2,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.8,100.5,101.8,103.5,104.0,107.2,109.5,112.0,113.4,113.5,113.2,114.8,115.1,115.7,116.9,116.8,118.9,116.5,117.5,115.9,117.0,118.4,116.7,115.9,114.9,115.3,114.6,114.3,114.2,113.6,114.4,114.2,115.4,115.0,114.4,115.4,115.3,116.7,117.3,119.3,118.3,119.4,118.6,118.5,118.3,119.4,119.7,118.7,119.7,118.4,120.4,120.4,121.2,124.8,121.2,121.7,121.6,122.2,123.2,123.1,123.0,124.8,125.9,126.7,126.7],"非木造住宅":[92.5,92.1,92.3,93.0,92.2,92.2,92.8,93.4,92.7,93.0,93.6,93.9,94.3,94.1,93.8,93.8,94.5,94.7,95.1,95.3,95.7,94.9,95.8,96.3,96.4,97.3,98.5,100.1,96.3,97.8,97.9,97.1,99.8,98.5,98.1,98.6,99.0,99.2,99.1,99.8,99.3,100.5,100.6,100.4,102.2,101.1,100.7,100.8,99.9,98.9,101.0,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.7,101.6,102.4,101.8,103.9,105.3,106.9,108.1,108.4,108.0,109.8,110.1,110.9,111.9,111.7,113.9,111.9,113.2,112.3,114.2,115.8,114.5,114.2,113.7,114.6,114.2,114.1,114.3,114.0,115.0,114.8,115.7,115.3,114.9,115.7,115.8,117.3,118.1,120.1,119.3,120.3,119.6,119.4,119.6,120.8,121.1,120.0,120.9,119.8,121.4,121.3,122.2,125.5,121.9,122.3,122.2,122.8,123.8,123.6,123.6,125.6,126.8,127.6,127.3],"住宅・鉄骨鉄筋コンクリート造":[92.8,92.3,92.6,93.3,92.5,92.3,93.1,93.6,92.9,93.1,93.7,93.9,94.4,94.3,93.9,93.9,94.7,94.8,95.3,95.5,95.9,95.0,95.9,96.3,96.4,97.5,98.8,100.5,96.4,97.8,97.9,97.1,100.1,98.5,98.2,98.6,99.1,99.2,99.1,100.0,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.1,99.7,99.9,99.6,99.6,99.3,100.0,100.3,100.9,100.5,101.7,102.2,101.1,102.9,103.8,105.0,105.8,106.1,105.6,107.3,107.7,108.5,109.6,109.2,111.5,109.2,110.6,109.9,111.8,113.5,112.3,112.2,111.9,112.9,112.7,112.8,112.9,112.8,113.9,113.5,114.5,114.0,113.5,114.5,114.6,116.3,117.5,119.7,118.8,119.8,118.8,118.6,118.9,120.2,120.4,119.5,120.3,119.2,120.8,120.9,121.9,125.4,121.3,121.7,121.5,122.2,123.3,123.5,123.5,125.5,126.7,127.5,127.0],"住宅・鉄筋コンクリート造":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.4,92.5,93.3,93.6,94.0,93.8,93.5,93.5,94.2,94.5,94.9,95.1,95.5,94.6,95.5,96.1,96.2,97.3,98.6,100.4,96.1,97.7,97.8,96.9,100.1,98.4,98.0,98.5,98.9,99.1,99.1,99.8,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.8,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.3,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.3,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"住宅・鉄骨造":[93.1,92.8,93.0,93.6,92.9,92.7,93.3,93.8,93.2,93.6,94.1,94.4,94.7,94.6,94.3,94.4,94.9,95.1,95.5,95.7,96.1,95.4,96.2,96.6,96.7,97.5,98.5,99.9,96.7,98.0,98.1,97.4,99.6,98.6,98.2,98.8,99.2,99.3,99.2,99.6,99.3,100.3,100.7,100.6,101.9,101.0,100.7,100.8,99.9,99.0,100.7,99.6,99.7,99.6,99.6,99.5,100.1,100.3,101.0,101.0,101.9,102.8,102.8,105.2,106.9,108.9,110.5,110.9,110.7,112.3,112.7,113.5,114.7,114.8,116.8,115.3,116.3,115.5,117.2,118.5,117.3,116.9,116.3,116.9,116.5,116.2,116.3,116.0,116.8,116.9,117.6,117.3,116.8,117.6,117.6,119.0,119.8,121.5,120.8,121.7,121.1,121.0,121.3,122.4,122.6,121.5,122.3,121.5,123.1,123.0,123.6,126.4,123.3,123.7,123.7,124.2,125.0,124.6,124.9,126.5,127.8,128.9,128.8],"非住宅総合":[92.4,91.9,92.2,92.9,92.2,92.0,92.7,93.3,92.6,92.7,93.4,93.6,93.9,93.8,93.4,93.5,94.1,94.3,94.9,95.0,95.4,94.6,95.4,95.9,96.0,96.8,98.1,99.9,95.9,97.4,97.5,96.6,99.7,98.3,97.8,98.3,98.7,98.8,98.7,99.5,98.9,100.3,100.5,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.4,100.3,102.1,103.0,104.1,104.9,105.1,104.8,106.6,106.8,107.6,108.4,108.0,110.2,108.0,109.5,108.7,110.7,112.4,111.2,111.3,111.2,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.2,113.8,113.2,114.1,114.1,115.7,116.7,118.6,117.8,118.8,118.0,117.9,118.2,119.7,119.8,118.7,119.6,118.4,120.0,120.1,121.2,124.6,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・非木造":[92.3,91.8,92.1,92.8,92.1,91.9,92.7,93.2,92.5,92.7,93.3,93.5,93.9,93.7,93.3,93.4,94.0,94.2,94.8,94.9,95.3,94.5,95.4,95.8,95.9,96.8,98.0,99.8,95.9,97.4,97.5,96.6,99.6,98.2,97.8,98.2,98.7,98.7,98.7,99.4,98.9,100.2,100.4,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.3,100.1,101.8,102.8,103.8,104.6,104.8,104.5,106.3,106.6,107.4,108.1,107.7,110.0,107.8,109.2,108.5,110.5,112.3,111.1,111.2,111.1,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.1,113.7,113.2,114.1,114.1,115.8,116.7,118.6,117.8,118.8,118.1,117.9,118.3,119.7,119.9,118.8,119.7,118.5,120.1,120.2,121.3,124.7,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・鉄筋コンクリート造":[92.5,92.2,92.5,93.0,92.3,92.2,92.9,93.4,92.8,93.1,93.6,93.9,94.3,94.1,93.8,93.9,94.5,94.7,95.1,95.3,95.7,95.0,95.8,96.2,96.4,97.3,98.3,99.7,96.5,97.7,97.8,97.2,99.5,98.3,98.0,98.4,98.8,98.9,98.9,99.5,99.0,100.0,100.5,100.3,101.7,101.0,100.6,100.6,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.3,101.2,101.7,100.6,102.4,103.4,104.6,105.4,105.6,105.2,107.0,107.3,108.0,108.9,108.5,110.7,108.5,109.9,109.1,111.1,112.8,111.5,111.5,111.2,112.2,112.0,112.1,112.4,112.1,113.1,112.9,114.1,113.6,113.0,114.0,114.0,115.5,116.4,118.4,117.5,118.5,117.8,117.7,117.8,119.2,119.4,118.2,119.2,117.9,119.6,119.6,120.5,124.1,120.2,120.6,120.5,121.1,122.2,122.0,122.0,123.9,125.0,125.6,125.0],"非住宅・鉄骨造":[92.2,91.8,92.0,92.7,91.9,91.8,92.6,93.1,92.3,92.5,93.1,93.3,93.7,93.5,93.1,93.1,93.9,94.1,94.7,94.8,95.2,94.3,95.3,95.7,95.7,96.6,97.9,99.7,95.7,97.2,97.3,96.4,99.6,98.2,97.7,98.1,98.6,98.7,98.7,99.4,98.9,100.3,100.4,100.2,102.0,100.8,100.4,100.7,100.1,99.1,101.2,99.8,99.9,99.6,99.7,99.4,100.0,100.2,100.7,100.1,100.8,101.2,100.0,101.7,102.5,103.6,104.3,104.6,104.3,106.1,106.4,107.2,107.9,107.6,109.7,107.6,109.0,108.3,110.3,112.1,111.0,111.2,111.1,112.2,112.0,112.1,112.3,112.3,113.4,113.2,114.2,113.9,113.4,114.2,114.3,115.9,116.9,118.8,118.0,119.0,118.2,118.0,118.5,120.0,120.1,119.0,119.9,118.7,120.3,120.4,121.6,125.0,120.8,121.0,120.8,121.3,122.3,122.1,122.3,124.0,124.9,125.7,124.9],"土木総合":[92.2,91.6,91.9,92.7,91.9,91.7,92.6,93.2,92.5,92.7,93.5,93.6,93.9,93.7,93.3,93.3,94.1,94.3,94.9,95.1,95.5,94.5,95.5,95.9,95.9,97.0,98.4,100.3,95.8,97.4,97.7,96.7,99.9,98.2,97.9,98.4,98.8,99.0,98.9,99.7,99.1,100.5,100.5,100.2,102.4,101.2,100.7,100.6,99.7,98.7,101.2,99.6,99.8,99.6,99.7,99.4,100.2,100.4,101.0,100.5,101.2,101.8,100.3,101.9,102.8,103.7,104.4,104.6,104.1,106.0,106.4,107.2,107.9,107.3,109.7,107.1,108.7,107.9,109.9,111.8,110.5,110.5,110.3,111.5,111.2,111.3,111.6,111.4,112.7,112.3,113.4,113.0,112.5,113.3,113.4,115.1,116.0,118.3,117.4,118.5,117.5,117.4,117.4,118.9,119.1,118.1,119.1,117.8,119.2,119.1,120.2,124.0,119.8,120.2,120.1,120.6,121.8,121.8,121.7,123.9,125.3,125.9,125.1],"鉄筋・在来住宅":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.3,92.5,93.3,93.6,94.0,93.8,93.4,93.4,94.2,94.5,94.9,95.1,95.5,94.5,95.5,96.2,96.2,97.3,98.7,100.5,96.1,97.7,97.8,96.9,100.1,98.3,98.0,98.5,99.0,99.1,99.1,99.9,99.3,100.6,100.5,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.2,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.2,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"鉄筋・事務所その他":[92.5,92.2,92.5,92.8,92.3,92.2,92.8,93.2,92.8,93.1,93.7,93.9,94.2,94.1,93.9,94.0,94.5,94.7,95.2,95.4,95.6,95.2,95.8,96.3,96.5,97.2,98.2,99.4,96.6,97.8,97.9,97.3,99.3,98.2,98.0,98.4,98.8,99.0,98.9,99.3,98.9,99.9,100.5,100.3,101.6,100.9,100.6,100.5,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.4,101.2,101.8,100.7,102.4,103.6,104.6,105.5,105.7,105.2,107.0,107.3,108.0,108.9,108.6,110.8,108.6,110.0,109.2,111.1,112.8,111.5,111.5,111.1,112.2,112.0,112.1,112.3,112.0,113.0,112.9,114.0,113.5,112.9,113.9,113.9,115.4,116.3,118.4,117.4,118.4,117.8,117.6,117.7,119.1,119.3,118.2,119.1,117.8,119.6,119.5,120.4,123.9,120.1,120.6,120.5,121.1,122.2,122.1,122.1,124.0,125.1,125.7,125.1]},"primary":"建築補修（改装・改修）","statsDataId":"0004055083","base":"2020年度＝100","url":"https://www.e-stat.go.jp/dbview?sid=0004055083"},"calc":{"factor":1.272,"latest_month":"2026年6月","median_now":{"1回目":140.2,"2回目":135.0,"3回目以上":123.4},"q1_now":{"1回目":115.6,"2回目":111.7,"3回目以上":97.7},"q3_now":{"1回目":170.4,"2回目":165.1,"3回目以上":159.9},"reserve_yen":13378}}</script>
+<script>
+(function(){
+"use strict";
+var B = JSON.parse(document.getElementById('basis').textContent);
+var D = B.deflator, MONTHS = D.months, SER = D.series;
+var N = MONTHS.length, LAST = N - 1;
+var NAMES = Object.keys(SER);
+var COLORS = ['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)'];
+var MAX_SEL = 5;
+var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var nf0 = new Intl.NumberFormat('ja-JP',{maximumFractionDigits:0});
+var nf1 = new Intl.NumberFormat('ja-JP',{minimumFractionDigits:1,maximumFractionDigits:1});
+var nf2 = new Intl.NumberFormat('ja-JP',{minimumFractionDigits:2,maximumFractionDigits:2});
+function $(id){return document.getElementById(id);}
+function el(tag,cls){var e=document.createElement(tag); if(cls) e.className=cls; return e;}
+function pct(a,b){return (a/b-1)*100;}
+function signed(v,dp){var s=(v>=0?'+':'−')+ (dp===1?nf1:nf2).format(Math.abs(v)); return s;}
+
+/* ---------- 派生指標 ---------- */
+var stats = NAMES.map(function(name,i){
+  var v = SER[name];
+  return {
+    name:name, i:i, v:v,
+    last:v[LAST],
+    mom: pct(v[LAST], v[LAST-1]),
+    yoy: LAST>=12 ? pct(v[LAST], v[LAST-12]) : null,
+    base: v[LAST]-100,
+    ten: pct(v[LAST], v[0])
+  };
+});
+var byName = {}; stats.forEach(function(s){byName[s.name]=s;});
+var primary = byName[D.primary];
+
+/* ---------- 指数パネル ---------- */
+(function(){
+  var d = $('deltas');
+  [['前月比', primary.mom, 1],['前年同月比', primary.yoy, 1],['基準年比', primary.base, 1],[MONTHS[0]+'比', primary.ten, 1]]
+  .forEach(function(row){
+    if(row[1]===null) return;
+    var up = row[1] >= 0;
+    var c = el('span','chip '+(up?'up':'down'));
+    c.innerHTML = '<em>'+row[0]+'</em><i>'+(up?'▲':'▼')+'</i>'+signed(row[1],1)+(row[0]==='基準年比'?' pt':' %');
+    d.appendChild(c);
+  });
+
+  // スパークライン
+  var s = $('spark'), v = primary.v;
+  var mn = Math.min.apply(null,v), mx = Math.max.apply(null,v), pad=(mx-mn)*0.12||1;
+  var X=function(i){return i/(N-1)*318+1;}, Y=function(y){return 50-(y-(mn-pad))/((mx+pad)-(mn-pad))*48;};
+  var line='', area='M 1 51 ';
+  for(var i=0;i<N;i++){ var p=X(i).toFixed(1)+' '+Y(v[i]).toFixed(1); line+=(i?'L ':'M ')+p+' '; area+='L '+p+' '; }
+  area+='L 319 51 Z';
+  s.innerHTML = '<path d="'+area+'" fill="var(--shu)" opacity=".12"/>'
+              + '<path d="'+line+'" fill="none" stroke="var(--shu)" stroke-width="1.6" stroke-linejoin="round"/>'
+              + '<circle cx="'+X(LAST).toFixed(1)+'" cy="'+Y(v[LAST]).toFixed(1)+'" r="3" fill="var(--shu)"/>';
+
+  // 数字のロール（最初の一瞬だけ動かす）
+  var t = $('idxval'), target = primary.v[LAST], from = primary.v[Math.max(0,LAST-12)];
+  if(!reduce){
+    var t0=null, dur=900;
+    requestAnimationFrame(function step(ts){
+      if(t0===null) t0=ts;
+      var k=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-k,3);
+      t.textContent = nf1.format(from+(target-from)*e);
+      if(k<1) requestAnimationFrame(step); else t.textContent = nf1.format(target);
+    });
+  }
+})();
+
+/* ---------- 金額シミュレータ ---------- */
+(function(){
+  var sel=$('simYear'), amt=$('simAmt'), out=$('simAmtOut');
+  var head=$('simHead'), note=$('simNote');
+  var k1=$('barK1'), k2=$('barK2'), b1=$('bar1'), b2=$('bar2'), v1=$('barV1'), v2=$('barV2');
+
+  // 最新月と同じ月を各年から拾い、季節差を挟まずに比べる
+  var lastMonth = MONTHS[LAST].split('年')[1];
+  var opts=[];
+  for(var i=0;i<LAST;i++) if(MONTHS[i].split('年')[1]===lastMonth) opts.push(i);
+  opts.reverse().forEach(function(i){ var o=el('option'); o.value=i; o.textContent=MONTHS[i]; sel.appendChild(o); });
+  sel.value = opts.indexOf(LAST-108)>=0 ? LAST-108 : opts[opts.length-1];
+
+  function w(v,max){ return Math.max(2, v/max*100)+'%'; }
+
+  function render(){
+    var i=+sel.value, a=+amt.value, when=MONTHS[i];
+    var r = primary.v[LAST]/primary.v[i];
+    var now = a*r;
+    out.textContent = nf0.format(a);
+    k1.textContent = when;
+    k2.textContent = MONTHS[LAST];
+    head.innerHTML = when+'に <b>'+nf0.format(a)+'</b> 万円だった改装・改修工事は、'
+      + MONTHS[LAST]+'の物価では <b>'+nf0.format(Math.round(now))+'</b> 万円。'
+      + '<span style="color:var(--shu)">'+(now>=a?'+':'−')+nf0.format(Math.abs(Math.round(now-a)))
+      + '万円（'+signed((r-1)*100,1)+'%）</span>';
+    note.textContent='同じ工事を同じ仕様で行った場合に、物価の変化ぶんだけを機械的に反映した数字です。';
+    var mx=Math.max(a,now);
+    b1.style.width=w(a,mx); b2.style.width=w(now,mx);
+    v1.innerHTML=nf0.format(a)+'<small>万円</small>';
+    v2.innerHTML=nf0.format(Math.round(now))+'<small>万円</small>';
+  }
+  sel.addEventListener('input',render);
+  amt.addEventListener('input',render);
+  render();
+})();
+
+/* ---------- Fig.3 棒グラフのホバー ---------- */
+(function(){
+  var tip=$('tip3');
+  if(!tip) return;
+  var box=tip.parentNode, svg=box.querySelector('svg');
+  if(!svg) return;
+  var bars=[].slice.call(svg.querySelectorAll('.bar'));
+  var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+  if(!hits.length) return;
+
+  function show(ev,i){
+    svg.classList.add('hot');
+    for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+    tip.className='tip on';
+    tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'
+      + '<div class="r">着工床面積　'+hits[i].getAttribute('data-v')+' m²</div>';
+    var wr=box.getBoundingClientRect();
+    var left=(ev.clientX-wr.left)+box.scrollLeft+14;
+    if(left+tip.offsetWidth > wr.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+    tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+    tip.style.top=Math.max(4,(ev.clientY-wr.top)-tip.offsetHeight-12)+'px';
+  }
+  function hide(){
+    svg.classList.remove('hot');
+    for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+    tip.className='tip';
+  }
+  hits.forEach(function(r,i){
+    r.addEventListener('mousemove', function(ev){ show(ev,i); });
+    r.addEventListener('touchstart', function(ev){ if(ev.touches[0]) show(ev.touches[0],i); }, {passive:true});
+  });
+  svg.addEventListener('mouseleave', hide);
+  svg.addEventListener('touchend', hide);
+})();
+
+/* ---------- 積立金と工事費の対照 ---------- */
+(function(){
+  var C = B.calc;
+  var $u=$('cUnits'), $a=$('cAge'), $n=$('cNext'), $t=$('cTimes'), $b=$('cBal'), $m=$('cMon');
+  if(!$u) return;
+  var labels = Object.keys(C.median_now);
+  labels.forEach(function(l){ var o=el('option'); o.value=l; o.textContent=l; $t.appendChild(o); });
+  $t.value = labels[labels.length-1];
+  $m.value = C.reserve_yen;
+
+  function w(v,max){ return Math.max(1.5, v/max*100)+'%'; }
+  function set(id,t){ var e=$(id); if(e) e.textContent=t; }
+
+  function render(){
+    var units=Math.max(1,+$u.value||0), age=+$a.value||0, next=+$n.value||0;
+    var years=Math.max(0, next-age);
+    var bal=Math.max(0,+$b.value||0), mon=Math.max(0,+$m.value||0);
+
+    var save = bal + mon*units*12*years/10000;          // 万円
+    var med  = C.median_now[$t.value];                  // 万円／戸
+    var cost = med*units;                               // 万円
+    var q1   = C.q1_now[$t.value]*units, q3 = C.q3_now[$t.value]*units;
+
+    set('cYears', (years>0 ? '実施まで '+years+'年' : '実施までの年数は0年（築年数が実施年以上）')
+      + '　／　工事費は '+$t.value+'・中央値 '+nf1.format(med)+' 万円／戸（'+C.latest_month+'換算）で計算');
+
+    var mx=Math.max(save,cost,1);
+    $('cBar1').style.width=w(save,mx); $('cBar2').style.width=w(cost,mx);
+    $('cVal1').innerHTML=nf0.format(Math.round(save))+'<small>万円</small>';
+    $('cVal2').innerHTML=nf0.format(Math.round(cost))+'<small>万円</small>';
+
+    var d=save-cost, short=d<0;
+    var e=$('cDiff');
+    e.textContent=(short?'−':'+')+nf0.format(Math.abs(Math.round(d)));
+    e.className='big '+(short?'short':'over');
+    set('cDiffLab', short?'不足':'差引');
+    set('cPerUnit','（1戸あたり '+(short?'−':'+')+nf1.format(Math.abs(d/units))+' 万円）');
+
+    set('cNote','幅で見ると、'+$t.value+'の工事費は下位25%〜上位25%で '
+      + nf0.format(Math.round(q1))+'〜'+nf0.format(Math.round(q3))+' 万円。'
+      + '積立見込は「現在の残高＋月額×戸数×12ヶ月×'+years+'年」の単純合計で、'
+      + '利息・値上げ・一時金・借入は含みません。工事費は'+C.latest_month+'の物価であり、'
+      + '将来の変動は織り込んでいません。共通仮設費は工事金額に含まれていません。');
+  }
+  [$u,$a,$n,$t,$b,$m].forEach(function(x){ x.addEventListener('input',render); });
+  render();
+})();
+
+/* ---------- エクスプローラ ---------- */
+var selected = [D.primary, '建設総合', '住宅・鉄筋コンクリート造'].filter(function(n){return byName[n];});
+var sortKey='last', sortDir=-1;
+
+function colorOf(name){ var k=selected.indexOf(name); return k<0?null:COLORS[k]; }
+
+function sparkSvg(v,color){
+  var mn=Math.min.apply(null,v), mx=Math.max.apply(null,v), pad=(mx-mn)*.15||1;
+  var X=function(i){return i/(N-1)*108+1;}, Y=function(y){return 22-(y-(mn-pad))/((mx+pad)-(mn-pad))*20;};
+  var p='';
+  for(var i=0;i<N;i++) p+=(i?'L ':'M ')+X(i).toFixed(1)+' '+Y(v[i]).toFixed(1)+' ';
+  return '<svg viewBox="0 0 110 24" aria-hidden="true"><path d="'+p+'" fill="none" stroke="'+(color||'var(--ink3)')+'" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+}
+
+function cell(v,dp,suffix){
+  if(v===null) return '<td class="n">—</td>';
+  var cls = v>0?'up':(v<0?'down':'');
+  return '<td class="n '+cls+'">'+signed(v,dp)+(suffix||'')+'</td>';
+}
+
+function renderTable(){
+  var rows = stats.slice().sort(function(a,b){
+    if(sortKey==='name') return a.name.localeCompare(b.name,'ja')*sortDir*-1;
+    var x=a[sortKey], y=b[sortKey];
+    if(x===null) return 1; if(y===null) return -1;
+    return (x-y)*sortDir;
+  });
+  var tb=$('tbody'); tb.innerHTML='';
+  rows.forEach(function(s){
+    var on = selected.indexOf(s.name)>=0, col=colorOf(s.name);
+    var tr=el('tr', on?'sel':'');
+    tr.tabIndex=0;
+    tr.innerHTML =
+      '<td><span class="name"><span class="box" style="'+(on?'background:'+col:'')+'"></span>'+s.name+'</span></td>'
+      + '<td class="n">'+nf1.format(s.last)+'</td>'
+      + cell(s.mom,1,' %') + cell(s.yoy,1,' %')
+      + '<td class="n">'+signed(s.base,1)+' pt</td>'
+      + cell(s.ten,1,' %')
+      + '<td class="sparkcell">'+sparkSvg(s.v,col)+'</td>';
+    function toggle(){
+      var k=selected.indexOf(s.name);
+      if(k>=0) selected.splice(k,1);
+      else { if(selected.length>=MAX_SEL) return; selected.push(s.name); }
+      renderTable(); renderChart();
+    }
+    tr.addEventListener('click',toggle);
+    tr.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+    tb.appendChild(tr);
+  });
+  $('selCount').textContent = selected.length;
+  document.querySelectorAll('.exp-table thead th').forEach(function(th){
+    th.classList.toggle('on', th.dataset.k===sortKey);
+  });
+}
+
+var CH={w:960,h:380,x0:64,x1:944,yt:26,yb:318};
+function renderChart(){
+  var svg=$('chart');
+  var series = selected.map(function(n,i){return {name:n, v:SER[n], c:COLORS[i]};});
+  if(!series.length){
+    svg.innerHTML='<title id="chartTitle">系列が選択されていません</title>'
+      +'<text x="480" y="190" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink3)">下の表から工事種別を選んでください</text>';
+    return;
+  }
+  var all=[]; series.forEach(function(s){all=all.concat(s.v);});
+  var mn=Math.min.apply(null,all), mx=Math.max.apply(null,all);
+  var step = 5, lo=Math.floor((mn-2)/step)*step, hi=Math.ceil((mx+2)/step)*step;
+  var X=function(i){return CH.x0 + i/(N-1)*(CH.x1-CH.x0);};
+  var Y=function(y){return CH.yb - (y-lo)/(hi-lo)*(CH.yb-CH.yt);};
+
+  var o=['<title id="chartTitle">建設工事費デフレーターの月次推移。'+series.map(function(s){return s.name+'は'+MONTHS[LAST]+'で'+nf1.format(s.v[LAST]);}).join('、')+'。</title>'];
+
+  // グリッド
+  o.push('<g stroke="var(--rule-soft)" stroke-width="1" fill="none">');
+  for(var g=lo; g<=hi; g+=step) o.push('<line x1="'+CH.x0+'" y1="'+Y(g).toFixed(1)+'" x2="'+CH.x1+'" y2="'+Y(g).toFixed(1)+'"/>');
+  o.push('</g>');
+  o.push('<g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="end">');
+  for(var g2=lo; g2<=hi; g2+=step) o.push('<text x="'+(CH.x0-10)+'" y="'+(Y(g2)+4).toFixed(1)+'">'+g2+'</text>');
+  o.push('</g>');
+  o.push('<text x="'+CH.x0+'" y="16" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)" letter-spacing="1">'+D.base+'</text>');
+
+  // 基準線 100
+  if(lo<=100 && hi>=100) o.push('<line x1="'+CH.x0+'" y1="'+Y(100).toFixed(1)+'" x2="'+CH.x1+'" y2="'+Y(100).toFixed(1)+'" stroke="var(--ink3)" stroke-width="1" stroke-dasharray="4 4"/>');
+
+  // x 軸（年頭）
+  o.push('<g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" text-anchor="middle">');
+  MONTHS.forEach(function(m,i){
+    if(m.indexOf('年1月')>0 && m.split('年')[0]%2===1){
+      o.push('<line x1="'+X(i).toFixed(1)+'" y1="'+CH.yb+'" x2="'+X(i).toFixed(1)+'" y2="'+(CH.yb+5)+'" stroke="var(--rule)"/>');
+      o.push('<text x="'+X(i).toFixed(1)+'" y="'+(CH.yb+20)+'">'+m.split('年')[0]+'</text>');
+    }
+  });
+  o.push('</g>');
+  o.push('<line x1="'+CH.x0+'" y1="'+CH.yb+'" x2="'+CH.x1+'" y2="'+CH.yb+'" stroke="var(--rule)"/>');
+
+  // 折れ線
+  series.forEach(function(s){
+    var p='';
+    for(var i=0;i<N;i++) p+=(i?'L ':'M ')+X(i).toFixed(1)+' '+Y(s.v[i]).toFixed(1)+' ';
+    o.push('<path d="'+p+'" fill="none" stroke="'+s.c+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>');
+    o.push('<circle cx="'+X(LAST).toFixed(1)+'" cy="'+Y(s.v[LAST]).toFixed(1)+'" r="3.5" fill="'+s.c+'" stroke="var(--surface)" stroke-width="1.5"/>');
+  });
+
+  // 凡例（系列の識別を色だけに頼らせない）
+  {
+    var lx=CH.x0, ly=CH.h-14;
+    o.push('<g font-family="IBM Plex Mono, monospace" font-size="11.5">');
+    series.forEach(function(s){
+      o.push('<rect x="'+lx+'" y="'+(ly-8)+'" width="9" height="9" rx="1.5" fill="'+s.c+'"/>');
+      o.push('<text x="'+(lx+14)+'" y="'+ly+'" fill="var(--ink2)">'+s.name+'</text>');
+      lx += 22 + s.name.length*12.2;
+    });
+    o.push('</g>');
+  }
+
+  // ホバー層
+  o.push('<g id="cross" opacity="0"><line id="crossline" y1="'+CH.yt+'" y2="'+CH.yb+'" stroke="var(--ink3)" stroke-width="1"/></g>');
+  o.push('<rect id="hit" x="'+CH.x0+'" y="'+CH.yt+'" width="'+(CH.x1-CH.x0)+'" height="'+(CH.yb-CH.yt)+'" fill="transparent" style="cursor:crosshair"/>');
+  svg.innerHTML=o.join('');
+  $('rangeLabel').textContent = MONTHS[0]+' 〜 '+MONTHS[LAST]+'（'+N+'ヶ月）';
+  bindHover(series,X,Y);
+}
+
+function bindHover(series,X,Y){
+  var svg=$('chart'), hit=svg.querySelector('#hit'), cross=svg.querySelector('#cross');
+  var line=svg.querySelector('#crossline'), tip=$('tip'), wrap=$('chartWrap');
+  var dots=[];
+  series.forEach(function(s){
+    var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r','4'); c.setAttribute('fill',s.c);
+    c.setAttribute('stroke','var(--surface)'); c.setAttribute('stroke-width','1.5');
+    cross.appendChild(c); dots.push(c);
+  });
+  function move(ev){
+    var r=svg.getBoundingClientRect();
+    var px=(ev.clientX-r.left)/r.width*CH.w;
+    var i=Math.round((px-CH.x0)/(CH.x1-CH.x0)*(N-1));
+    i=Math.max(0,Math.min(N-1,i));
+    var x=X(i);
+    cross.setAttribute('opacity','1');
+    line.setAttribute('x1',x); line.setAttribute('x2',x);
+    series.forEach(function(s,k){ dots[k].setAttribute('cx',x); dots[k].setAttribute('cy',Y(s.v[i])); });
+    tip.className='tip on';
+    tip.innerHTML='<b>'+MONTHS[i]+'</b>'+series.map(function(s){
+      return '<div class="r"><span class="sw" style="background:'+s.c+'"></span>'+s.name+'　'+nf1.format(s.v[i])+'</div>';
+    }).join('');
+    var wr=wrap.getBoundingClientRect();
+    var left=(ev.clientX-wr.left)+14;
+    if(left+tip.offsetWidth > wr.width-8) left=(ev.clientX-wr.left)-tip.offsetWidth-14;
+    tip.style.left=Math.max(4,left)+'px';
+    tip.style.top=Math.max(4,(ev.clientY-wr.top)-tip.offsetHeight-12)+'px';
+  }
+  function leave(){ cross.setAttribute('opacity','0'); tip.className='tip'; }
+  hit.addEventListener('mousemove',move);
+  hit.addEventListener('mouseleave',leave);
+  hit.addEventListener('touchmove',function(e){ if(e.touches[0]) move(e.touches[0]); },{passive:true});
+  hit.addEventListener('touchend',leave);
+}
+
+document.querySelectorAll('.exp-table thead th[data-k]').forEach(function(th){
+  th.addEventListener('click',function(){
+    var k=th.dataset.k;
+    if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=(k==='name')?1:-1; }
+    renderTable();
+  });
+});
+
+renderTable();
+renderChart();
+
+/* ---------- 秒進行カウンター ---------- */
+(function(){
+  var C=B.clock, SEC=31536000;
+  var rateArea=C.annual_floor_area_m2/SEC, rateMan=(C.c_2034-C.b_2024)/10/SEC;
+  function jstNow(){var d=new Date();return new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);}
+  function ys(y){return Date.UTC(y,0,1)-9*3600*1000;}
+  function set(id,t){var e=$(id); if(e&&e.textContent!==t) e.textContent=t;}
+  function pad(n){return n<10?'0'+n:''+n;}
+  set('rate', nf2.format(rateArea)+' m²/秒');
+  set('mansionRate', nf0.format(1/rateMan)+' 秒に1戸');
+  set('mansionRate2', nf0.format(1/rateMan)+'秒に1戸');
+  function tick(){
+    var j=jstNow(), y=j.getUTCFullYear();
+    var el=(Date.now()-ys(y))/1000;
+    var td=j.getUTCHours()*3600+j.getUTCMinutes()*60+j.getUTCSeconds()+j.getUTCMilliseconds()/1000;
+    var a=rateArea*el;
+    set('area',nf0.format(Math.floor(a)));
+    set('dome',nf0.format(Math.floor(a/C.dome_m2)));
+    set('today','今日の分 '+nf0.format(Math.floor(rateArea*td))+' m²');
+    var mv=nf0.format(Math.floor(rateMan*el));
+    set('mansion',mv); set('mansion2',mv);
+    var ysec=(ys(y+1)-ys(y))/1000;
+    set('pct',nf1.format(el/ysec*100));
+    set('daysLeft','残り '+nf0.format(Math.ceil((ysec-el)/86400))+' 日');
+    set('stamp','JST '+y+'-'+pad(j.getUTCMonth()+1)+'-'+pad(j.getUTCDate())+' '+pad(j.getUTCHours())+':'+pad(j.getUTCMinutes())+':'+pad(j.getUTCSeconds()));
+  }
+  tick(); setInterval(tick,200);
+})();
+})();
+</script>

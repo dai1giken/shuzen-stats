@@ -1,0 +1,15 @@
+# 「消えたことに後から気づけない」ファイル。
+# ~/.claude/hooks/protect_ledgers.py が読む。1行1パス（プロジェクトルートからの相対）。
+#
+# 生成物（page.html / index.html / basis.json / ogp.png）は入れない。
+# build.py と update_basis.py があれば作り直せるので、守る価値が低い。
+# ここに載せるのは「失ったら手で書き直すしかないもの」だけ。
+
+template.html        # 唯一の編集対象。ページ本体はここからしか作れない
+update_basis.py      # e-Stat の取得条件と、PDFから読み取った定数（実態調査・総合調査）
+build.py             # トークン展開とチャート生成
+costfig.py           # 戸あたり工事金額のレンジ図・分布表・CPI比較図
+cartogram.py         # 47都道府県のタイル配置表。手で組んだので失うと痛い
+make_ogp.py          # OGP画像の生成
+run_update.ps1       # 月次再生成のラッパー（ASCII only）
+README.md            # 踏んだ罠と判断の記録。コードより復元が難しい

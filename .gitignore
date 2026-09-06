@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+raw_estat.json
+*.pdf
+
+# 内部向け。立ち位置の分析や事故の記録が入っているため公開しない。
+README_内部.md
+
+# 社内PC用のローカル実行ラッパー。OneDrive配下の運用基盤を参照するので公開しない。
+# 自動更新は .github/workflows/update.yml が担う。
+run_update.ps1

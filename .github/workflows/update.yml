@@ -1,0 +1,88 @@
+name: monthly-update
+
+# 大規模修繕統計ビューアの月次再生成と公開。
+#
+# 設計の要点:
+#   - 第一技研PCにも自宅PCにも依存しない。GitHub 上だけで完結する
+#   - ESTAT_APP_ID は Secrets に置く。リポジトリには絶対に入れない
+#   - 元データが伸びていない月は、コミットも発生しない（差分が無いだけ）
+#   - 公開するのは index.html と ogp.png だけ。ソースは配らない
+
+on:
+  schedule:
+    - cron: "0 22 9 * *"      # 毎月10日 07:00 JST（UTC では9日22:00）。デフレーターの公表後
+  workflow_dispatch:           # 手動実行
+  push:
+    branches: [main]
+
+permissions:
+  contents: write              # 生成物の書き戻しに必要
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 依存を入れる（OGP画像に Pillow と日本語フォントが要る）
+        run: |
+          python -m pip install --quiet pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+
+      - name: e-Stat から基準値を取得
+        env:
+          ESTAT_APP_ID: ${{ secrets.ESTAT_APP_ID }}
+        run: |
+          if [ -z "$ESTAT_APP_ID" ]; then
+            echo "::warning::ESTAT_APP_ID が未設定です。既存の basis.json でページだけ再生成します。"
+          else
+            python update_basis.py
+          fi
+
+      - name: ページと OGP を生成
+        run: |
+          python build.py
+          python make_ogp.py
+
+      - name: 生成物をリポジトリへ書き戻す
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add basis.json page.html index.html ogp.png
+          if git diff --cached --quiet; then
+            echo "変更なし。元データが伸びていないので何もコミットしません。"
+          else
+            git commit -m "chore: 月次更新（e-Stat から再生成）"
+            git push
+          fi
+
+      - name: 公開するファイルだけ集める
+        run: |
+          mkdir -p _site
+          cp index.html ogp.png _site/
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
