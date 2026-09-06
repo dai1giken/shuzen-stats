@@ -1,0 +1,51 @@
+name: probe
+
+# e-Stat の中身を実測して報告するだけのワークフロー。
+#
+# なぜ要るか:
+#   ESTAT_APP_ID は Secrets にしか無く、手元では取り直せない。
+#   かといって update.yml を workflow_dispatch すると、あれは commit も deploy もするので
+#   本番が動いてしまう。確かめたいだけのときに使えるものが無かった。
+#
+# 設計の要点:
+#   - 手動起動のみ。push では走らない
+#   - commit しない・push しない・Pages へ deploy しない
+#   - basis.json はアーティファクトへ上げる。落として手元に置けば、
+#     以降のローカル検証が実データでできる（これがこのワークフローの本題）
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 市区町村ストック表の構成を実測する
+        env:
+          ESTAT_APP_ID: ${{ secrets.ESTAT_APP_ID }}
+          PYTHONIOENCODING: utf-8
+        run: python probe_city.py
+
+      - name: basis.json を作る（リポジトリには書き戻さない）
+        env:
+          ESTAT_APP_ID: ${{ secrets.ESTAT_APP_ID }}
+          PYTHONIOENCODING: utf-8
+        run: python update_basis.py
+
+      - name: 差分を見せるだけ（コミットはしない）
+        run: git --no-pager diff --stat
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: basis-json
+          path: basis.json
+          retention-days: 14
