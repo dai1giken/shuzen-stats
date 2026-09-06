@@ -5,7 +5,8 @@ name: monthly-update
 # 設計の要点:
 #   - 第一技研PCにも自宅PCにも依存しない。GitHub 上だけで完結する
 #   - ESTAT_APP_ID は Secrets に置く。リポジトリには絶対に入れない
-#   - 元データが伸びていない月は、コミットも発生しない（差分が無いだけ）
+#   - basis.json に取得日が入るので毎回コミットは入る。元データが伸びたかは
+#     コミットメッセージで区別する（「月次更新（A → B）」/「再生成（… のまま）」）
 #   - 公開するのは index.html と ogp.png だけ。ソースは配らない
 
 on:
@@ -40,6 +41,10 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq fonts-noto-cjk
 
+      - name: 更新前の最新月を控える
+        id: before
+        run: python -c "import json;print('month='+json.load(open('basis.json',encoding='utf-8'))['deflator']['months'][-1])" >> "$GITHUB_OUTPUT"
+
       - name: e-Stat から基準値を取得
         env:
           ESTAT_APP_ID: ${{ secrets.ESTAT_APP_ID }}
@@ -50,6 +55,10 @@ jobs:
             python update_basis.py
           fi
 
+      - name: 更新後の最新月を控える
+        id: after
+        run: python -c "import json;print('month='+json.load(open('basis.json',encoding='utf-8'))['deflator']['months'][-1])" >> "$GITHUB_OUTPUT"
+
       - name: ページと OGP を生成
         run: |
           python build.py
@@ -59,11 +68,20 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BEFORE="${{ steps.before.outputs.month }}"
+          AFTER="${{ steps.after.outputs.month }}"
+          if [ "$BEFORE" = "$AFTER" ]; then
+            MSG="chore: 再生成（元データは $AFTER のまま）"
+            echo "::notice::元データは $AFTER のままです。取得日だけが更新されました。"
+          else
+            MSG="chore: 月次更新（$BEFORE → $AFTER）"
+            echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
+          fi
           git add basis.json page.html index.html ogp.png
           if git diff --cached --quiet; then
-            echo "変更なし。元データが伸びていないので何もコミットしません。"
+            echo "差分なし。コミットしません。"
           else
-            git commit -m "chore: 月次更新（e-Stat から再生成）"
+            git commit -m "$MSG"
             git push
           fi
 
