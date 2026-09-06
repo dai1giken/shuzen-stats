@@ -75,8 +75,29 @@ h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:clamp(14px
   font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--ai);margin:30px 0 10px;display:block;font-weight:500;
 }
-.by{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3)}
-.by b{color:var(--ink2);font-weight:500;letter-spacing:.02em;font-family:var(--jp)}
+a.by{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);text-decoration:none}
+a.by b{
+  color:var(--ink);font-weight:600;letter-spacing:.02em;font-family:var(--jp);font-size:14px;
+  text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:var(--rule);
+}
+a.by:hover b,a.by:focus-visible b{color:var(--shu);text-decoration-color:var(--shu)}
+a.by .ext{font-size:11px}
+a.by:hover .ext{color:var(--shu)}
+
+/* 制作元へのリンク（ページ末尾） */
+a.sitelink{
+  display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;
+  margin-top:30px;padding:20px 24px;text-decoration:none;
+  border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface);
+  transition:background .15s,border-color .15s;
+}
+a.sitelink:hover{background:var(--sunk);border-color:var(--shu)}
+a.sitelink .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.sitelink .n{font-family:var(--cond);font-weight:700;font-size:clamp(20px,3vw,26px);color:var(--ink);letter-spacing:.01em}
+a.sitelink:hover .n{color:var(--shu)}
+a.sitelink .d{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--shu)}
+@media (prefers-reduced-motion:reduce){a.sitelink{transition:none}}
 h1 .tagline{display:block;font-family:var(--cond);font-weight:600;font-size:clamp(17px,2.4vw,24px);line-height:1.3;color:var(--shu);margin-top:14px;letter-spacing:.01em}
 
 /* 図ごとの出典見出し */
@@ -292,7 +313,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
 <div class="wrap">
 
   <header class="masthead">
-    <span class="by">制作・提供　<b>株式会社第一技研</b></span>
+    <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b><span class="ext">↗</span></a>
     <span class="spacer"></span>
     <span class="stamp" id="stamp">JST —</span>
   </header>
@@ -1434,7 +1455,14 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
 
   <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。</p>
 
-  <p class="colophon">試作 v0.3 ／ 基準値取得 2026-09-06（e-Stat API 3.0）／ 株式会社第一技研</p>
+  <a class="sitelink" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">
+    <span class="k">制作・提供</span>
+    <span class="n">株式会社第一技研</span>
+    <span class="d">マンション・ビルの外装大規模修繕　dai1giken.co.jp</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="colophon">v1.0 ／ 基準値取得 2026-09-06（e-Stat API 3.0）</p>
 </div>
 
 <script type="application/ld+json">
