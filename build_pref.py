@@ -15,13 +15,17 @@
   載せられない … 工事費の指数。県別・市区町村別のデフレーターは存在しない。
                だから県ページで言えるのは「量」だけで、「いくら」は全国共通になる。
 
-市区町村別ページを作らないのも同じ理由。市区町村別の着工統計は2011〜2024年
-しかなく、修繕適齢期（1988〜2001年度着工）のコホートが作れない。
+市区町村別の着工統計は2011〜2024年しかなく、修繕適齢期のコホートが作れない。
+そこで一都三県の市区町村は、着工ではなく令和5年住宅・土地統計調査（ストック）を
+使っている（build_city.py）。県ページの下部にもその内訳を差し込むが、上下で
+出典も定義も違うので、境目は pref_city.py が明示している。
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
+
+from pref_city import city_section
 
 HERE = Path(__file__).resolve().parent
 SITE_URL = "https://dai1giken.github.io/shuzen-stats/"
@@ -396,7 +400,9 @@ def build(basis: dict) -> int:
         h.append(f'''</tbody></table></div>
     <p class="lede"><a href="index.html">47都道府県の一覧を見る →</a></p>
   </section>
-
+''')
+        h.append(city_section(basis, name))
+        h.append(f'''
   <div class="warn">
     <h4>この数字は「いま建っている数」ではありません</h4>
     <ul>
