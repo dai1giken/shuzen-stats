@@ -16,7 +16,8 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
-from build_pref import SLUG, analytics_tags, build as build_pref, stock_by_pref
+from build_pref import (FLOW_COHORT, SLUG, analytics_tags, build as build_pref,
+                        flow_by_pref, stock_by_pref)
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
@@ -204,6 +205,11 @@ def waffle_chart(panels) -> str:
     return "\n      ".join(s)
 
 
+def _yr(label: str) -> int:
+    """'1988年度' → 1988。by_year のキーから年度の数字だけを取り出す。"""
+    return int("".join(c for c in label if c.isdigit()))
+
+
 HEAD = """<!doctype html>
 <html lang="ja">
 <head>
@@ -247,7 +253,12 @@ def main() -> None:
     d = basis["deflator"]
     pref = basis["prefecture"]
     tokyo3 = ("東京都", "神奈川県", "埼玉県", "千葉県")
-    metro = sum(pref["units"][k] for k in tokyo3)
+    # 着工（フロー）は basis.json の units ではなく by_year から数え直す。
+    # 年度範囲を変えるのに e-Stat から取り直さなくて済む。
+    flo, fhi = FLOW_COHORT
+    flow = flow_by_pref(basis, flo, fhi)
+    flow_national = sum(flow.values())
+    metro = sum(flow[k] for k in tokyo3)
 
     # ---- 現存ストック（住宅・土地統計）。Fig.5 と都道府県ページの見出し数字はこちら ----
     city = basis["city"]
@@ -256,7 +267,7 @@ def main() -> None:
     stock_rank = sorted(stock.items(), key=lambda kv: -kv[1])
     # 「次いで○○、○○の順です」は順位が変われば変わる。散文に直書きしない
     stock_next = "、".join(nm for nm, _ in stock_rank[1:5])
-    flow_rank = sorted(pref["units"].items(), key=lambda kv: -kv[1])
+    flow_rank = sorted(flow.items(), key=lambda kv: -kv[1])
     flow_next = "、".join(nm for nm, _ in flow_rank[1:5])
 
     dmonths, dser = d["months"], d["series"]
@@ -285,6 +296,15 @@ def main() -> None:
             "n": {r["label"]: r["n"] for r in sv["per_unit"]},
             "reserve_yen": rsv["monthly_per_unit_yen"],
         },
+        # 年代を切り替えてカートグラムを塗り直すための、都道府県×年度の実数。
+        # 47×36＝1,692個。ページに載せても数十KBで済む。
+        "flow": {
+            "years": [_yr(k) for k in sorted(pref["by_year"]["東京都"], key=_yr)],
+            "by_pref": {nm: [v for _, v in sorted(ser.items(), key=lambda kv: _yr(kv[0]))]
+                        for nm, ser in pref["by_year"].items() if nm != "全国"},
+            "metro": list(tokyo3),
+            "default": [flo, fhi],
+        },
     }
 
     tokens = {
@@ -307,7 +327,7 @@ def main() -> None:
         "{{CHART_STOCK}}": cartogram(stock, highlight=tokyo3,
                                      links={k: f"pref/{v}.html" for k, v in SLUG.items()},
                                      label="築26〜45年の非木造共同住宅の戸数", scale="万戸"),
-        "{{CHART_MAP}}": cartogram(pref["units"], highlight=tokyo3,
+        "{{CHART_MAP}}": cartogram(flow, highlight=tokyo3,
                                    label="分譲マンション着工戸数", scale="千戸"),
         "{{STOCK_SURVEY}}": city["survey"],
         "{{STOCK_SID}}": city["statsDataId"],
@@ -322,17 +342,17 @@ def main() -> None:
         "{{STOCK_TOP1_UNITS}}": _fmt(stock_rank[0][1]),
         "{{STOCK_NEXT}}": stock_next,
         "{{TOP_NEXT}}": flow_next,
-        "{{PREF_FROM}}": str(pref["cohort"][0]),
-        "{{PREF_TO}}": str(pref["cohort"][1]),
-        "{{PREF_AGE_FROM}}": str(2026 - pref["cohort"][1]),
-        "{{PREF_AGE_TO}}": str(2026 - pref["cohort"][0]),
-        "{{PREF_TOTAL}}": _fmt(pref["national"]),
+        "{{PREF_FROM}}": str(flo),
+        "{{PREF_TO}}": str(fhi),
+        "{{PREF_AGE_FROM}}": str(2026 - fhi),
+        "{{PREF_AGE_TO}}": str(2026 - flo),
+        "{{PREF_TOTAL}}": _fmt(flow_national),
         "{{PREF_SID}}": pref["statsDataId"],
         "{{PREF_URL}}": pref["url"],
         "{{METRO_UNITS}}": _fmt(metro),
-        "{{METRO_PCT}}": f"{metro / pref['national'] * 100:.1f}",
-        "{{TOP1}}": "東京都",
-        "{{TOP1_UNITS}}": _fmt(pref["units"]["東京都"]),
+        "{{METRO_PCT}}": f"{metro / flow_national * 100:.1f}",
+        "{{TOP1}}": flow_rank[0][0],
+        "{{TOP1_UNITS}}": _fmt(flow_rank[0][1]),
         "{{FACTOR}}": f"{factor:.3f}",
         "{{SV_N}}": str(sv["n"]),
         "{{SV_NAME}}": sv["name"],
@@ -400,7 +420,7 @@ def main() -> None:
     print(f"  戸あたり工事金額 3回目中央値 {third['median']}→{third['median']*factor:.0f} 万円/戸"
           f"（×{factor:.3f}）　積立金12年分 {reserve12:.0f} 万円/戸")
     print(f"  CPI {cpi['values'][-1]} vs デフレーター {prim[-1]}　差 {prim[-1]-cpi['values'][-1]:.1f} pt")
-    print(f"  修繕適齢期コホート（着工・フロー）{_fmt(pref['national'])} 戸　"
+    print(f"  着工（フロー）{flo}〜{fhi}年度 {_fmt(flow_national)} 戸　"
           f"一都三県 {_fmt(metro)} 戸（{tokens['{{METRO_PCT}}']}%）")
     print(f"  現存ストック 全国行 {_fmt(nat_stock)} 戸　47都道府県合計 {_fmt(sum47)} 戸　"
           f"差 {_fmt(nat_stock - sum47)} 戸　一都三県 {_fmt(stock_metro)} 戸"

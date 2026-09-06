@@ -93,7 +93,7 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
     s.append(f'<g font-family="{MONO}" font-size="10.5" fill="var(--ink3)">')
     s.append(f'<text x="{X0}" y="56">0</text>')
     for b, c in enumerate(cuts):
-        s.append(f'<text x="{X0 + (b + 1) * lw}" y="56" text-anchor="middle">{_n(c)}</text>')
+        s.append(f'<text x="{X0 + (b + 1) * lw}" y="56" text-anchor="middle" class="cut" data-i="{b}">{_n(c)}</text>')
     s.append('</g>')
 
     # タイル
@@ -105,11 +105,12 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
         href = (links or {}).get(name)
         if href:
             s.append(f'<a href="{href}" aria-label="{name}の大規模修繕統計">')
-        s.append(f'<rect x="{x}" y="{y}" width="{SIZE}" height="{SIZE}" rx="3" fill="var(--b{b})"{stroke}/>')
+        s.append(f'<rect x="{x}" y="{y}" width="{SIZE}" height="{SIZE}" rx="3" fill="var(--b{b})"{stroke} '
+                 f'class="tile" data-pref="{name}"/>')
         s.append(f'<text x="{x + SIZE/2}" y="{y + 21}" text-anchor="middle" font-size="13" '
-                 f'font-weight="600" fill="var(--b{b}f)">{_short(name)}</text>')
+                 f'font-weight="600" fill="var(--b{b}f)" class="tilenm" data-pref="{name}">{_short(name)}</text>')
         s.append(f'<text x="{x + SIZE/2}" y="{y + 39}" text-anchor="middle" font-family="{MONO}" '
-                 f'font-size="13" fill="var(--b{b}f)">{_n(v)}</text>')
+                 f'font-size="13" fill="var(--b{b}f)" class="tileval" data-pref="{name}">{_n(v)}</text>')
         if href:
             s.append('</a>')
 
@@ -117,8 +118,8 @@ def cartogram(units: dict[str, int], highlight: tuple[str, ...] = (),
     tx, ty = TILES["東京都"]
     ex, ey = X0 + tx * PITCH, Y0 + ty * PITCH + SIZE + 26
     s.append(f'<text x="{ex}" y="{ey}" font-family="{MONO}" font-size="12" fill="var(--ink3)">単位：{scale}</text>')
-    s.append(f'<text x="{ex}" y="{ey + 19}" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'
-             f'例）東京 {_n(units["東京都"])} ＝ {units["東京都"]:,}戸</text>')
+    s.append(f'<text x="{ex}" y="{ey + 19}" font-family="{MONO}" font-size="11.5" fill="var(--ink3)" '
+             f'class="egline">例）東京 {_n(units["東京都"])} ＝ {units["東京都"]:,}戸</text>')
 
     if highlight:
         s.append(f'<text x="{X0}" y="778" font-family="{MONO}" font-size="11.5" fill="var(--ink3)">'

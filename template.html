@@ -257,6 +257,39 @@ h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--s
   letter-spacing:-.02em;margin-top:3px;white-space:nowrap}
 
 
+/* 着工年度の切り替え（Fig.6） */
+.eras{margin-top:18px;padding:12px 14px;border:1px solid var(--rule);background:var(--surface)}
+.erarow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.erarow + .erarow{margin-top:12px}
+.eras .eralab{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+/* 2つまみのスライダー。range を2本重ね、つまみだけクリックを受ける */
+.erarange{position:relative;flex:1 1 340px;min-width:240px;height:40px}
+.erarange .track{position:absolute;left:9px;right:9px;top:13px;height:6px;
+  background:var(--sunk);border:1px solid var(--rule);border-radius:3px}
+.erarange .sel{position:absolute;top:0;bottom:0;background:var(--ai);border-radius:3px}
+.erarange input[type=range]{position:absolute;left:0;width:100%;top:6px;margin:0;height:20px;
+  -webkit-appearance:none;appearance:none;background:transparent;pointer-events:none}
+.erarange input[type=range]:focus{outline:none}
+.erarange input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;
+  width:18px;height:18px;border-radius:50%;background:var(--raise);border:2px solid var(--ai);cursor:pointer}
+.erarange input[type=range]::-moz-range-thumb{pointer-events:auto;
+  width:16px;height:16px;border-radius:50%;background:var(--raise);border:2px solid var(--ai);cursor:pointer}
+.erarange input[type=range]:focus-visible::-webkit-slider-thumb{border-color:var(--shu);box-shadow:0 0 0 3px rgba(190,58,34,.25)}
+.erarange input[type=range]:focus-visible::-moz-range-thumb{border-color:var(--shu)}
+.erarange .ticks{position:absolute;left:9px;right:9px;top:26px;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;color:var(--ink3);pointer-events:none}
+.erabtns{display:flex;flex-wrap:wrap;gap:6px}
+.erabtns button{font-family:var(--jp);font-size:12.5px;line-height:1.5;padding:5px 11px;cursor:pointer;
+  color:var(--ink2);background:var(--raise);border:1px solid var(--rule);border-radius:2px}
+.erabtns button:hover{border-color:var(--ai);color:var(--ink)}
+.erabtns button[aria-pressed="true"]{background:var(--ai);border-color:var(--ai);color:var(--raise);font-weight:600}
+.erabtns button:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.erain{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink3)}
+.erain input{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;width:5.4em;
+  padding:4px 6px;background:var(--raise);color:var(--ink);border:1px solid var(--rule);border-radius:2px}
+.eraage{font-family:var(--mono);font-size:12px;color:var(--shu);font-weight:600}
+@media (prefers-reduced-motion:no-preference){.tile,.tileval{transition:fill .25s ease}}
+
 /* 強い注記（読み飛ばされては困るもの） */
 .warn{margin-top:1px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:17px;color:var(--shu);letter-spacing:.01em}
@@ -591,34 +624,53 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <ul>
         <li>Fig.5 は<strong>現存ストック</strong>〔2023年10月1日時点で建っている住宅の数〕ですが、こちらは<strong>着工戸数（フロー）</strong>〔その年度に着工した数〕です。その後の取り壊しや用途変更は反映されていません。</li>
         <li>絞り込みは<strong>「分譲マンション」まで届きます</strong>（共同住宅・鉄筋コンクリート造・分譲住宅）。賃貸は入りません。Fig.5 で失われる分譲／賃貸の区別が、ここでは効きます。</li>
-        <li>期間の取り方も違い、こちらは<strong>{{PREF_FROM}}〜{{PREF_TO}}年度着工＝2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年</strong>です。<strong>Fig.5 とは直接比べられません。</strong></li>
+        <li>対象の築年数も違い、Fig.5 は<strong>築26〜45年</strong>、こちらは<strong>{{PREF_FROM}}〜{{PREF_TO}}年度着工＝2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年</strong>です（着工年度は下のつまみで変えられます）。<strong>Fig.5 とは直接比べられません。</strong></li>
       </ul>
     </div>
-    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。</p>
+    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。<strong>着工年度を変えると、地図と下の3つの数字が塗り替わります。</strong></p>
+
+    <div class="eras">
+      <div class="erarow">
+        <span class="eralab">着工年度</span>
+        <span class="erabtns" id="eraBtns"></span>
+      </div>
+      <div class="erarow">
+        <div class="erarange">
+          <span class="track"><span class="sel" id="eraSel"></span></span>
+          <input type="range" id="eraR1" min="1988" max="2023" step="1" aria-label="着工年度の始まり">
+          <input type="range" id="eraR2" min="1988" max="2023" step="1" aria-label="着工年度の終わり">
+          <span class="ticks" id="eraTicks"></span>
+        </div>
+        <label class="erain">自<input type="number" id="eraFrom" min="1988" max="2023" step="1"></label>
+        <label class="erain">至<input type="number" id="eraTo" min="1988" max="2023" step="1"></label>
+      </div>
+      <div class="erarow"><span class="eraage" id="eraAge">—</span></div>
+    </div>
+
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>住宅着工統計調査</strong>　e-Stat API 取得・{{GENERATED}}</span></div>
       {{CHART_MAP}}
       <div class="chart-foot">
         <a href="{{PREF_URL}}" target="_blank" rel="noopener">e-Stat statsDataId={{PREF_SID}}</a>　建て方＝共同住宅／構造＝鉄筋コンクリート造／利用関係＝分譲住宅／表章項目＝戸数<br>
-        全国値 {{PREF_TOTAL}} 戸に対し、47都道府県の合計は差 0 戸で一致します。<br>
+        <span id="eraFoot">—</span><br>
         タイルはリンクではありません。都道府県ページの見出し数字は Fig.5 のストックなので、ここから直接は送っていません。
       </div>
     </div>
     <div class="figgrid">
       <div class="keynum">
         <span class="k">National</span>
-        <div class="v">{{PREF_TOTAL}}<small>戸</small></div>
-        <p>{{PREF_FROM}}〜{{PREF_TO}}年度の全国合計。2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年です。</p>
+        <div class="v" id="eraTotal">{{PREF_TOTAL}}<small>戸</small></div>
+        <p id="eraTotalNote">{{PREF_FROM}}〜{{PREF_TO}}年度の全国合計。2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年です。</p>
       </div>
       <div class="keynum">
         <span class="k">一都三県</span>
-        <div class="v">{{METRO_PCT}}<small>%</small></div>
-        <p>東京・神奈川・埼玉・千葉の合計 {{METRO_UNITS}} 戸。</p>
+        <div class="v" id="eraMetroPct">{{METRO_PCT}}<small>%</small></div>
+        <p id="eraMetroNote">東京・神奈川・埼玉・千葉の合計 {{METRO_UNITS}} 戸。</p>
       </div>
       <div class="keynum">
         <span class="k">最多</span>
-        <div class="v">{{TOP1_UNITS}}<small>戸</small></div>
-        <p>{{TOP1}}。次いで{{TOP_NEXT}}の順です。</p>
+        <div class="v" id="eraTop1">{{TOP1_UNITS}}<small>戸</small></div>
+        <p id="eraTop1Note">{{TOP1}}。次いで{{TOP_NEXT}}の順です。</p>
       </div>
     </div>
   </section>
@@ -1082,6 +1134,100 @@ var primary = byName[D.primary];
   }
   [$u,$a,$n,$t,$b,$m].forEach(function(x){ x.addEventListener('input',render); });
   render();
+})();
+
+/* ---------- Fig.6 着工年度の切り替え ----------
+   サーバ側で描いた SVG のタイルを、data-pref を手がかりに塗り直す。
+   数字は B.flow.by_pref（都道府県×年度の実数）から毎回足し直しているので、
+   画面に出る値は必ず公表値の合計になる。ここで按分や推計はしていない。 */
+(function(){
+  var F = B.flow, box = $('eraBtns');
+  if(!F || !box) return;
+  var YEARS = F.years, BY = F.by_pref, METRO = F.metro;
+  var Y0 = YEARS[0], Y1 = YEARS[YEARS.length-1];
+  var NOW = 2026;
+  var PRESETS = [
+    {lab:'1回目まわり', lo:2002, hi:2013},
+    {lab:'2〜3回目',   lo:1988, hi:2001},
+    {lab:'1〜3回目',   lo:F.default[0], hi:F.default[1]},
+    {lab:'全期間',     lo:Y0,   hi:Y1}
+  ];
+  var $f=$('eraFrom'), $t=$('eraTo'), $r1=$('eraR1'), $r2=$('eraR2'), $sel=$('eraSel');
+  [$f,$t,$r1,$r2].forEach(function(x){ x.min=Y0; x.max=Y1; });
+  // 目盛りは端と、10年区切りの年度
+  var tk=$('eraTicks');
+  if(tk){ [Y0,1995,2005,2015,Y1].forEach(function(y){ var s=el('span'); s.textContent=y; tk.appendChild(s); }); }
+
+  PRESETS.forEach(function(p){
+    var b=el('button'); b.type='button';
+    b.textContent=p.lab+'（'+p.lo+'〜'+p.hi+'）';
+    b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',function(){ apply(p.lo,p.hi); });
+    box.appendChild(b);
+  });
+
+  // set() は電卓側 IIFE のローカルでここからは見えない。自前で持つ
+  function put(id,t){ var e=$(id); if(e) e.textContent=t; }
+
+  function sums(lo,hi){
+    var i0=YEARS.indexOf(lo), i1=YEARS.indexOf(hi), o={};
+    for(var nm in BY){ var a=BY[nm], s=0; for(var i=i0;i<=i1;i++) s+=a[i]; o[nm]=s; }
+    return o;
+  }
+  // 塗り分けは順位で6分位。等間隔だと東京・神奈川に引きずられて他が潰れる
+  function cutsOf(v){
+    var o=Object.keys(v).map(function(k){return v[k];}).sort(function(a,b){return a-b;});
+    var c=[]; for(var k=1;k<6;k++) c.push(o[Math.round(o.length*k/6)]);
+    return c;
+  }
+  function binOf(x,c){ var b=0; for(var i=0;i<c.length;i++) if(x>=c[i]) b++; return Math.min(b,5); }
+  function k(v){ return nf0.format(Math.round(v/1000)); }
+
+  function apply(lo,hi){
+    lo=Math.max(Y0,Math.min(Y1,lo|0)); hi=Math.max(Y0,Math.min(Y1,hi|0));
+    if(lo>hi){ var s=lo; lo=hi; hi=s; }
+    $f.value=lo; $t.value=hi; $r1.value=lo; $r2.value=hi;
+    // 選択帯。つまみの中心に合わせるため track は左右9pxずつ内側にしてある
+    var span=Y1-Y0;
+    $sel.style.left=((lo-Y0)/span*100)+'%';
+    $sel.style.width=((hi-lo)/span*100)+'%';
+    [].forEach.call(box.children,function(b,i){
+      b.setAttribute('aria-pressed', String(PRESETS[i].lo===lo && PRESETS[i].hi===hi));
+    });
+
+    var v=sums(lo,hi), c=cutsOf(v);
+    document.querySelectorAll('#map-flow .tile').forEach(function(r){
+      var b=binOf(v[r.dataset.pref],c); r.setAttribute('fill','var(--b'+b+')');
+      document.querySelectorAll('#map-flow [data-pref="'+r.dataset.pref+'"]').forEach(function(e){
+        if(e.classList.contains('tile')) return;
+        e.setAttribute('fill','var(--b'+b+'f)');
+        if(e.classList.contains('tileval')) e.textContent=k(v[r.dataset.pref]);
+      });
+    });
+    document.querySelectorAll('#map-flow .cut').forEach(function(e){ e.textContent=k(c[+e.dataset.i]); });
+    var eg=document.querySelector('#map-flow .egline');
+    if(eg) eg.textContent='例）東京 '+k(v['東京都'])+' ＝ '+nf0.format(v['東京都'])+'戸';
+
+    var tot=0; for(var nm in v) tot+=v[nm];
+    var met=0; METRO.forEach(function(nm){ met+=v[nm]; });
+    var rank=Object.keys(v).sort(function(a,b){return v[b]-v[a];});
+    var ageF=NOW-hi, ageT=NOW-lo;
+
+    put('eraAge','2026年時点で築'+ageF+'〜'+ageT+'年');
+    $('eraTotal').innerHTML=nf0.format(tot)+'<small>戸</small>';
+    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。2026年時点で築'+ageF+'〜'+ageT+'年です。');
+    $('eraMetroPct').innerHTML=nf1.format(met/tot*100)+'<small>%</small>';
+    put('eraMetroNote','東京・神奈川・埼玉・千葉の合計 '+nf0.format(met)+' 戸。');
+    $('eraTop1').innerHTML=nf0.format(v[rank[0]])+'<small>戸</small>';
+    put('eraTop1Note',rank[0]+'。次いで'+rank.slice(1,5).join('、')+'の順です。');
+    put('eraFoot','表示中は '+lo+'〜'+hi+'年度着工。全国値 '+nf0.format(tot)
+      +' 戸で、47都道府県の合計と一致します（着工統計は全数集計のため）。');
+  }
+  [$f,$t].forEach(function(x){ x.addEventListener('change',function(){ apply(+$f.value,+$t.value); }); });
+  // つまみは掴んだ側だけを動かす。追い越したら入れ替えるのではなく、相手で止める
+  $r1.addEventListener('input',function(){ apply(Math.min(+$r1.value,+$r2.value), +$r2.value); });
+  $r2.addEventListener('input',function(){ apply(+$r1.value, Math.max(+$r2.value,+$r1.value)); });
+  apply(F.default[0], F.default[1]);
 })();
 
 /* ---------- エクスプローラ ---------- */

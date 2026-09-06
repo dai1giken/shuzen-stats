@@ -31,6 +31,7 @@ Ref. セクションとして残してある（3点の違いをその場に書�
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 from pref_city import city_section
@@ -394,6 +395,28 @@ def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
 
 
 
+# 着工（フロー）側で既定に置く年度範囲。2026年時点で築16〜38年＝1回目を終えた住戸から
+# 3回目にあたるところまで。**basis.json の prefecture.cohort ではなく、ここが効く。**
+#
+# by_year に1988〜2023年度の全年がそろっているので、範囲を変えても e-Stat から
+# 取り直す必要はない。トップの年代切り替えも同じ数字から作っている。
+FLOW_COHORT = (1988, 2010)
+
+
+def flow_by_pref(basis: dict, lo: int, hi: int) -> dict[str, int]:
+    """着工戸数を年度範囲で合計して都道府県別に返す。「全国」の行は落とす。"""
+    by = basis["prefecture"]["by_year"]
+    out = {}
+    for name, series in by.items():
+        if name == "全国":
+            continue
+        out[name] = sum(v for k, v in series.items()
+                        if lo <= int("".join(ch for ch in k if ch.isdigit())) <= hi)
+    if len(out) != 47:
+        sys.exit(f"by_year の都道府県が {len(out)} 件です（期待47件）。")
+    return out
+
+
 def stock_by_pref(basis: dict) -> tuple[dict[str, int], dict[str, str], int, int]:
     """住宅・土地統計（ストック）から、都道府県別の築26〜45年の戸数を取り出す。
 
@@ -418,9 +441,9 @@ def stock_by_pref(basis: dict) -> tuple[dict[str, int], dict[str, str], int, int
 
 def build(basis: dict) -> int:
     pref = basis["prefecture"]
-    units = pref["units"]                 # 着工（フロー）。副次セクションで使う
+    lo, hi = FLOW_COHORT                  # basis.json の cohort ではなくこちらが効く
+    units = flow_by_pref(basis, lo, hi)   # 着工（フロー）。Ref. セクションで使う
     by_year = pref["by_year"]
-    lo, hi = pref["cohort"]
 
     city = basis["city"]
     stock, codes, nat_stock, sum47 = stock_by_pref(basis)
@@ -518,7 +541,7 @@ def build(basis: dict) -> int:
       年度別の推移が見られるのは<strong>国土交通省「住宅着工統計調査」</strong>のほうです。
       <strong>{lo}〜{hi}年度に{name}で着工した分譲マンションは {flow:,}戸</strong>
       （共同住宅・鉄筋コンクリート造・分譲住宅）。上の {val:,}戸 とは
-      <strong>着工か現存か・分譲のみか賃貸込みか・{hi-lo+1}年幅か20年幅か</strong>の3点が違うため、
+      <strong>着工か現存か・分譲のみか賃貸込みか・築{2026-hi}〜{2026-lo}年か築26〜45年か</strong>の3点が違うため、
       直接は比べられません。
     </div>
     <p class="lede">朱色の期間が、2026年時点で築{2026-hi}〜{2026-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>

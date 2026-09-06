@@ -277,6 +277,39 @@ h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--s
   letter-spacing:-.02em;margin-top:3px;white-space:nowrap}
 
 
+/* 着工年度の切り替え（Fig.6） */
+.eras{margin-top:18px;padding:12px 14px;border:1px solid var(--rule);background:var(--surface)}
+.erarow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.erarow + .erarow{margin-top:12px}
+.eras .eralab{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+/* 2つまみのスライダー。range を2本重ね、つまみだけクリックを受ける */
+.erarange{position:relative;flex:1 1 340px;min-width:240px;height:40px}
+.erarange .track{position:absolute;left:9px;right:9px;top:13px;height:6px;
+  background:var(--sunk);border:1px solid var(--rule);border-radius:3px}
+.erarange .sel{position:absolute;top:0;bottom:0;background:var(--ai);border-radius:3px}
+.erarange input[type=range]{position:absolute;left:0;width:100%;top:6px;margin:0;height:20px;
+  -webkit-appearance:none;appearance:none;background:transparent;pointer-events:none}
+.erarange input[type=range]:focus{outline:none}
+.erarange input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;
+  width:18px;height:18px;border-radius:50%;background:var(--raise);border:2px solid var(--ai);cursor:pointer}
+.erarange input[type=range]::-moz-range-thumb{pointer-events:auto;
+  width:16px;height:16px;border-radius:50%;background:var(--raise);border:2px solid var(--ai);cursor:pointer}
+.erarange input[type=range]:focus-visible::-webkit-slider-thumb{border-color:var(--shu);box-shadow:0 0 0 3px rgba(190,58,34,.25)}
+.erarange input[type=range]:focus-visible::-moz-range-thumb{border-color:var(--shu)}
+.erarange .ticks{position:absolute;left:9px;right:9px;top:26px;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;color:var(--ink3);pointer-events:none}
+.erabtns{display:flex;flex-wrap:wrap;gap:6px}
+.erabtns button{font-family:var(--jp);font-size:12.5px;line-height:1.5;padding:5px 11px;cursor:pointer;
+  color:var(--ink2);background:var(--raise);border:1px solid var(--rule);border-radius:2px}
+.erabtns button:hover{border-color:var(--ai);color:var(--ink)}
+.erabtns button[aria-pressed="true"]{background:var(--ai);border-color:var(--ai);color:var(--raise);font-weight:600}
+.erabtns button:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.erain{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink3)}
+.erain input{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;width:5.4em;
+  padding:4px 6px;background:var(--raise);color:var(--ink);border:1px solid var(--rule);border-radius:2px}
+.eraage{font-family:var(--mono);font-size:12px;color:var(--shu);font-weight:600}
+@media (prefers-reduced-motion:no-preference){.tile,.tileval{transition:fill .25s ease}}
+
 /* 強い注記（読み飛ばされては困るもの） */
 .warn{margin-top:1px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:17px;color:var(--shu);letter-spacing:.01em}
@@ -1045,249 +1078,249 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <rect x="290" y="28" width="49" height="14" fill="var(--b5)"/>
       <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">
       <text x="30" y="56">0</text>
-      <text x="82" y="56" text-anchor="middle">2.6</text>
-      <text x="134" y="56" text-anchor="middle">5.1</text>
-      <text x="186" y="56" text-anchor="middle">6.3</text>
-      <text x="238" y="56" text-anchor="middle">8.3</text>
-      <text x="290" y="56" text-anchor="middle">37.6</text>
+      <text x="82" y="56" text-anchor="middle" class="cut" data-i="0">2.6</text>
+      <text x="134" y="56" text-anchor="middle" class="cut" data-i="1">5.1</text>
+      <text x="186" y="56" text-anchor="middle" class="cut" data-i="2">6.3</text>
+      <text x="238" y="56" text-anchor="middle" class="cut" data-i="3">8.3</text>
+      <text x="290" y="56" text-anchor="middle" class="cut" data-i="4">37.6</text>
       </g>
       <a href="pref/hokkaido.html" aria-label="北海道の大規模修繕統計">
-      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">北海</text>
-      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">33.0</text>
+      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="北海道"/>
+      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="北海道">北海</text>
+      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="北海道">33.0</text>
       </a>
       <a href="pref/aomori.html" aria-label="青森県の大規模修繕統計">
-      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">青森</text>
-      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.0</text>
+      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="青森県"/>
+      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="青森県">青森</text>
+      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="青森県">2.0</text>
       </a>
       <a href="pref/akita.html" aria-label="秋田県の大規模修繕統計">
-      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">秋田</text>
-      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.6</text>
+      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="秋田県"/>
+      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="秋田県">秋田</text>
+      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="秋田県">1.6</text>
       </a>
       <a href="pref/iwate.html" aria-label="岩手県の大規模修繕統計">
-      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">岩手</text>
-      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.2</text>
+      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="岩手県"/>
+      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="岩手県">岩手</text>
+      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="岩手県">2.2</text>
       </a>
       <a href="pref/yamagata.html" aria-label="山形県の大規模修繕統計">
-      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">山形</text>
-      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.8</text>
+      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="山形県"/>
+      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="山形県">山形</text>
+      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="山形県">1.8</text>
       </a>
       <a href="pref/miyagi.html" aria-label="宮城県の大規模修繕統計">
-      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">宮城</text>
-      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">11.4</text>
+      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="宮城県"/>
+      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="宮城県">宮城</text>
+      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="宮城県">11.4</text>
       </a>
       <a href="pref/ishikawa.html" aria-label="石川県の大規模修繕統計">
-      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">石川</text>
-      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.2</text>
+      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="石川県"/>
+      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="石川県">石川</text>
+      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="石川県">4.2</text>
       </a>
       <a href="pref/toyama.html" aria-label="富山県の大規模修繕統計">
-      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">富山</text>
-      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.1</text>
+      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="富山県"/>
+      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="富山県">富山</text>
+      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="富山県">3.1</text>
       </a>
       <a href="pref/niigata.html" aria-label="新潟県の大規模修繕統計">
-      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">新潟</text>
-      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.3</text>
+      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="新潟県"/>
+      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="新潟県">新潟</text>
+      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="新潟県">4.3</text>
       </a>
       <a href="pref/fukushima.html" aria-label="福島県の大規模修繕統計">
-      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">福島</text>
-      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.2</text>
+      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="福島県"/>
+      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="福島県">福島</text>
+      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="福島県">5.2</text>
       </a>
       <a href="pref/shimane.html" aria-label="島根県の大規模修繕統計">
-      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">島根</text>
-      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.9</text>
+      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="島根県"/>
+      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="島根県">島根</text>
+      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="島根県">1.9</text>
       </a>
       <a href="pref/tottori.html" aria-label="鳥取県の大規模修繕統計">
-      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">鳥取</text>
-      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1.6</text>
+      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="鳥取県"/>
+      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="鳥取県">鳥取</text>
+      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="鳥取県">1.6</text>
       </a>
       <a href="pref/hyogo.html" aria-label="兵庫県の大規模修繕統計">
-      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">兵庫</text>
-      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">49.4</text>
+      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="兵庫県"/>
+      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="兵庫県">兵庫</text>
+      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="兵庫県">49.4</text>
       </a>
       <a href="pref/kyoto.html" aria-label="京都府の大規模修繕統計">
-      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">京</text>
-      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">18.9</text>
+      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="京都府"/>
+      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="京都府">京</text>
+      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="京都府">18.9</text>
       </a>
       <a href="pref/fukui.html" aria-label="福井県の大規模修繕統計">
-      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">福井</text>
-      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.3</text>
+      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="福井県"/>
+      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="福井県">福井</text>
+      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="福井県">2.3</text>
       </a>
       <a href="pref/gifu.html" aria-label="岐阜県の大規模修繕統計">
-      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岐阜</text>
-      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.3</text>
+      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="岐阜県"/>
+      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="岐阜県">岐阜</text>
+      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="岐阜県">6.3</text>
       </a>
       <a href="pref/nagano.html" aria-label="長野県の大規模修繕統計">
-      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">長野</text>
-      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="長野県"/>
+      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="長野県">長野</text>
+      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="長野県">6.7</text>
       </a>
       <a href="pref/gunma.html" aria-label="群馬県の大規模修繕統計">
-      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">群馬</text>
-      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.1</text>
+      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="群馬県"/>
+      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="群馬県">群馬</text>
+      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="群馬県">5.1</text>
       </a>
       <a href="pref/tochigi.html" aria-label="栃木県の大規模修繕統計">
-      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">栃木</text>
-      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6.2</text>
+      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="栃木県"/>
+      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="栃木県">栃木</text>
+      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="栃木県">6.2</text>
       </a>
       <a href="pref/ibaraki.html" aria-label="茨城県の大規模修繕統計">
-      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">茨城</text>
-      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">8.8</text>
+      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="茨城県"/>
+      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="茨城県">茨城</text>
+      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="茨城県">8.8</text>
       </a>
       <a href="pref/yamaguchi.html" aria-label="山口県の大規模修繕統計">
-      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">山口</text>
-      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.7</text>
+      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="山口県"/>
+      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="山口県">山口</text>
+      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="山口県">5.7</text>
       </a>
       <a href="pref/hiroshima.html" aria-label="広島県の大規模修繕統計">
-      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">広島</text>
-      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">19.5</text>
+      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="広島県"/>
+      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="広島県">広島</text>
+      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="広島県">19.5</text>
       </a>
       <a href="pref/okayama.html" aria-label="岡山県の大規模修繕統計">
-      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岡山</text>
-      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">8.1</text>
+      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="岡山県"/>
+      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="岡山県">岡山</text>
+      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="岡山県">8.1</text>
       </a>
       <a href="pref/osaka.html" aria-label="大阪府の大規模修繕統計">
-      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">大阪</text>
-      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">86.7</text>
+      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="大阪府"/>
+      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="大阪府">大阪</text>
+      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="大阪府">86.7</text>
       </a>
       <a href="pref/shiga.html" aria-label="滋賀県の大規模修繕統計">
-      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">滋賀</text>
-      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.6</text>
+      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="滋賀県"/>
+      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="滋賀県">滋賀</text>
+      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="滋賀県">6.6</text>
       </a>
       <a href="pref/mie.html" aria-label="三重県の大規模修繕統計">
-      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">三重</text>
-      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6.2</text>
+      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="三重県"/>
+      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="三重県">三重</text>
+      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="三重県">6.2</text>
       </a>
       <a href="pref/aichi.html" aria-label="愛知県の大規模修繕統計">
-      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">愛知</text>
-      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">52.1</text>
+      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="愛知県"/>
+      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="愛知県">愛知</text>
+      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="愛知県">52.1</text>
       </a>
       <a href="pref/yamanashi.html" aria-label="山梨県の大規模修繕統計">
-      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">山梨</text>
-      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">2.9</text>
+      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="山梨県"/>
+      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="山梨県">山梨</text>
+      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="山梨県">2.9</text>
       </a>
       <a href="pref/saitama.html" aria-label="埼玉県の大規模修繕統計">
-      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">埼玉</text>
-      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">49.3</text>
+      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="埼玉県"/>
+      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="埼玉県">埼玉</text>
+      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="埼玉県">49.3</text>
       </a>
       <a href="pref/chiba.html" aria-label="千葉県の大規模修繕統計">
-      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">千葉</text>
-      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">37.6</text>
+      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="千葉県"/>
+      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="千葉県">千葉</text>
+      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="千葉県">37.6</text>
       </a>
       <a href="pref/fukuoka.html" aria-label="福岡県の大規模修繕統計">
-      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">福岡</text>
-      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">45.6</text>
+      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="福岡県"/>
+      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="福岡県">福岡</text>
+      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="福岡県">45.6</text>
       </a>
       <a href="pref/ehime.html" aria-label="愛媛県の大規模修繕統計">
-      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">愛媛</text>
-      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="愛媛県"/>
+      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="愛媛県">愛媛</text>
+      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="愛媛県">6.7</text>
       </a>
       <a href="pref/kagawa.html" aria-label="香川県の大規模修繕統計">
-      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">香川</text>
-      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4.1</text>
+      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="香川県"/>
+      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="香川県">香川</text>
+      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="香川県">4.1</text>
       </a>
       <a href="pref/wakayama.html" aria-label="和歌山県の大規模修繕統計">
-      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">和歌</text>
-      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.1</text>
+      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="和歌山県"/>
+      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="和歌山県">和歌</text>
+      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="和歌山県">3.1</text>
       </a>
       <a href="pref/nara.html" aria-label="奈良県の大規模修繕統計">
-      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">奈良</text>
-      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">6.7</text>
+      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="奈良県"/>
+      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="奈良県">奈良</text>
+      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="奈良県">6.7</text>
       </a>
       <a href="pref/shizuoka.html" aria-label="静岡県の大規模修繕統計">
-      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">静岡</text>
-      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">17.0</text>
+      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="静岡県"/>
+      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="静岡県">静岡</text>
+      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="静岡県">17.0</text>
       </a>
       <a href="pref/kanagawa.html" aria-label="神奈川県の大規模修繕統計">
-      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">神奈</text>
-      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">85.1</text>
+      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="神奈川県"/>
+      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="神奈川県">神奈</text>
+      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="神奈川県">85.1</text>
       </a>
       <a href="pref/tokyo.html" aria-label="東京都の大規模修繕統計">
-      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">東京</text>
-      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">157.8</text>
+      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="東京都"/>
+      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="東京都">東京</text>
+      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="東京都">157.8</text>
       </a>
       <a href="pref/saga.html" aria-label="佐賀県の大規模修繕統計">
-      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">佐賀</text>
-      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2.3</text>
+      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="佐賀県"/>
+      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="佐賀県">佐賀</text>
+      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="佐賀県">2.3</text>
       </a>
       <a href="pref/nagasaki.html" aria-label="長崎県の大規模修繕統計">
-      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">長崎</text>
-      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.7</text>
+      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="長崎県"/>
+      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="長崎県">長崎</text>
+      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="長崎県">5.7</text>
       </a>
       <a href="pref/oita.html" aria-label="大分県の大規模修繕統計">
-      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">大分</text>
-      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.5</text>
+      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="大分県"/>
+      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="大分県">大分</text>
+      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="大分県">5.5</text>
       </a>
       <a href="pref/kochi.html" aria-label="高知県の大規模修繕統計">
-      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">高知</text>
-      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3.3</text>
+      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="高知県"/>
+      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="高知県">高知</text>
+      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="高知県">3.3</text>
       </a>
       <a href="pref/tokushima.html" aria-label="徳島県の大規模修繕統計">
-      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">徳島</text>
-      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">2.6</text>
+      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="徳島県"/>
+      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="徳島県">徳島</text>
+      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="徳島県">2.6</text>
       </a>
       <a href="pref/kumamoto.html" aria-label="熊本県の大規模修繕統計">
-      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">熊本</text>
-      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7.3</text>
+      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="熊本県"/>
+      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="熊本県">熊本</text>
+      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="熊本県">7.3</text>
       </a>
       <a href="pref/miyazaki.html" aria-label="宮崎県の大規模修繕統計">
-      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">宮崎</text>
-      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5.1</text>
+      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="宮崎県"/>
+      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="宮崎県">宮崎</text>
+      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="宮崎県">5.1</text>
       </a>
       <a href="pref/kagoshima.html" aria-label="鹿児島県の大規模修繕統計">
-      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">鹿児</text>
-      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">8.3</text>
+      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="鹿児島県"/>
+      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="鹿児島県">鹿児</text>
+      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="鹿児島県">8.3</text>
       </a>
       <a href="pref/okinawa.html" aria-label="沖縄県の大規模修繕統計">
-      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">沖縄</text>
-      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">11.0</text>
+      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="沖縄県"/>
+      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="沖縄県">沖縄</text>
+      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="沖縄県">11.0</text>
       </a>
       <text x="610" y="576" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">単位：万戸</text>
-      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">例）東京 157.8 ＝ 1,578,400戸</text>
+      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" class="egline">例）東京 157.8 ＝ 1,578,400戸</text>
       <text x="30" y="778" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">太枠＝東京・神奈・埼玉・千葉（一都三県）</text>
       </svg>
       <div class="chart-foot">
@@ -1318,19 +1351,38 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
 
   <!-- ===== 都道府県タイルマップ（2）分譲マンションの着工＝別の統計 ===== -->
   <section id="map-flow">
-    <h2><span class="idx">Fig. 6</span>都道府県別　分譲マンションの着工戸数（1988〜2001年度）</h2>
+    <h2><span class="idx">Fig. 6</span>都道府県別　分譲マンションの着工戸数（1988〜2010年度）</h2>
     <div class="warn">
       <h4>ここから下は別の統計です</h4>
       <ul>
         <li>Fig.5 は<strong>現存ストック</strong>〔2023年10月1日時点で建っている住宅の数〕ですが、こちらは<strong>着工戸数（フロー）</strong>〔その年度に着工した数〕です。その後の取り壊しや用途変更は反映されていません。</li>
         <li>絞り込みは<strong>「分譲マンション」まで届きます</strong>（共同住宅・鉄筋コンクリート造・分譲住宅）。賃貸は入りません。Fig.5 で失われる分譲／賃貸の区別が、ここでは効きます。</li>
-        <li>期間の取り方も違い、こちらは<strong>1988〜2001年度着工＝2026年時点で築25〜38年</strong>です。<strong>Fig.5 とは直接比べられません。</strong></li>
+        <li>対象の築年数も違い、Fig.5 は<strong>築26〜45年</strong>、こちらは<strong>1988〜2010年度着工＝2026年時点で築16〜38年</strong>です（着工年度は下のつまみで変えられます）。<strong>Fig.5 とは直接比べられません。</strong></li>
       </ul>
     </div>
-    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。</p>
+    <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。<strong>着工年度を変えると、地図と下の3つの数字が塗り替わります。</strong></p>
+
+    <div class="eras">
+      <div class="erarow">
+        <span class="eralab">着工年度</span>
+        <span class="erabtns" id="eraBtns"></span>
+      </div>
+      <div class="erarow">
+        <div class="erarange">
+          <span class="track"><span class="sel" id="eraSel"></span></span>
+          <input type="range" id="eraR1" min="1988" max="2023" step="1" aria-label="着工年度の始まり">
+          <input type="range" id="eraR2" min="1988" max="2023" step="1" aria-label="着工年度の終わり">
+          <span class="ticks" id="eraTicks"></span>
+        </div>
+        <label class="erain">自<input type="number" id="eraFrom" min="1988" max="2023" step="1"></label>
+        <label class="erain">至<input type="number" id="eraTo" min="1988" max="2023" step="1"></label>
+      </div>
+      <div class="erarow"><span class="eraage" id="eraAge">—</span></div>
+    </div>
+
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 国土交通省</span><span><strong>住宅着工統計調査</strong>　e-Stat API 取得・2026-09-06</span></div>
-      <svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の分譲マンション着工戸数タイルマップ。東京都297,723戸、神奈川県228,399戸、大阪府130,681戸、兵庫県120,380戸、埼玉県119,384戸 の順に多い。">
+      <svg viewBox="0 0 900 790" role="img" aria-label="都道府県別の分譲マンション着工戸数タイルマップ。東京都698,645戸、神奈川県406,337戸、大阪府287,548戸、埼玉県204,482戸、兵庫県191,489戸 の順に多い。">
       <text x="30" y="18" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" letter-spacing="1">単位：千戸　　少ない ← → 多い</text>
       <rect x="30" y="28" width="49" height="14" fill="var(--b0)"/>
       <rect x="82" y="28" width="49" height="14" fill="var(--b1)"/>
@@ -1340,178 +1392,178 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <rect x="290" y="28" width="49" height="14" fill="var(--b5)"/>
       <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">
       <text x="30" y="56">0</text>
-      <text x="82" y="56" text-anchor="middle">3</text>
-      <text x="134" y="56" text-anchor="middle">5</text>
-      <text x="186" y="56" text-anchor="middle">7</text>
-      <text x="238" y="56" text-anchor="middle">12</text>
-      <text x="290" y="56" text-anchor="middle">85</text>
+      <text x="82" y="56" text-anchor="middle" class="cut" data-i="0">6</text>
+      <text x="134" y="56" text-anchor="middle" class="cut" data-i="1">9</text>
+      <text x="186" y="56" text-anchor="middle" class="cut" data-i="2">10</text>
+      <text x="238" y="56" text-anchor="middle" class="cut" data-i="3">23</text>
+      <text x="290" y="56" text-anchor="middle" class="cut" data-i="4">145</text>
       </g>
-      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">北海</text>
-      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">67</text>
-      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">青森</text>
-      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">秋田</text>
-      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">岩手</text>
-      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">山形</text>
-      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">3</text>
-      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">宮城</text>
-      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">26</text>
-      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">石川</text>
-      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">富山</text>
-      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">新潟</text>
-      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">福島</text>
-      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">島根</text>
-      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">鳥取</text>
-      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">1</text>
-      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">兵庫</text>
-      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">120</text>
-      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">京</text>
-      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">35</text>
-      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">福井</text>
-      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">岐阜</text>
-      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">長野</text>
-      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">群馬</text>
-      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">栃木</text>
-      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">茨城</text>
-      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">10</text>
-      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">山口</text>
-      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">広島</text>
-      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">30</text>
-      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">岡山</text>
-      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">9</text>
-      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">大阪</text>
-      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">131</text>
-      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">滋賀</text>
-      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">14</text>
-      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">三重</text>
-      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">5</text>
-      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">愛知</text>
-      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">85</text>
-      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">山梨</text>
-      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">埼玉</text>
-      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">119</text>
-      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">千葉</text>
-      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">107</text>
-      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)"/>
-      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">福岡</text>
-      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">88</text>
-      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">愛媛</text>
-      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">4</text>
-      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">香川</text>
-      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">和歌</text>
-      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">6</text>
-      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">奈良</text>
-      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">25</text>
-      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">静岡</text>
-      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">27</text>
-      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">神奈</text>
-      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">228</text>
-      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2"/>
-      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)">東京</text>
-      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)">298</text>
-      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">佐賀</text>
-      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">長崎</text>
-      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">大分</text>
-      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">7</text>
-      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">高知</text>
-      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b0)"/>
-      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)">徳島</text>
-      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)">2</text>
-      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)"/>
-      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)">熊本</text>
-      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)">11</text>
-      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b1)"/>
-      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)">宮崎</text>
-      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)">3</text>
-      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b2)"/>
-      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)">鹿児</text>
-      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)">5</text>
-      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b4)"/>
-      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)">沖縄</text>
-      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)">12</text>
+      <rect x="784" y="92" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="北海道"/>
+      <text x="810.0" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="北海道">北海</text>
+      <text x="810.0" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="北海道">95</text>
+      <rect x="726" y="150" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="青森県"/>
+      <text x="752.0" y="171" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="青森県">青森</text>
+      <text x="752.0" y="189" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="青森県">2</text>
+      <rect x="668" y="208" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="秋田県"/>
+      <text x="694.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="秋田県">秋田</text>
+      <text x="694.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="秋田県">3</text>
+      <rect x="726" y="208" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="岩手県"/>
+      <text x="752.0" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="岩手県">岩手</text>
+      <text x="752.0" y="247" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="岩手県">6</text>
+      <rect x="668" y="266" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="山形県"/>
+      <text x="694.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="山形県">山形</text>
+      <text x="694.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="山形県">4</text>
+      <rect x="726" y="266" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="宮城県"/>
+      <text x="752.0" y="287" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="宮城県">宮城</text>
+      <text x="752.0" y="305" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="宮城県">42</text>
+      <rect x="494" y="324" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="石川県"/>
+      <text x="520.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="石川県">石川</text>
+      <text x="520.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="石川県">8</text>
+      <rect x="552" y="324" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="富山県"/>
+      <text x="578.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="富山県">富山</text>
+      <text x="578.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="富山県">5</text>
+      <rect x="610" y="324" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="新潟県"/>
+      <text x="636.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="新潟県">新潟</text>
+      <text x="636.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="新潟県">10</text>
+      <rect x="668" y="324" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="福島県"/>
+      <text x="694.0" y="345" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="福島県">福島</text>
+      <text x="694.0" y="363" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="福島県">10</text>
+      <rect x="204" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="島根県"/>
+      <text x="230.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="島根県">島根</text>
+      <text x="230.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="島根県">4</text>
+      <rect x="262" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="鳥取県"/>
+      <text x="288.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="鳥取県">鳥取</text>
+      <text x="288.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="鳥取県">3</text>
+      <rect x="320" y="382" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="兵庫県"/>
+      <text x="346.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="兵庫県">兵庫</text>
+      <text x="346.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="兵庫県">191</text>
+      <rect x="378" y="382" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="京都府"/>
+      <text x="404.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="京都府">京</text>
+      <text x="404.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="京都府">60</text>
+      <rect x="436" y="382" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="福井県"/>
+      <text x="462.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="福井県">福井</text>
+      <text x="462.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="福井県">4</text>
+      <rect x="494" y="382" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="岐阜県"/>
+      <text x="520.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="岐阜県">岐阜</text>
+      <text x="520.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="岐阜県">9</text>
+      <rect x="552" y="382" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="長野県"/>
+      <text x="578.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="長野県">長野</text>
+      <text x="578.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="長野県">12</text>
+      <rect x="610" y="382" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="群馬県"/>
+      <text x="636.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="群馬県">群馬</text>
+      <text x="636.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="群馬県">11</text>
+      <rect x="668" y="382" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="栃木県"/>
+      <text x="694.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="栃木県">栃木</text>
+      <text x="694.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="栃木県">9</text>
+      <rect x="726" y="382" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="茨城県"/>
+      <text x="752.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="茨城県">茨城</text>
+      <text x="752.0" y="421" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="茨城県">24</text>
+      <rect x="146" y="440" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="山口県"/>
+      <text x="172.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="山口県">山口</text>
+      <text x="172.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="山口県">9</text>
+      <rect x="204" y="440" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="広島県"/>
+      <text x="230.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="広島県">広島</text>
+      <text x="230.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="広島県">57</text>
+      <rect x="262" y="440" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="岡山県"/>
+      <text x="288.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="岡山県">岡山</text>
+      <text x="288.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="岡山県">17</text>
+      <rect x="320" y="440" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="大阪府"/>
+      <text x="346.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="大阪府">大阪</text>
+      <text x="346.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="大阪府">288</text>
+      <rect x="378" y="440" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="滋賀県"/>
+      <text x="404.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="滋賀県">滋賀</text>
+      <text x="404.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="滋賀県">23</text>
+      <rect x="436" y="440" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="三重県"/>
+      <text x="462.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="三重県">三重</text>
+      <text x="462.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="三重県">10</text>
+      <rect x="494" y="440" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="愛知県"/>
+      <text x="520.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="愛知県">愛知</text>
+      <text x="520.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="愛知県">145</text>
+      <rect x="552" y="440" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="山梨県"/>
+      <text x="578.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="山梨県">山梨</text>
+      <text x="578.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="山梨県">9</text>
+      <rect x="610" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="埼玉県"/>
+      <text x="636.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="埼玉県">埼玉</text>
+      <text x="636.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="埼玉県">204</text>
+      <rect x="668" y="440" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="千葉県"/>
+      <text x="694.0" y="461" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="千葉県">千葉</text>
+      <text x="694.0" y="479" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="千葉県">191</text>
+      <rect x="146" y="498" width="52" height="52" rx="3" fill="var(--b5)" class="tile" data-pref="福岡県"/>
+      <text x="172.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="福岡県">福岡</text>
+      <text x="172.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="福岡県">147</text>
+      <rect x="204" y="498" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="愛媛県"/>
+      <text x="230.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="愛媛県">愛媛</text>
+      <text x="230.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="愛媛県">9</text>
+      <rect x="262" y="498" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="香川県"/>
+      <text x="288.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="香川県">香川</text>
+      <text x="288.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="香川県">13</text>
+      <rect x="320" y="498" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="和歌山県"/>
+      <text x="346.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="和歌山県">和歌</text>
+      <text x="346.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="和歌山県">7</text>
+      <rect x="378" y="498" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="奈良県"/>
+      <text x="404.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="奈良県">奈良</text>
+      <text x="404.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="奈良県">35</text>
+      <rect x="494" y="498" width="52" height="52" rx="3" fill="var(--b4)" class="tile" data-pref="静岡県"/>
+      <text x="520.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b4f)" class="tilenm" data-pref="静岡県">静岡</text>
+      <text x="520.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b4f)" class="tileval" data-pref="静岡県">42</text>
+      <rect x="552" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="神奈川県"/>
+      <text x="578.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="神奈川県">神奈</text>
+      <text x="578.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="神奈川県">406</text>
+      <rect x="610" y="498" width="52" height="52" rx="3" fill="var(--b5)" stroke="var(--ink)" stroke-width="2" class="tile" data-pref="東京都"/>
+      <text x="636.0" y="519" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b5f)" class="tilenm" data-pref="東京都">東京</text>
+      <text x="636.0" y="537" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b5f)" class="tileval" data-pref="東京都">699</text>
+      <rect x="88" y="556" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="佐賀県"/>
+      <text x="114.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="佐賀県">佐賀</text>
+      <text x="114.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="佐賀県">6</text>
+      <rect x="146" y="556" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="長崎県"/>
+      <text x="172.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="長崎県">長崎</text>
+      <text x="172.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="長崎県">10</text>
+      <rect x="204" y="556" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="大分県"/>
+      <text x="230.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="大分県">大分</text>
+      <text x="230.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="大分県">10</text>
+      <rect x="262" y="556" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="高知県"/>
+      <text x="288.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="高知県">高知</text>
+      <text x="288.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="高知県">6</text>
+      <rect x="320" y="556" width="52" height="52" rx="3" fill="var(--b0)" class="tile" data-pref="徳島県"/>
+      <text x="346.0" y="577" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b0f)" class="tilenm" data-pref="徳島県">徳島</text>
+      <text x="346.0" y="595" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b0f)" class="tileval" data-pref="徳島県">4</text>
+      <rect x="146" y="614" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="熊本県"/>
+      <text x="172.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="熊本県">熊本</text>
+      <text x="172.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="熊本県">17</text>
+      <rect x="204" y="614" width="52" height="52" rx="3" fill="var(--b1)" class="tile" data-pref="宮崎県"/>
+      <text x="230.0" y="635" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b1f)" class="tilenm" data-pref="宮崎県">宮崎</text>
+      <text x="230.0" y="653" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b1f)" class="tileval" data-pref="宮崎県">6</text>
+      <rect x="146" y="672" width="52" height="52" rx="3" fill="var(--b2)" class="tile" data-pref="鹿児島県"/>
+      <text x="172.0" y="693" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b2f)" class="tilenm" data-pref="鹿児島県">鹿児</text>
+      <text x="172.0" y="711" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b2f)" class="tileval" data-pref="鹿児島県">10</text>
+      <rect x="30" y="730" width="52" height="52" rx="3" fill="var(--b3)" class="tile" data-pref="沖縄県"/>
+      <text x="56.0" y="751" text-anchor="middle" font-size="13" font-weight="600" fill="var(--b3f)" class="tilenm" data-pref="沖縄県">沖縄</text>
+      <text x="56.0" y="769" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--b3f)" class="tileval" data-pref="沖縄県">20</text>
       <text x="610" y="576" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">単位：千戸</text>
-      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">例）東京 298 ＝ 297,723戸</text>
+      <text x="610" y="595" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)" class="egline">例）東京 699 ＝ 698,645戸</text>
       <text x="30" y="778" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink3)">太枠＝東京・神奈・埼玉・千葉（一都三県）</text>
       </svg>
       <div class="chart-foot">
         <a href="https://www.e-stat.go.jp/dbview?sid=0003119736" target="_blank" rel="noopener">e-Stat statsDataId=0003119736</a>　建て方＝共同住宅／構造＝鉄筋コンクリート造／利用関係＝分譲住宅／表章項目＝戸数<br>
-        全国値 1,560,831 戸に対し、47都道府県の合計は差 0 戸で一致します。<br>
+        <span id="eraFoot">—</span><br>
         タイルはリンクではありません。都道府県ページの見出し数字は Fig.5 のストックなので、ここから直接は送っていません。
       </div>
     </div>
     <div class="figgrid">
       <div class="keynum">
         <span class="k">National</span>
-        <div class="v">1,560,831<small>戸</small></div>
-        <p>1988〜2001年度の全国合計。2026年時点で築25〜38年です。</p>
+        <div class="v" id="eraTotal">2,912,202<small>戸</small></div>
+        <p id="eraTotalNote">1988〜2010年度の全国合計。2026年時点で築16〜38年です。</p>
       </div>
       <div class="keynum">
         <span class="k">一都三県</span>
-        <div class="v">48.2<small>%</small></div>
-        <p>東京・神奈川・埼玉・千葉の合計 752,756 戸。</p>
+        <div class="v" id="eraMetroPct">51.5<small>%</small></div>
+        <p id="eraMetroNote">東京・神奈川・埼玉・千葉の合計 1,500,025 戸。</p>
       </div>
       <div class="keynum">
         <span class="k">最多</span>
-        <div class="v">297,723<small>戸</small></div>
-        <p>東京都。次いで神奈川県、大阪府、兵庫県、埼玉県の順です。</p>
+        <div class="v" id="eraTop1">698,645<small>戸</small></div>
+        <p id="eraTop1Note">東京都。次いで神奈川県、大阪府、埼玉県、兵庫県の順です。</p>
       </div>
     </div>
   </section>
@@ -1841,7 +1893,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   ]
 }
 </script>
-<script id="basis" type="application/json">{"clock":{"annual_floor_area_m2":108315608,"b_2024":1480000,"c_2034":2932000,"dome_m2":46755},"deflator":{"months":["2016年4月","2016年5月","2016年6月","2016年7月","2016年8月","2016年9月","2016年10月","2016年11月","2016年12月","2017年1月","2017年2月","2017年3月","2017年4月","2017年5月","2017年6月","2017年7月","2017年8月","2017年9月","2017年10月","2017年11月","2017年12月","2018年1月","2018年2月","2018年3月","2018年4月","2018年5月","2018年6月","2018年7月","2018年8月","2018年9月","2018年10月","2018年11月","2018年12月","2019年1月","2019年2月","2019年3月","2019年4月","2019年5月","2019年6月","2019年7月","2019年8月","2019年9月","2019年10月","2019年11月","2019年12月","2020年1月","2020年2月","2020年3月","2020年4月","2020年5月","2020年6月","2020年7月","2020年8月","2020年9月","2020年10月","2020年11月","2020年12月","2021年1月","2021年2月","2021年3月","2021年4月","2021年5月","2021年6月","2021年7月","2021年8月","2021年9月","2021年10月","2021年11月","2021年12月","2022年1月","2022年2月","2022年3月","2022年4月","2022年5月","2022年6月","2022年7月","2022年8月","2022年9月","2022年10月","2022年11月","2022年12月","2023年1月","2023年2月","2023年3月","2023年4月","2023年5月","2023年6月","2023年7月","2023年8月","2023年9月","2023年10月","2023年11月","2023年12月","2024年1月","2024年2月","2024年3月","2024年4月","2024年5月","2024年6月","2024年7月","2024年8月","2024年9月","2024年10月","2024年11月","2024年12月","2025年1月","2025年2月","2025年3月","2025年4月","2025年5月","2025年6月","2025年7月","2025年8月","2025年9月","2025年10月","2025年11月","2025年12月","2026年1月","2026年2月","2026年3月","2026年4月","2026年5月","2026年6月"],"series":{"建築補修（改装・改修）":[92.9,92.5,92.8,93.5,92.7,92.5,93.3,93.8,92.9,93.1,93.7,93.9,94.2,94.3,94.1,94.0,94.7,94.8,95.2,95.3,95.6,94.7,95.6,95.9,96.0,97.0,98.2,99.9,95.9,97.4,97.4,96.5,99.4,98.1,97.7,98.0,98.5,98.7,98.7,99.6,99.2,100.4,100.5,100.3,102.1,101.0,100.7,100.8,99.9,99.0,101.2,99.7,99.9,99.6,99.7,99.4,100.1,100.2,100.8,100.2,101.0,101.5,100.3,102.2,103.1,104.2,105.0,105.4,104.8,106.7,107.1,107.8,108.7,108.3,110.9,109.0,110.5,109.8,112.2,114.1,112.8,113.1,112.8,113.8,113.6,113.7,113.9,113.8,114.9,114.7,115.8,115.3,114.8,115.6,115.6,117.0,117.7,119.8,119.1,120.1,119.4,119.3,119.6,121.0,121.2,120.1,121.1,119.8,121.3,121.4,122.3,125.9,121.9,122.2,122.1,122.6,123.6,123.5,123.6,125.7,126.9,127.6,127.2],"建設総合":[92.6,92.1,92.3,93.1,92.3,92.2,93.0,93.5,92.8,93.0,93.6,93.8,94.1,94.0,93.6,93.6,94.4,94.6,95.0,95.2,95.6,94.7,95.6,96.0,96.0,97.1,98.4,100.1,96.0,97.4,97.6,96.7,99.8,98.3,97.9,98.3,98.7,98.9,98.8,99.7,99.1,100.4,100.5,100.2,102.2,101.0,100.6,100.7,99.9,99.0,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.3,100.9,100.4,101.3,102.0,101.0,102.9,104.1,105.3,106.2,106.4,106.0,107.8,108.2,108.9,109.8,109.4,111.7,109.4,110.9,110.0,111.9,113.7,112.4,112.3,111.9,112.9,112.6,112.6,112.8,112.5,113.6,113.4,114.5,114.1,113.5,114.4,114.4,116.0,116.8,118.9,118.1,119.1,118.3,118.2,118.3,119.7,119.9,118.8,119.8,118.5,120.1,120.1,121.1,124.7,120.7,121.1,121.0,121.5,122.6,122.5,122.5,124.5,125.7,126.4,125.9],"建築総合":[92.9,92.4,92.6,93.3,92.6,92.5,93.2,93.8,92.9,93.1,93.8,93.9,94.3,94.2,93.9,93.9,94.5,94.8,95.2,95.3,95.7,94.8,95.7,96.2,96.3,97.2,98.4,100.2,96.1,97.6,97.7,96.7,99.8,98.4,97.9,98.4,98.8,99.0,99.0,99.7,99.1,100.4,100.5,100.3,102.1,101.0,100.6,100.7,100.0,99.1,101.2,99.6,99.8,99.5,99.7,99.4,100.1,100.2,100.8,100.4,101.4,102.3,101.8,104.1,105.6,107.2,108.3,108.5,108.2,109.9,110.2,111.0,111.8,111.6,113.7,111.5,112.8,111.8,113.4,115.1,113.7,113.4,112.9,113.7,113.3,113.3,113.4,113.1,114.0,113.8,114.9,114.5,114.0,114.9,114.9,116.4,117.2,119.2,118.3,119.3,118.6,118.4,118.5,119.9,120.1,119.0,119.9,118.7,120.5,120.5,121.4,124.9,121.1,121.4,121.3,121.9,122.9,122.7,122.8,124.6,125.7,126.4,126.0],"住宅総合":[93.3,92.7,93.0,93.7,93.0,92.8,93.6,94.0,93.3,93.5,94.1,94.3,94.7,94.6,94.2,94.2,94.9,95.1,95.5,95.6,96.0,95.0,95.9,96.5,96.5,97.4,98.7,100.4,96.3,97.7,97.8,96.8,99.9,98.4,98.1,98.4,98.9,99.1,99.1,99.8,99.3,100.6,100.5,100.2,102.2,101.0,100.7,100.8,100.0,99.1,101.1,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.9,100.6,101.7,103.0,103.1,105.9,107.8,109.9,111.2,111.4,111.1,112.7,113.0,113.7,114.7,114.6,116.7,114.5,115.6,114.4,115.8,117.3,115.8,115.2,114.4,115.0,114.4,114.3,114.2,113.8,114.6,114.5,115.5,115.1,114.6,115.6,115.5,116.9,117.6,119.6,118.7,119.7,119.0,118.9,118.8,120.0,120.3,119.2,120.2,119.0,120.8,120.8,121.6,125.1,121.5,121.9,121.9,122.4,123.5,123.3,123.2,125.2,126.3,127.1,126.9],"木造住宅":[93.8,93.2,93.4,94.2,93.4,93.3,94.1,94.6,93.6,93.8,94.5,94.6,95.0,94.8,94.5,94.5,95.1,95.3,95.7,95.8,96.0,95.0,96.0,96.5,96.4,97.5,98.7,100.4,96.0,97.5,97.5,96.6,99.9,98.3,97.9,98.3,98.7,98.9,98.9,99.7,99.1,100.5,100.4,100.0,102.1,101.0,100.5,100.7,100.1,99.3,101.2,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.8,100.5,101.8,103.5,104.0,107.2,109.5,112.0,113.4,113.5,113.2,114.8,115.1,115.7,116.9,116.8,118.9,116.5,117.5,115.9,117.0,118.4,116.7,115.9,114.9,115.3,114.6,114.3,114.2,113.6,114.4,114.2,115.4,115.0,114.4,115.4,115.3,116.7,117.3,119.3,118.3,119.4,118.6,118.5,118.3,119.4,119.7,118.7,119.7,118.4,120.4,120.4,121.2,124.8,121.2,121.7,121.6,122.2,123.2,123.1,123.0,124.8,125.9,126.7,126.7],"非木造住宅":[92.5,92.1,92.3,93.0,92.2,92.2,92.8,93.4,92.7,93.0,93.6,93.9,94.3,94.1,93.8,93.8,94.5,94.7,95.1,95.3,95.7,94.9,95.8,96.3,96.4,97.3,98.5,100.1,96.3,97.8,97.9,97.1,99.8,98.5,98.1,98.6,99.0,99.2,99.1,99.8,99.3,100.5,100.6,100.4,102.2,101.1,100.7,100.8,99.9,98.9,101.0,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.7,101.6,102.4,101.8,103.9,105.3,106.9,108.1,108.4,108.0,109.8,110.1,110.9,111.9,111.7,113.9,111.9,113.2,112.3,114.2,115.8,114.5,114.2,113.7,114.6,114.2,114.1,114.3,114.0,115.0,114.8,115.7,115.3,114.9,115.7,115.8,117.3,118.1,120.1,119.3,120.3,119.6,119.4,119.6,120.8,121.1,120.0,120.9,119.8,121.4,121.3,122.2,125.5,121.9,122.3,122.2,122.8,123.8,123.6,123.6,125.6,126.8,127.6,127.3],"住宅・鉄骨鉄筋コンクリート造":[92.8,92.3,92.6,93.3,92.5,92.3,93.1,93.6,92.9,93.1,93.7,93.9,94.4,94.3,93.9,93.9,94.7,94.8,95.3,95.5,95.9,95.0,95.9,96.3,96.4,97.5,98.8,100.5,96.4,97.8,97.9,97.1,100.1,98.5,98.2,98.6,99.1,99.2,99.1,100.0,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.1,99.7,99.9,99.6,99.6,99.3,100.0,100.3,100.9,100.5,101.7,102.2,101.1,102.9,103.8,105.0,105.8,106.1,105.6,107.3,107.7,108.5,109.6,109.2,111.5,109.2,110.6,109.9,111.8,113.5,112.3,112.2,111.9,112.9,112.7,112.8,112.9,112.8,113.9,113.5,114.5,114.0,113.5,114.5,114.6,116.3,117.5,119.7,118.8,119.8,118.8,118.6,118.9,120.2,120.4,119.5,120.3,119.2,120.8,120.9,121.9,125.4,121.3,121.7,121.5,122.2,123.3,123.5,123.5,125.5,126.7,127.5,127.0],"住宅・鉄筋コンクリート造":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.4,92.5,93.3,93.6,94.0,93.8,93.5,93.5,94.2,94.5,94.9,95.1,95.5,94.6,95.5,96.1,96.2,97.3,98.6,100.4,96.1,97.7,97.8,96.9,100.1,98.4,98.0,98.5,98.9,99.1,99.1,99.8,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.8,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.3,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.3,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"住宅・鉄骨造":[93.1,92.8,93.0,93.6,92.9,92.7,93.3,93.8,93.2,93.6,94.1,94.4,94.7,94.6,94.3,94.4,94.9,95.1,95.5,95.7,96.1,95.4,96.2,96.6,96.7,97.5,98.5,99.9,96.7,98.0,98.1,97.4,99.6,98.6,98.2,98.8,99.2,99.3,99.2,99.6,99.3,100.3,100.7,100.6,101.9,101.0,100.7,100.8,99.9,99.0,100.7,99.6,99.7,99.6,99.6,99.5,100.1,100.3,101.0,101.0,101.9,102.8,102.8,105.2,106.9,108.9,110.5,110.9,110.7,112.3,112.7,113.5,114.7,114.8,116.8,115.3,116.3,115.5,117.2,118.5,117.3,116.9,116.3,116.9,116.5,116.2,116.3,116.0,116.8,116.9,117.6,117.3,116.8,117.6,117.6,119.0,119.8,121.5,120.8,121.7,121.1,121.0,121.3,122.4,122.6,121.5,122.3,121.5,123.1,123.0,123.6,126.4,123.3,123.7,123.7,124.2,125.0,124.6,124.9,126.5,127.8,128.9,128.8],"非住宅総合":[92.4,91.9,92.2,92.9,92.2,92.0,92.7,93.3,92.6,92.7,93.4,93.6,93.9,93.8,93.4,93.5,94.1,94.3,94.9,95.0,95.4,94.6,95.4,95.9,96.0,96.8,98.1,99.9,95.9,97.4,97.5,96.6,99.7,98.3,97.8,98.3,98.7,98.8,98.7,99.5,98.9,100.3,100.5,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.4,100.3,102.1,103.0,104.1,104.9,105.1,104.8,106.6,106.8,107.6,108.4,108.0,110.2,108.0,109.5,108.7,110.7,112.4,111.2,111.3,111.2,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.2,113.8,113.2,114.1,114.1,115.7,116.7,118.6,117.8,118.8,118.0,117.9,118.2,119.7,119.8,118.7,119.6,118.4,120.0,120.1,121.2,124.6,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・非木造":[92.3,91.8,92.1,92.8,92.1,91.9,92.7,93.2,92.5,92.7,93.3,93.5,93.9,93.7,93.3,93.4,94.0,94.2,94.8,94.9,95.3,94.5,95.4,95.8,95.9,96.8,98.0,99.8,95.9,97.4,97.5,96.6,99.6,98.2,97.8,98.2,98.7,98.7,98.7,99.4,98.9,100.2,100.4,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.3,100.1,101.8,102.8,103.8,104.6,104.8,104.5,106.3,106.6,107.4,108.1,107.7,110.0,107.8,109.2,108.5,110.5,112.3,111.1,111.2,111.1,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.1,113.7,113.2,114.1,114.1,115.8,116.7,118.6,117.8,118.8,118.1,117.9,118.3,119.7,119.9,118.8,119.7,118.5,120.1,120.2,121.3,124.7,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・鉄筋コンクリート造":[92.5,92.2,92.5,93.0,92.3,92.2,92.9,93.4,92.8,93.1,93.6,93.9,94.3,94.1,93.8,93.9,94.5,94.7,95.1,95.3,95.7,95.0,95.8,96.2,96.4,97.3,98.3,99.7,96.5,97.7,97.8,97.2,99.5,98.3,98.0,98.4,98.8,98.9,98.9,99.5,99.0,100.0,100.5,100.3,101.7,101.0,100.6,100.6,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.3,101.2,101.7,100.6,102.4,103.4,104.6,105.4,105.6,105.2,107.0,107.3,108.0,108.9,108.5,110.7,108.5,109.9,109.1,111.1,112.8,111.5,111.5,111.2,112.2,112.0,112.1,112.4,112.1,113.1,112.9,114.1,113.6,113.0,114.0,114.0,115.5,116.4,118.4,117.5,118.5,117.8,117.7,117.8,119.2,119.4,118.2,119.2,117.9,119.6,119.6,120.5,124.1,120.2,120.6,120.5,121.1,122.2,122.0,122.0,123.9,125.0,125.6,125.0],"非住宅・鉄骨造":[92.2,91.8,92.0,92.7,91.9,91.8,92.6,93.1,92.3,92.5,93.1,93.3,93.7,93.5,93.1,93.1,93.9,94.1,94.7,94.8,95.2,94.3,95.3,95.7,95.7,96.6,97.9,99.7,95.7,97.2,97.3,96.4,99.6,98.2,97.7,98.1,98.6,98.7,98.7,99.4,98.9,100.3,100.4,100.2,102.0,100.8,100.4,100.7,100.1,99.1,101.2,99.8,99.9,99.6,99.7,99.4,100.0,100.2,100.7,100.1,100.8,101.2,100.0,101.7,102.5,103.6,104.3,104.6,104.3,106.1,106.4,107.2,107.9,107.6,109.7,107.6,109.0,108.3,110.3,112.1,111.0,111.2,111.1,112.2,112.0,112.1,112.3,112.3,113.4,113.2,114.2,113.9,113.4,114.2,114.3,115.9,116.9,118.8,118.0,119.0,118.2,118.0,118.5,120.0,120.1,119.0,119.9,118.7,120.3,120.4,121.6,125.0,120.8,121.0,120.8,121.3,122.3,122.1,122.3,124.0,124.9,125.7,124.9],"土木総合":[92.2,91.6,91.9,92.7,91.9,91.7,92.6,93.2,92.5,92.7,93.5,93.6,93.9,93.7,93.3,93.3,94.1,94.3,94.9,95.1,95.5,94.5,95.5,95.9,95.9,97.0,98.4,100.3,95.8,97.4,97.7,96.7,99.9,98.2,97.9,98.4,98.8,99.0,98.9,99.7,99.1,100.5,100.5,100.2,102.4,101.2,100.7,100.6,99.7,98.7,101.2,99.6,99.8,99.6,99.7,99.4,100.2,100.4,101.0,100.5,101.2,101.8,100.3,101.9,102.8,103.7,104.4,104.6,104.1,106.0,106.4,107.2,107.9,107.3,109.7,107.1,108.7,107.9,109.9,111.8,110.5,110.5,110.3,111.5,111.2,111.3,111.6,111.4,112.7,112.3,113.4,113.0,112.5,113.3,113.4,115.1,116.0,118.3,117.4,118.5,117.5,117.4,117.4,118.9,119.1,118.1,119.1,117.8,119.2,119.1,120.2,124.0,119.8,120.2,120.1,120.6,121.8,121.8,121.7,123.9,125.3,125.9,125.1],"鉄筋・在来住宅":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.3,92.5,93.3,93.6,94.0,93.8,93.4,93.4,94.2,94.5,94.9,95.1,95.5,94.5,95.5,96.2,96.2,97.3,98.7,100.5,96.1,97.7,97.8,96.9,100.1,98.3,98.0,98.5,99.0,99.1,99.1,99.9,99.3,100.6,100.5,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.2,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.2,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"鉄筋・事務所その他":[92.5,92.2,92.5,92.8,92.3,92.2,92.8,93.2,92.8,93.1,93.7,93.9,94.2,94.1,93.9,94.0,94.5,94.7,95.2,95.4,95.6,95.2,95.8,96.3,96.5,97.2,98.2,99.4,96.6,97.8,97.9,97.3,99.3,98.2,98.0,98.4,98.8,99.0,98.9,99.3,98.9,99.9,100.5,100.3,101.6,100.9,100.6,100.5,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.4,101.2,101.8,100.7,102.4,103.6,104.6,105.5,105.7,105.2,107.0,107.3,108.0,108.9,108.6,110.8,108.6,110.0,109.2,111.1,112.8,111.5,111.5,111.1,112.2,112.0,112.1,112.3,112.0,113.0,112.9,114.0,113.5,112.9,113.9,113.9,115.4,116.3,118.4,117.4,118.4,117.8,117.6,117.7,119.1,119.3,118.2,119.1,117.8,119.6,119.5,120.4,123.9,120.1,120.6,120.5,121.1,122.2,122.1,122.1,124.0,125.1,125.7,125.1]},"primary":"建築補修（改装・改修）","statsDataId":"0004055083","base":"2020年度＝100","url":"https://www.e-stat.go.jp/dbview?sid=0004055083"},"calc":{"factor":1.272,"latest_month":"2026年6月","median_now":{"1回目":140.2,"2回目":135.0,"3回目以上":123.4},"q1_now":{"1回目":115.6,"2回目":111.7,"3回目以上":97.7},"q3_now":{"1回目":170.4,"2回目":165.1,"3回目以上":159.9},"n":{"1回目":331,"2回目":194,"3回目以上":242},"reserve_yen":13378}}</script>
+<script id="basis" type="application/json">{"clock":{"annual_floor_area_m2":108315608,"b_2024":1480000,"c_2034":2932000,"dome_m2":46755},"deflator":{"months":["2016年4月","2016年5月","2016年6月","2016年7月","2016年8月","2016年9月","2016年10月","2016年11月","2016年12月","2017年1月","2017年2月","2017年3月","2017年4月","2017年5月","2017年6月","2017年7月","2017年8月","2017年9月","2017年10月","2017年11月","2017年12月","2018年1月","2018年2月","2018年3月","2018年4月","2018年5月","2018年6月","2018年7月","2018年8月","2018年9月","2018年10月","2018年11月","2018年12月","2019年1月","2019年2月","2019年3月","2019年4月","2019年5月","2019年6月","2019年7月","2019年8月","2019年9月","2019年10月","2019年11月","2019年12月","2020年1月","2020年2月","2020年3月","2020年4月","2020年5月","2020年6月","2020年7月","2020年8月","2020年9月","2020年10月","2020年11月","2020年12月","2021年1月","2021年2月","2021年3月","2021年4月","2021年5月","2021年6月","2021年7月","2021年8月","2021年9月","2021年10月","2021年11月","2021年12月","2022年1月","2022年2月","2022年3月","2022年4月","2022年5月","2022年6月","2022年7月","2022年8月","2022年9月","2022年10月","2022年11月","2022年12月","2023年1月","2023年2月","2023年3月","2023年4月","2023年5月","2023年6月","2023年7月","2023年8月","2023年9月","2023年10月","2023年11月","2023年12月","2024年1月","2024年2月","2024年3月","2024年4月","2024年5月","2024年6月","2024年7月","2024年8月","2024年9月","2024年10月","2024年11月","2024年12月","2025年1月","2025年2月","2025年3月","2025年4月","2025年5月","2025年6月","2025年7月","2025年8月","2025年9月","2025年10月","2025年11月","2025年12月","2026年1月","2026年2月","2026年3月","2026年4月","2026年5月","2026年6月"],"series":{"建築補修（改装・改修）":[92.9,92.5,92.8,93.5,92.7,92.5,93.3,93.8,92.9,93.1,93.7,93.9,94.2,94.3,94.1,94.0,94.7,94.8,95.2,95.3,95.6,94.7,95.6,95.9,96.0,97.0,98.2,99.9,95.9,97.4,97.4,96.5,99.4,98.1,97.7,98.0,98.5,98.7,98.7,99.6,99.2,100.4,100.5,100.3,102.1,101.0,100.7,100.8,99.9,99.0,101.2,99.7,99.9,99.6,99.7,99.4,100.1,100.2,100.8,100.2,101.0,101.5,100.3,102.2,103.1,104.2,105.0,105.4,104.8,106.7,107.1,107.8,108.7,108.3,110.9,109.0,110.5,109.8,112.2,114.1,112.8,113.1,112.8,113.8,113.6,113.7,113.9,113.8,114.9,114.7,115.8,115.3,114.8,115.6,115.6,117.0,117.7,119.8,119.1,120.1,119.4,119.3,119.6,121.0,121.2,120.1,121.1,119.8,121.3,121.4,122.3,125.9,121.9,122.2,122.1,122.6,123.6,123.5,123.6,125.7,126.9,127.6,127.2],"建設総合":[92.6,92.1,92.3,93.1,92.3,92.2,93.0,93.5,92.8,93.0,93.6,93.8,94.1,94.0,93.6,93.6,94.4,94.6,95.0,95.2,95.6,94.7,95.6,96.0,96.0,97.1,98.4,100.1,96.0,97.4,97.6,96.7,99.8,98.3,97.9,98.3,98.7,98.9,98.8,99.7,99.1,100.4,100.5,100.2,102.2,101.0,100.6,100.7,99.9,99.0,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.3,100.9,100.4,101.3,102.0,101.0,102.9,104.1,105.3,106.2,106.4,106.0,107.8,108.2,108.9,109.8,109.4,111.7,109.4,110.9,110.0,111.9,113.7,112.4,112.3,111.9,112.9,112.6,112.6,112.8,112.5,113.6,113.4,114.5,114.1,113.5,114.4,114.4,116.0,116.8,118.9,118.1,119.1,118.3,118.2,118.3,119.7,119.9,118.8,119.8,118.5,120.1,120.1,121.1,124.7,120.7,121.1,121.0,121.5,122.6,122.5,122.5,124.5,125.7,126.4,125.9],"建築総合":[92.9,92.4,92.6,93.3,92.6,92.5,93.2,93.8,92.9,93.1,93.8,93.9,94.3,94.2,93.9,93.9,94.5,94.8,95.2,95.3,95.7,94.8,95.7,96.2,96.3,97.2,98.4,100.2,96.1,97.6,97.7,96.7,99.8,98.4,97.9,98.4,98.8,99.0,99.0,99.7,99.1,100.4,100.5,100.3,102.1,101.0,100.6,100.7,100.0,99.1,101.2,99.6,99.8,99.5,99.7,99.4,100.1,100.2,100.8,100.4,101.4,102.3,101.8,104.1,105.6,107.2,108.3,108.5,108.2,109.9,110.2,111.0,111.8,111.6,113.7,111.5,112.8,111.8,113.4,115.1,113.7,113.4,112.9,113.7,113.3,113.3,113.4,113.1,114.0,113.8,114.9,114.5,114.0,114.9,114.9,116.4,117.2,119.2,118.3,119.3,118.6,118.4,118.5,119.9,120.1,119.0,119.9,118.7,120.5,120.5,121.4,124.9,121.1,121.4,121.3,121.9,122.9,122.7,122.8,124.6,125.7,126.4,126.0],"住宅総合":[93.3,92.7,93.0,93.7,93.0,92.8,93.6,94.0,93.3,93.5,94.1,94.3,94.7,94.6,94.2,94.2,94.9,95.1,95.5,95.6,96.0,95.0,95.9,96.5,96.5,97.4,98.7,100.4,96.3,97.7,97.8,96.8,99.9,98.4,98.1,98.4,98.9,99.1,99.1,99.8,99.3,100.6,100.5,100.2,102.2,101.0,100.7,100.8,100.0,99.1,101.1,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.9,100.6,101.7,103.0,103.1,105.9,107.8,109.9,111.2,111.4,111.1,112.7,113.0,113.7,114.7,114.6,116.7,114.5,115.6,114.4,115.8,117.3,115.8,115.2,114.4,115.0,114.4,114.3,114.2,113.8,114.6,114.5,115.5,115.1,114.6,115.6,115.5,116.9,117.6,119.6,118.7,119.7,119.0,118.9,118.8,120.0,120.3,119.2,120.2,119.0,120.8,120.8,121.6,125.1,121.5,121.9,121.9,122.4,123.5,123.3,123.2,125.2,126.3,127.1,126.9],"木造住宅":[93.8,93.2,93.4,94.2,93.4,93.3,94.1,94.6,93.6,93.8,94.5,94.6,95.0,94.8,94.5,94.5,95.1,95.3,95.7,95.8,96.0,95.0,96.0,96.5,96.4,97.5,98.7,100.4,96.0,97.5,97.5,96.6,99.9,98.3,97.9,98.3,98.7,98.9,98.9,99.7,99.1,100.5,100.4,100.0,102.1,101.0,100.5,100.7,100.1,99.3,101.2,99.5,99.7,99.5,99.6,99.4,100.1,100.2,100.8,100.5,101.8,103.5,104.0,107.2,109.5,112.0,113.4,113.5,113.2,114.8,115.1,115.7,116.9,116.8,118.9,116.5,117.5,115.9,117.0,118.4,116.7,115.9,114.9,115.3,114.6,114.3,114.2,113.6,114.4,114.2,115.4,115.0,114.4,115.4,115.3,116.7,117.3,119.3,118.3,119.4,118.6,118.5,118.3,119.4,119.7,118.7,119.7,118.4,120.4,120.4,121.2,124.8,121.2,121.7,121.6,122.2,123.2,123.1,123.0,124.8,125.9,126.7,126.7],"非木造住宅":[92.5,92.1,92.3,93.0,92.2,92.2,92.8,93.4,92.7,93.0,93.6,93.9,94.3,94.1,93.8,93.8,94.5,94.7,95.1,95.3,95.7,94.9,95.8,96.3,96.4,97.3,98.5,100.1,96.3,97.8,97.9,97.1,99.8,98.5,98.1,98.6,99.0,99.2,99.1,99.8,99.3,100.5,100.6,100.4,102.2,101.1,100.7,100.8,99.9,98.9,101.0,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.7,101.6,102.4,101.8,103.9,105.3,106.9,108.1,108.4,108.0,109.8,110.1,110.9,111.9,111.7,113.9,111.9,113.2,112.3,114.2,115.8,114.5,114.2,113.7,114.6,114.2,114.1,114.3,114.0,115.0,114.8,115.7,115.3,114.9,115.7,115.8,117.3,118.1,120.1,119.3,120.3,119.6,119.4,119.6,120.8,121.1,120.0,120.9,119.8,121.4,121.3,122.2,125.5,121.9,122.3,122.2,122.8,123.8,123.6,123.6,125.6,126.8,127.6,127.3],"住宅・鉄骨鉄筋コンクリート造":[92.8,92.3,92.6,93.3,92.5,92.3,93.1,93.6,92.9,93.1,93.7,93.9,94.4,94.3,93.9,93.9,94.7,94.8,95.3,95.5,95.9,95.0,95.9,96.3,96.4,97.5,98.8,100.5,96.4,97.8,97.9,97.1,100.1,98.5,98.2,98.6,99.1,99.2,99.1,100.0,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.1,99.7,99.9,99.6,99.6,99.3,100.0,100.3,100.9,100.5,101.7,102.2,101.1,102.9,103.8,105.0,105.8,106.1,105.6,107.3,107.7,108.5,109.6,109.2,111.5,109.2,110.6,109.9,111.8,113.5,112.3,112.2,111.9,112.9,112.7,112.8,112.9,112.8,113.9,113.5,114.5,114.0,113.5,114.5,114.6,116.3,117.5,119.7,118.8,119.8,118.8,118.6,118.9,120.2,120.4,119.5,120.3,119.2,120.8,120.9,121.9,125.4,121.3,121.7,121.5,122.2,123.3,123.5,123.5,125.5,126.7,127.5,127.0],"住宅・鉄筋コンクリート造":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.4,92.5,93.3,93.6,94.0,93.8,93.5,93.5,94.2,94.5,94.9,95.1,95.5,94.6,95.5,96.1,96.2,97.3,98.6,100.4,96.1,97.7,97.8,96.9,100.1,98.4,98.0,98.5,98.9,99.1,99.1,99.8,99.3,100.6,100.6,100.3,102.3,101.2,100.7,100.8,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.3,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.3,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"住宅・鉄骨造":[93.1,92.8,93.0,93.6,92.9,92.7,93.3,93.8,93.2,93.6,94.1,94.4,94.7,94.6,94.3,94.4,94.9,95.1,95.5,95.7,96.1,95.4,96.2,96.6,96.7,97.5,98.5,99.9,96.7,98.0,98.1,97.4,99.6,98.6,98.2,98.8,99.2,99.3,99.2,99.6,99.3,100.3,100.7,100.6,101.9,101.0,100.7,100.8,99.9,99.0,100.7,99.6,99.7,99.6,99.6,99.5,100.1,100.3,101.0,101.0,101.9,102.8,102.8,105.2,106.9,108.9,110.5,110.9,110.7,112.3,112.7,113.5,114.7,114.8,116.8,115.3,116.3,115.5,117.2,118.5,117.3,116.9,116.3,116.9,116.5,116.2,116.3,116.0,116.8,116.9,117.6,117.3,116.8,117.6,117.6,119.0,119.8,121.5,120.8,121.7,121.1,121.0,121.3,122.4,122.6,121.5,122.3,121.5,123.1,123.0,123.6,126.4,123.3,123.7,123.7,124.2,125.0,124.6,124.9,126.5,127.8,128.9,128.8],"非住宅総合":[92.4,91.9,92.2,92.9,92.2,92.0,92.7,93.3,92.6,92.7,93.4,93.6,93.9,93.8,93.4,93.5,94.1,94.3,94.9,95.0,95.4,94.6,95.4,95.9,96.0,96.8,98.1,99.9,95.9,97.4,97.5,96.6,99.7,98.3,97.8,98.3,98.7,98.8,98.7,99.5,98.9,100.3,100.5,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.4,100.3,102.1,103.0,104.1,104.9,105.1,104.8,106.6,106.8,107.6,108.4,108.0,110.2,108.0,109.5,108.7,110.7,112.4,111.2,111.3,111.2,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.2,113.8,113.2,114.1,114.1,115.7,116.7,118.6,117.8,118.8,118.0,117.9,118.2,119.7,119.8,118.7,119.6,118.4,120.0,120.1,121.2,124.6,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・非木造":[92.3,91.8,92.1,92.8,92.1,91.9,92.7,93.2,92.5,92.7,93.3,93.5,93.9,93.7,93.3,93.4,94.0,94.2,94.8,94.9,95.3,94.5,95.4,95.8,95.9,96.8,98.0,99.8,95.9,97.4,97.5,96.6,99.6,98.2,97.8,98.2,98.7,98.7,98.7,99.4,98.9,100.2,100.4,100.2,102.0,100.9,100.5,100.7,100.0,99.1,101.2,99.7,99.9,99.6,99.7,99.4,100.0,100.2,100.8,100.2,100.9,101.3,100.1,101.8,102.8,103.8,104.6,104.8,104.5,106.3,106.6,107.4,108.1,107.7,110.0,107.8,109.2,108.5,110.5,112.3,111.1,111.2,111.1,112.2,112.0,112.1,112.3,112.2,113.3,113.1,114.1,113.7,113.2,114.1,114.1,115.8,116.7,118.6,117.8,118.8,118.1,117.9,118.3,119.7,119.9,118.8,119.7,118.5,120.1,120.2,121.3,124.7,120.6,120.8,120.7,121.2,122.3,122.1,122.2,124.0,124.9,125.6,124.9],"非住宅・鉄筋コンクリート造":[92.5,92.2,92.5,93.0,92.3,92.2,92.9,93.4,92.8,93.1,93.6,93.9,94.3,94.1,93.8,93.9,94.5,94.7,95.1,95.3,95.7,95.0,95.8,96.2,96.4,97.3,98.3,99.7,96.5,97.7,97.8,97.2,99.5,98.3,98.0,98.4,98.8,98.9,98.9,99.5,99.0,100.0,100.5,100.3,101.7,101.0,100.6,100.6,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.3,101.2,101.7,100.6,102.4,103.4,104.6,105.4,105.6,105.2,107.0,107.3,108.0,108.9,108.5,110.7,108.5,109.9,109.1,111.1,112.8,111.5,111.5,111.2,112.2,112.0,112.1,112.4,112.1,113.1,112.9,114.1,113.6,113.0,114.0,114.0,115.5,116.4,118.4,117.5,118.5,117.8,117.7,117.8,119.2,119.4,118.2,119.2,117.9,119.6,119.6,120.5,124.1,120.2,120.6,120.5,121.1,122.2,122.0,122.0,123.9,125.0,125.6,125.0],"非住宅・鉄骨造":[92.2,91.8,92.0,92.7,91.9,91.8,92.6,93.1,92.3,92.5,93.1,93.3,93.7,93.5,93.1,93.1,93.9,94.1,94.7,94.8,95.2,94.3,95.3,95.7,95.7,96.6,97.9,99.7,95.7,97.2,97.3,96.4,99.6,98.2,97.7,98.1,98.6,98.7,98.7,99.4,98.9,100.3,100.4,100.2,102.0,100.8,100.4,100.7,100.1,99.1,101.2,99.8,99.9,99.6,99.7,99.4,100.0,100.2,100.7,100.1,100.8,101.2,100.0,101.7,102.5,103.6,104.3,104.6,104.3,106.1,106.4,107.2,107.9,107.6,109.7,107.6,109.0,108.3,110.3,112.1,111.0,111.2,111.1,112.2,112.0,112.1,112.3,112.3,113.4,113.2,114.2,113.9,113.4,114.2,114.3,115.9,116.9,118.8,118.0,119.0,118.2,118.0,118.5,120.0,120.1,119.0,119.9,118.7,120.3,120.4,121.6,125.0,120.8,121.0,120.8,121.3,122.3,122.1,122.3,124.0,124.9,125.7,124.9],"土木総合":[92.2,91.6,91.9,92.7,91.9,91.7,92.6,93.2,92.5,92.7,93.5,93.6,93.9,93.7,93.3,93.3,94.1,94.3,94.9,95.1,95.5,94.5,95.5,95.9,95.9,97.0,98.4,100.3,95.8,97.4,97.7,96.7,99.9,98.2,97.9,98.4,98.8,99.0,98.9,99.7,99.1,100.5,100.5,100.2,102.4,101.2,100.7,100.6,99.7,98.7,101.2,99.6,99.8,99.6,99.7,99.4,100.2,100.4,101.0,100.5,101.2,101.8,100.3,101.9,102.8,103.7,104.4,104.6,104.1,106.0,106.4,107.2,107.9,107.3,109.7,107.1,108.7,107.9,109.9,111.8,110.5,110.5,110.3,111.5,111.2,111.3,111.6,111.4,112.7,112.3,113.4,113.0,112.5,113.3,113.4,115.1,116.0,118.3,117.4,118.5,117.5,117.4,117.4,118.9,119.1,118.1,119.1,117.8,119.2,119.1,120.2,124.0,119.8,120.2,120.1,120.6,121.8,121.8,121.7,123.9,125.3,125.9,125.1],"鉄筋・在来住宅":[92.1,91.6,91.9,92.6,91.9,91.7,92.5,93.1,92.3,92.5,93.3,93.6,94.0,93.8,93.4,93.4,94.2,94.5,94.9,95.1,95.5,94.5,95.5,96.2,96.2,97.3,98.7,100.5,96.1,97.7,97.8,96.9,100.1,98.3,98.0,98.5,99.0,99.1,99.1,99.9,99.3,100.6,100.5,100.3,102.3,101.2,100.7,100.7,99.9,98.9,101.2,99.6,99.8,99.6,99.6,99.4,100.1,100.3,100.9,100.5,101.4,102.1,101.0,103.0,104.2,105.5,106.4,106.6,106.2,108.0,108.4,109.2,110.1,109.7,112.1,109.8,111.2,110.4,112.3,114.1,112.8,112.6,112.1,113.2,112.8,112.8,113.0,112.7,113.8,113.5,114.6,114.1,113.6,114.6,114.6,116.2,117.1,119.2,118.3,119.4,118.6,118.4,118.4,119.8,120.1,119.0,119.9,118.7,120.3,120.3,121.2,124.9,120.9,121.4,121.3,121.9,123.0,122.9,122.8,125.0,126.2,126.8,126.4],"鉄筋・事務所その他":[92.5,92.2,92.5,92.8,92.3,92.2,92.8,93.2,92.8,93.1,93.7,93.9,94.2,94.1,93.9,94.0,94.5,94.7,95.2,95.4,95.6,95.2,95.8,96.3,96.5,97.2,98.2,99.4,96.6,97.8,97.9,97.3,99.3,98.2,98.0,98.4,98.8,99.0,98.9,99.3,98.9,99.9,100.5,100.3,101.6,100.9,100.6,100.5,100.0,99.1,101.2,99.6,99.8,99.6,99.7,99.4,100.1,100.2,100.8,100.4,101.2,101.8,100.7,102.4,103.6,104.6,105.5,105.7,105.2,107.0,107.3,108.0,108.9,108.6,110.8,108.6,110.0,109.2,111.1,112.8,111.5,111.5,111.1,112.2,112.0,112.1,112.3,112.0,113.0,112.9,114.0,113.5,112.9,113.9,113.9,115.4,116.3,118.4,117.4,118.4,117.8,117.6,117.7,119.1,119.3,118.2,119.1,117.8,119.6,119.5,120.4,123.9,120.1,120.6,120.5,121.1,122.2,122.1,122.1,124.0,125.1,125.7,125.1]},"primary":"建築補修（改装・改修）","statsDataId":"0004055083","base":"2020年度＝100","url":"https://www.e-stat.go.jp/dbview?sid=0004055083"},"calc":{"factor":1.272,"latest_month":"2026年6月","median_now":{"1回目":140.2,"2回目":135.0,"3回目以上":123.4},"q1_now":{"1回目":115.6,"2回目":111.7,"3回目以上":97.7},"q3_now":{"1回目":170.4,"2回目":165.1,"3回目以上":159.9},"n":{"1回目":331,"2回目":194,"3回目以上":242},"reserve_yen":13378},"flow":{"years":[1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],"by_pref":{"北海道":[3970,4296,7672,4745,4825,7611,9039,5511,5556,4017,1514,3362,2214,2208,2404,4080,4861,4752,3445,4376,2347,815,1564,1857,2438,2013,1728,1823,1900,1843,1739,2018,2367,2087,2295,1821],"青森県":[57,133,357,187,0,0,72,0,0,236,56,0,0,144,117,87,168,313,0,89,237,0,0,56,52,0,35,84,38,56,57,0,292,82,112,84],"岩手県":[109,166,742,85,139,65,128,0,159,39,36,187,70,260,196,541,487,421,839,310,437,0,160,138,134,287,284,51,44,57,116,324,78,52,322,210],"宮城県":[918,2000,2734,1152,1028,2244,2677,1876,2114,3214,1172,1324,1936,1964,1605,1705,2036,2401,2688,2227,1932,613,583,921,1363,737,1447,1615,732,2081,1055,980,1249,1122,1547,324],"秋田県":[0,182,182,188,0,0,10,0,50,95,66,166,166,172,170,201,201,261,301,173,184,36,26,0,0,0,0,0,111,0,186,54,52,335,129,36],"山形県":[263,108,359,403,36,71,54,584,64,203,50,128,147,192,84,214,427,125,227,293,185,52,130,0,0,0,0,52,0,66,171,246,6,70,54,277],"福島県":[253,431,1474,529,104,298,282,247,483,210,361,309,285,323,613,351,557,683,620,514,419,0,182,0,130,181,295,265,194,367,188,418,162,216,44,290],"茨城県":[403,834,1398,1317,818,737,1685,865,188,409,172,196,299,308,797,649,1064,3892,3427,3486,1029,54,320,669,455,857,1659,416,530,558,346,159,648,1405,917,471],"栃木県":[45,482,1128,983,120,178,446,232,136,153,281,89,276,189,265,49,714,422,1716,581,432,204,59,337,200,161,378,0,455,114,312,621,186,562,308,429],"群馬県":[281,581,1684,2600,448,7,1,8,129,334,142,115,82,201,94,89,497,709,1671,770,374,79,221,95,149,373,70,83,120,0,0,0,360,238,656,333],"埼玉県":[8091,7005,9677,7143,6768,12188,11931,7418,6550,9171,8358,8177,8395,8512,7895,9661,9751,13743,14759,9232,11372,4758,3927,7177,7049,5449,5111,4180,5075,4620,5387,4249,5435,4658,4274,6323],"千葉県":[4000,3938,5940,5876,5863,9814,13192,8343,7100,8911,7493,7536,7805,11439,7319,4728,10303,16105,18184,10459,10426,2172,3615,3596,6408,6019,5503,5306,5136,5687,3862,4674,4619,3940,6419,4513],"東京都":[11339,10527,21083,10015,8002,15110,24774,21848,21878,26957,26292,28563,32292,39043,40788,57806,54814,58319,54614,40475,41238,17778,35090,41766,44082,39784,39217,39207,40251,33677,36987,34309,32826,28554,31502,23929],"神奈川県":[16528,14799,18934,13685,8816,13118,17101,15228,15844,15515,13163,16458,25292,23918,23777,20146,25159,27076,26943,16505,18466,8334,11532,14102,12160,14132,9200,12003,12328,10721,13365,11075,10656,10275,12563,12533],"新潟県":[294,366,1545,526,0,542,348,229,435,460,95,390,544,331,206,141,339,728,1338,716,723,105,58,159,217,139,325,289,130,356,358,207,653,601,321,243],"富山県":[262,340,332,129,0,96,274,163,262,303,152,405,175,166,43,34,110,227,529,142,258,0,185,111,52,219,128,400,237,253,172,69,96,181,96,55],"石川県":[385,663,1115,335,214,107,476,548,386,262,174,437,198,144,274,42,304,530,773,429,139,0,65,106,149,204,283,152,194,110,210,289,54,385,139,0],"福井県":[192,252,250,18,23,43,235,103,141,272,114,351,408,38,132,162,174,83,415,60,161,87,83,0,9,0,29,68,18,0,0,154,0,0,0,198],"山梨県":[1131,680,2528,1384,763,113,114,34,138,351,34,64,55,0,99,102,485,498,233,44,145,0,0,56,0,121,44,172,80,349,53,70,0,0,78,19],"長野県":[542,1160,1281,1009,557,33,94,189,177,222,243,453,556,338,400,390,463,735,1361,625,773,103,0,291,355,297,97,338,357,329,359,372,571,229,620,277],"岐阜県":[197,187,558,655,384,134,375,319,160,567,282,156,405,541,415,382,1038,693,611,381,459,0,81,70,315,195,196,134,238,474,629,614,418,223,104,350],"静岡県":[2138,2992,3470,1855,1840,1935,2049,1277,1628,1437,1406,1747,1355,1401,1304,1414,1663,2240,1777,2848,2664,819,1088,1570,729,1001,1198,1127,1090,889,563,493,881,285,374,714],"愛知県":[5354,4897,5382,4231,3418,6743,8213,6787,6369,8553,6084,6189,7090,6164,6518,5765,5934,8768,8330,6056,8481,4249,5499,5241,5280,5844,5169,5256,4072,4977,8181,8796,7234,8303,7345,9938],"三重県":[275,197,580,530,132,92,301,395,226,528,377,97,393,417,430,292,1015,659,1015,824,526,90,268,68,235,0,257,450,44,289,192,170,577,146,642,256],"滋賀県":[871,583,1177,1456,1232,1124,1802,1106,1034,942,75,1370,325,1025,669,173,455,2075,1948,1191,1400,338,544,546,675,853,266,619,521,848,881,826,744,1449,450,447],"京都府":[2296,2888,3016,1307,681,1448,4041,3357,3067,2617,1905,2256,3119,3255,2991,2531,3034,3150,5511,3010,2336,1160,1083,2047,2147,3268,2227,2516,1774,1336,1479,2190,2873,2247,2324,2329],"大阪府":[4889,5624,6244,2899,4117,6594,14031,13727,12052,12900,8136,11081,13055,15332,13699,17173,19136,26635,24398,15671,17945,9547,12663,13385,15163,15022,14128,14053,14843,13181,20687,14717,13434,13992,15774,11764],"兵庫県":[6047,7298,8999,5501,4885,6156,10092,9732,14106,10528,8204,9007,9597,10228,6687,7444,10835,10907,13290,7856,6244,3901,3945,6291,5079,6121,4834,6494,4089,4961,3257,5346,6265,2856,4725,4448],"奈良県":[1167,2476,2575,2087,1305,2750,3078,2584,1408,816,1348,1342,952,1489,1137,1008,966,1122,1964,1657,749,363,400,719,678,621,188,689,248,98,431,428,377,205,401,244],"和歌山県":[678,1309,1474,986,229,174,179,16,47,0,41,145,383,108,162,99,194,249,328,377,77,78,0,0,84,271,138,0,443,98,129,141,94,69,295,0],"鳥取県":[59,47,180,6,41,51,187,119,45,132,133,85,162,171,92,217,183,348,556,200,232,0,0,54,94,38,112,112,93,102,91,138,90,105,89,183],"島根県":[0,169,51,191,121,120,250,147,206,24,0,304,277,205,183,112,496,223,370,184,219,61,0,152,42,155,137,265,213,174,191,110,0,149,334,288],"岡山県":[313,647,877,239,382,666,1486,529,327,887,580,627,444,557,767,767,1176,1289,1594,638,955,611,467,904,557,1023,223,1107,885,751,1102,504,875,1128,1146,1460],"広島県":[1583,1386,2697,1834,1458,3062,3329,2536,2752,2690,1523,1659,2231,1352,1554,2541,4300,4490,5710,2228,2949,986,2089,2730,2763,2820,1762,1526,2199,3412,1558,2596,2169,1836,2388,1770],"山口県":[238,134,444,375,267,241,267,319,210,478,120,473,656,286,320,482,483,1073,1070,289,593,225,444,316,851,699,426,741,261,538,691,204,318,484,482,454],"徳島県":[376,231,497,246,123,105,46,44,114,64,171,239,97,94,93,131,160,284,292,132,137,72,67,54,56,72,157,171,107,42,151,256,148,0,41,165],"香川県":[343,386,609,564,513,575,1069,443,391,164,167,212,526,430,434,745,864,970,957,480,953,400,311,365,386,384,297,616,519,455,450,367,516,568,403,394],"愛媛県":[184,458,654,469,121,238,212,173,166,356,181,189,337,279,154,361,542,1013,634,624,750,249,256,263,724,567,267,368,195,437,299,466,254,436,399,458],"高知県":[4,393,515,196,131,136,165,289,168,232,247,73,402,232,299,264,296,462,545,461,281,65,141,137,113,319,206,140,191,207,353,318,528,128,95,221],"福岡県":[6290,7686,8638,5323,5872,8800,9157,5875,5430,6081,3708,4992,5665,4649,4700,5199,8708,9904,10079,5383,6987,3887,3632,5055,4973,6289,4426,5723,3917,4619,5467,4908,3971,5995,5471,4104],"佐賀県":[139,79,416,78,115,113,282,64,124,353,293,339,445,217,269,399,213,639,872,373,206,0,174,413,158,381,228,96,99,187,158,112,178,244,156,364],"長崎県":[217,254,637,239,359,358,764,535,841,496,129,134,236,219,419,259,332,1391,806,173,748,358,232,559,473,409,517,407,462,581,602,709,489,472,886,1177],"熊本県":[1140,1098,1329,926,787,420,1079,978,492,778,212,398,604,332,662,719,586,849,1625,634,770,540,191,810,749,636,651,719,631,778,723,495,552,396,834,677],"大分県":[635,698,753,1040,525,442,346,546,592,389,133,329,202,69,51,146,433,506,550,734,760,72,297,469,873,324,428,717,283,647,463,665,475,250,717,528],"宮崎県":[422,239,410,163,139,273,414,66,130,145,169,128,80,76,124,198,743,276,396,424,526,205,98,207,236,686,160,213,403,319,110,372,121,673,152,207],"鹿児島県":[332,484,487,215,144,217,476,729,313,392,330,330,252,294,323,386,783,692,954,381,1154,169,333,539,602,572,446,948,367,509,679,415,268,743,1038,670],"沖縄県":[943,865,1525,1308,688,668,931,895,1044,836,489,736,812,725,720,562,418,520,1382,829,2107,437,769,1167,1272,1021,1411,1402,1497,1553,1774,1467,894,911,1398,1491]},"metro":["東京都","神奈川県","埼玉県","千葉県"],"default":[1988,2010]}}</script>
 <script>
 (function(){
 "use strict";
@@ -2046,6 +2098,100 @@ var primary = byName[D.primary];
   }
   [$u,$a,$n,$t,$b,$m].forEach(function(x){ x.addEventListener('input',render); });
   render();
+})();
+
+/* ---------- Fig.6 着工年度の切り替え ----------
+   サーバ側で描いた SVG のタイルを、data-pref を手がかりに塗り直す。
+   数字は B.flow.by_pref（都道府県×年度の実数）から毎回足し直しているので、
+   画面に出る値は必ず公表値の合計になる。ここで按分や推計はしていない。 */
+(function(){
+  var F = B.flow, box = $('eraBtns');
+  if(!F || !box) return;
+  var YEARS = F.years, BY = F.by_pref, METRO = F.metro;
+  var Y0 = YEARS[0], Y1 = YEARS[YEARS.length-1];
+  var NOW = 2026;
+  var PRESETS = [
+    {lab:'1回目まわり', lo:2002, hi:2013},
+    {lab:'2〜3回目',   lo:1988, hi:2001},
+    {lab:'1〜3回目',   lo:F.default[0], hi:F.default[1]},
+    {lab:'全期間',     lo:Y0,   hi:Y1}
+  ];
+  var $f=$('eraFrom'), $t=$('eraTo'), $r1=$('eraR1'), $r2=$('eraR2'), $sel=$('eraSel');
+  [$f,$t,$r1,$r2].forEach(function(x){ x.min=Y0; x.max=Y1; });
+  // 目盛りは端と、10年区切りの年度
+  var tk=$('eraTicks');
+  if(tk){ [Y0,1995,2005,2015,Y1].forEach(function(y){ var s=el('span'); s.textContent=y; tk.appendChild(s); }); }
+
+  PRESETS.forEach(function(p){
+    var b=el('button'); b.type='button';
+    b.textContent=p.lab+'（'+p.lo+'〜'+p.hi+'）';
+    b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',function(){ apply(p.lo,p.hi); });
+    box.appendChild(b);
+  });
+
+  // set() は電卓側 IIFE のローカルでここからは見えない。自前で持つ
+  function put(id,t){ var e=$(id); if(e) e.textContent=t; }
+
+  function sums(lo,hi){
+    var i0=YEARS.indexOf(lo), i1=YEARS.indexOf(hi), o={};
+    for(var nm in BY){ var a=BY[nm], s=0; for(var i=i0;i<=i1;i++) s+=a[i]; o[nm]=s; }
+    return o;
+  }
+  // 塗り分けは順位で6分位。等間隔だと東京・神奈川に引きずられて他が潰れる
+  function cutsOf(v){
+    var o=Object.keys(v).map(function(k){return v[k];}).sort(function(a,b){return a-b;});
+    var c=[]; for(var k=1;k<6;k++) c.push(o[Math.round(o.length*k/6)]);
+    return c;
+  }
+  function binOf(x,c){ var b=0; for(var i=0;i<c.length;i++) if(x>=c[i]) b++; return Math.min(b,5); }
+  function k(v){ return nf0.format(Math.round(v/1000)); }
+
+  function apply(lo,hi){
+    lo=Math.max(Y0,Math.min(Y1,lo|0)); hi=Math.max(Y0,Math.min(Y1,hi|0));
+    if(lo>hi){ var s=lo; lo=hi; hi=s; }
+    $f.value=lo; $t.value=hi; $r1.value=lo; $r2.value=hi;
+    // 選択帯。つまみの中心に合わせるため track は左右9pxずつ内側にしてある
+    var span=Y1-Y0;
+    $sel.style.left=((lo-Y0)/span*100)+'%';
+    $sel.style.width=((hi-lo)/span*100)+'%';
+    [].forEach.call(box.children,function(b,i){
+      b.setAttribute('aria-pressed', String(PRESETS[i].lo===lo && PRESETS[i].hi===hi));
+    });
+
+    var v=sums(lo,hi), c=cutsOf(v);
+    document.querySelectorAll('#map-flow .tile').forEach(function(r){
+      var b=binOf(v[r.dataset.pref],c); r.setAttribute('fill','var(--b'+b+')');
+      document.querySelectorAll('#map-flow [data-pref="'+r.dataset.pref+'"]').forEach(function(e){
+        if(e.classList.contains('tile')) return;
+        e.setAttribute('fill','var(--b'+b+'f)');
+        if(e.classList.contains('tileval')) e.textContent=k(v[r.dataset.pref]);
+      });
+    });
+    document.querySelectorAll('#map-flow .cut').forEach(function(e){ e.textContent=k(c[+e.dataset.i]); });
+    var eg=document.querySelector('#map-flow .egline');
+    if(eg) eg.textContent='例）東京 '+k(v['東京都'])+' ＝ '+nf0.format(v['東京都'])+'戸';
+
+    var tot=0; for(var nm in v) tot+=v[nm];
+    var met=0; METRO.forEach(function(nm){ met+=v[nm]; });
+    var rank=Object.keys(v).sort(function(a,b){return v[b]-v[a];});
+    var ageF=NOW-hi, ageT=NOW-lo;
+
+    put('eraAge','2026年時点で築'+ageF+'〜'+ageT+'年');
+    $('eraTotal').innerHTML=nf0.format(tot)+'<small>戸</small>';
+    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。2026年時点で築'+ageF+'〜'+ageT+'年です。');
+    $('eraMetroPct').innerHTML=nf1.format(met/tot*100)+'<small>%</small>';
+    put('eraMetroNote','東京・神奈川・埼玉・千葉の合計 '+nf0.format(met)+' 戸。');
+    $('eraTop1').innerHTML=nf0.format(v[rank[0]])+'<small>戸</small>';
+    put('eraTop1Note',rank[0]+'。次いで'+rank.slice(1,5).join('、')+'の順です。');
+    put('eraFoot','表示中は '+lo+'〜'+hi+'年度着工。全国値 '+nf0.format(tot)
+      +' 戸で、47都道府県の合計と一致します（着工統計は全数集計のため）。');
+  }
+  [$f,$t].forEach(function(x){ x.addEventListener('change',function(){ apply(+$f.value,+$t.value); }); });
+  // つまみは掴んだ側だけを動かす。追い越したら入れ替えるのではなく、相手で止める
+  $r1.addEventListener('input',function(){ apply(Math.min(+$r1.value,+$r2.value), +$r2.value); });
+  $r2.addEventListener('input',function(){ apply(+$r1.value, Math.max(+$r2.value,+$r1.value)); });
+  apply(F.default[0], F.default[1]);
 })();
 
 /* ---------- エクスプローラ ---------- */
