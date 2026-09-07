@@ -360,6 +360,9 @@ def fetch_city() -> dict:
         "survey": "令和5年住宅・土地統計調査（2023年10月1日現在）",
         "filter": "建物の構造=非木造／建て方=共同住宅／階数=総数",
         "cohort": cohort,
+        # 築年数はページ側で 基準年 - この年 として出す。ページに 2026 を直書きすると
+        # 年が明けた瞬間に全ページが「2026年時点で築26〜45年」のまま古くなる。
+        "stock_window": list(STOCK_WINDOW),
         "order": order,
         "floor_order": floors,
         "tenure": {

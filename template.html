@@ -586,7 +586,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <!-- ===== 都道府県タイルマップ（1）現存ストック ===== -->
   <section id="map">
     <h2><span class="idx">Fig. 5</span>都道府県別　築26〜45年の非木造共同住宅（現存ストック）</h2>
-    <p class="lede">2023年10月1日時点で現存する非木造共同住宅のうち、1981〜2000年に建築されたものの戸数です。2026年時点で築26〜45年、Fig.3 の2回目から3回目の周期にあたります。<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
+    <p class="lede">2023年10月1日時点で現存する非木造共同住宅のうち、{{STOCK_FROM}}〜{{STOCK_TO}}年に建築されたものの戸数です。{{REF_YEAR}}年時点で築{{STOCK_AGE_FROM}}〜{{STOCK_AGE_TO}}年、Fig.3 の2回目から3回目の周期にあたります。<strong>この統計表には所有関係（分譲／賃貸）の軸がありません</strong>。絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。面積の大小に引きずられないよう、1都道府県＝1タイルの等面積で並べています。</p>
     <div class="chartbox">
       <div class="chart-head"><span class="srcchip">出典 総務省</span><span><strong>{{STOCK_SURVEY}}</strong>　e-Stat API 取得・{{GENERATED}}</span></div>
       {{CHART_STOCK}}
@@ -601,7 +601,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <div class="keynum">
         <span class="k">National</span>
         <div class="v">{{STOCK_TOTAL}}<small>戸</small></div>
-        <p>1981〜2000年建築の非木造共同住宅の全国合計。2026年時点で築26〜45年です。</p>
+        <p>{{STOCK_FROM}}〜{{STOCK_TO}}年建築の非木造共同住宅の全国合計。{{REF_YEAR}}年時点で築{{STOCK_AGE_FROM}}〜{{STOCK_AGE_TO}}年です。</p>
       </div>
       <div class="keynum hi">
         <span class="k">一都三県</span>
@@ -624,7 +624,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <ul>
         <li>Fig.5 は<strong>現存ストック</strong>〔2023年10月1日時点で建っている住宅の数〕ですが、こちらは<strong>着工戸数（フロー）</strong>〔その年度に着工した数〕です。その後の取り壊しや用途変更は反映されていません。</li>
         <li>絞り込みは<strong>「分譲マンション」まで届きます</strong>（共同住宅・鉄筋コンクリート造・分譲住宅）。賃貸は入りません。Fig.5 で失われる分譲／賃貸の区別が、ここでは効きます。</li>
-        <li>対象の築年数も違い、Fig.5 は<strong>築26〜45年</strong>、こちらは<strong>{{PREF_FROM}}〜{{PREF_TO}}年度着工＝2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年</strong>です（着工年度は下のつまみで変えられます）。<strong>Fig.5 とは直接比べられません。</strong></li>
+        <li>対象の築年数も違い、Fig.5 は<strong>築{{STOCK_AGE_FROM}}〜{{STOCK_AGE_TO}}年</strong>、こちらは<strong>{{PREF_FROM}}〜{{PREF_TO}}年度着工＝{{REF_YEAR}}年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年</strong>です（着工年度は下のつまみで変えられます）。<strong>Fig.5 とは直接比べられません。</strong></li>
       </ul>
     </div>
     <p class="lede">年ごとの動きが見られるのは、こちらの統計だけです。ストックは調査時点の断面なので推移が出ません。<strong>着工年度を変えると、地図と下の3つの数字が塗り替わります。</strong></p>
@@ -660,7 +660,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
       <div class="keynum">
         <span class="k">National</span>
         <div class="v" id="eraTotal">{{PREF_TOTAL}}<small>戸</small></div>
-        <p id="eraTotalNote">{{PREF_FROM}}〜{{PREF_TO}}年度の全国合計。2026年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年です。</p>
+        <p id="eraTotalNote">{{PREF_FROM}}〜{{PREF_TO}}年度の全国合計。{{REF_YEAR}}年時点で築{{PREF_AGE_FROM}}〜{{PREF_AGE_TO}}年です。</p>
       </div>
       <div class="keynum">
         <span class="k">一都三県</span>
@@ -1153,7 +1153,7 @@ var primary = byName[D.primary];
   if(!F || !box) return;
   var YEARS = F.years, BY = F.by_pref, METRO = F.metro;
   var Y0 = YEARS[0], Y1 = YEARS[YEARS.length-1];
-  var NOW = 2026;
+  var NOW = {{REF_YEAR}};
   var PRESETS = [
     {lab:'1回目まわり', lo:2002, hi:2013},
     {lab:'2〜3回目',   lo:1988, hi:2001},
@@ -1221,9 +1221,9 @@ var primary = byName[D.primary];
     var rank=Object.keys(v).sort(function(a,b){return v[b]-v[a];});
     var ageF=NOW-hi, ageT=NOW-lo;
 
-    put('eraAge','2026年時点で築'+ageF+'〜'+ageT+'年');
+    put('eraAge',NOW+'年時点で築'+ageF+'〜'+ageT+'年');
     $('eraTotal').innerHTML=nf0.format(tot)+'<small>戸</small>';
-    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。2026年時点で築'+ageF+'〜'+ageT+'年です。');
+    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。'+NOW+'年時点で築'+ageF+'〜'+ageT+'年です。');
     $('eraMetroPct').innerHTML=nf1.format(met/tot*100)+'<small>%</small>';
     put('eraMetroNote','東京・神奈川・埼玉・千葉の合計 '+nf0.format(met)+' 戸。');
     $('eraTop1').innerHTML=nf0.format(v[rank[0]])+'<small>戸</small>';

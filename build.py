@@ -258,6 +258,9 @@ def main() -> None:
     m = basis["mansion"]
     d = basis["deflator"]
     pref = basis["prefecture"]
+    # 基準年は basis を作った年（JST）。2026 を直書きしないこと。
+    ref = int(basis["generated"][:4])
+    swin = basis["city"]["stock_window"]
     tokyo3 = ("東京都", "神奈川県", "埼玉県", "千葉県")
     # 着工（フロー）は basis.json の units ではなく by_year から数え直す。
     # 年度範囲を変えるのに e-Stat から取り直さなくて済む。
@@ -353,8 +356,14 @@ def main() -> None:
         "{{TOP_NEXT}}": flow_next,
         "{{PREF_FROM}}": str(flo),
         "{{PREF_TO}}": str(fhi),
-        "{{PREF_AGE_FROM}}": str(2026 - fhi),
-        "{{PREF_AGE_TO}}": str(2026 - flo),
+        "{{PREF_AGE_FROM}}": str(ref - fhi),
+        "{{PREF_AGE_TO}}": str(ref - flo),
+        # 基準年。ページに直書きすると年が明けた瞬間に全ページが古くなる
+        "{{REF_YEAR}}": str(ref),
+        "{{STOCK_FROM}}": str(swin[0]),
+        "{{STOCK_TO}}": str(swin[1]),
+        "{{STOCK_AGE_FROM}}": str(ref - swin[1]),
+        "{{STOCK_AGE_TO}}": str(ref - swin[0]),
         "{{PREF_TOTAL}}": _fmt(flow_national),
         "{{PREF_SID}}": pref["statsDataId"],
         "{{PREF_URL}}": pref["url"],

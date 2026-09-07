@@ -28,7 +28,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import CSS, SITE_URL, SLUG, head, period_chart
+from build_pref import CSS, SITE_URL, SLUG, head, period_chart, ref_ages
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
 HERE = Path(__file__).resolve().parent
@@ -74,6 +74,8 @@ def build(basis: dict) -> int:
     city = basis["city"]
     areas = city["areas"]
     cohort = city["cohort"]
+    ref, age_lo, age_hi = ref_ages(basis)
+    win = city["stock_window"]
     day = basis["generated"].split()[0]
 
     def coh(a):
@@ -113,9 +115,9 @@ def build(basis: dict) -> int:
         pref_v = coh(areas[pre + "000"]) if pre + "000" in areas else 0
         pshare = v / pref_v * 100 if pref_v else 0
         canonical = f"{SITE_URL}city/{code}.html"
-        title = f"{name}（{pref_name}）の大規模修繕統計｜築26〜45年 {v:,}戸"
+        title = f"{name}（{pref_name}）の大規模修繕統計｜築{age_lo}〜{age_hi}年 {v:,}戸"
         desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{v:,}戸。"
-                f"2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。"
+                f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
                 f"総務省「令和5年住宅・土地統計調査」の公表値。")
 
         h = [head(title, desc, canonical, crumb="市区町村別")]
@@ -134,12 +136,12 @@ def build(basis: dict) -> int:
 
   <span class="toplabel">公表統計 ／ {pref_name}</span>
   <h1>{name}の大規模修繕統計
-    <span class="sub">{name}の非木造共同住宅のうち、<strong>1981〜2000年に建築されたものは {v:,}戸</strong>。2026年時点で築26〜45年、大規模修繕の2回目から3回目にあたります。</span>
+    <span class="sub">{name}の非木造共同住宅のうち、<strong>{win[0]}〜{win[1]}年に建築されたものは {v:,}戸</strong>。{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2回目から3回目にあたります。</span>
   </h1>
 
   <div class="kpis">
     <div class="kpi hi">
-      <span class="k">築26〜45年の共同住宅</span>
+      <span class="k">築{age_lo}〜{age_hi}年の共同住宅</span>
       <div class="v">{v:,}<small>戸</small></div>
       <p>1981〜2000年建築。{name}の非木造共同住宅 {total:,}戸 の {share:.1f}%。</p>
     </div>
@@ -151,9 +153,9 @@ def build(basis: dict) -> int:
 
   <section>
     <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
-    <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、2026年時点で築26〜45年にあたります。</p>
+    <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、{ref}年時点で築{age_lo}〜{age_hi}年にあたります。</p>
     <div class="chartbox">
-      {period_chart(a["periods"], cohort)}
+      {period_chart(a["periods"], cohort, ref)}
       <div class="chart-foot">
         出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a><br>
         {city["filter"]}　取得日 {day}
@@ -180,8 +182,8 @@ def build(basis: dict) -> int:
                     '公表値が100戸単位に丸めてあるためです。' if gap else
                     f'階数別の合計は上の {v:,}戸 と一致します。')
             h.append(f'''  <section>
-    <h2><span class="idx">Floor</span>{name}の築26〜45年（階数別）</h2>
-    <p class="lede">上と同じ 1981〜2000年建築の非木造共同住宅を、建物の階数で分けたものです。</p>
+    <h2><span class="idx">Floor</span>{name}の築{age_lo}〜{age_hi}年（階数別）</h2>
+    <p class="lede">上と同じ {win[0]}〜{win[1]}年建築の非木造共同住宅を、建物の階数で分けたものです。</p>
     <div class="tablebox"><table>
       <thead><tr><th>階数</th><th>戸数</th><th>構成比</th></tr></thead>
       <tbody>{rows}</tbody>
@@ -208,7 +210,7 @@ def build(basis: dict) -> int:
                     else "この表での合計は {:,}戸 で、上の {:,}戸 と {:,}戸 ちがいます。"
                          .format(tot_t, v, abs(tot_t - v)))
             h.append(f'''  <section>
-    <h2><span class="idx">Own</span>{name}の築26〜45年（所有の関係別）</h2>
+    <h2><span class="idx">Own</span>{name}の築{age_lo}〜{age_hi}年（所有の関係別）</h2>
     <p class="lede">同じ調査の別の統計表から。「持ち家」は住戸ごとに所有者がいるもの、「持ち家以外」は借りて住んでいるものです。</p>
     <div class="tablebox"><table>
       <thead><tr><th>所有の関係</th><th>戸数</th><th>構成比</th></tr></thead>
@@ -219,7 +221,7 @@ def build(basis: dict) -> int:
 ''')
         else:
             h.append(f'''  <section>
-    <h2><span class="idx">Own</span>{name}の築26〜45年（所有の関係別）</h2>
+    <h2><span class="idx">Own</span>{name}の築{age_lo}〜{age_hi}年（所有の関係別）</h2>
     <p class="lede">所有の関係（持ち家か、そうでないか）の内訳は、同じ調査の別の統計表
     （<a href="{tn.get("url", "")}" target="_blank" rel="noopener">statsDataId={tn.get("statsDataId", "")}</a>）にありますが、
     <strong>その表は市区までで、町村は収録されていません</strong>。{name}はこれに当たるため、内訳を出していません。</p>
@@ -232,7 +234,7 @@ def build(basis: dict) -> int:
             h.append(f'''  <section>
     <h2><span class="idx">Rank</span>{pref_name}内で順位の近い市区町村</h2>
     <div class="tablebox"><table>
-      <thead><tr><th>順位</th><th>市区町村</th><th>築26〜45年</th><th>{u}内比</th></tr></thead>
+      <thead><tr><th>順位</th><th>市区町村</th><th>築{age_lo}〜{age_hi}年</th><th>{u}内比</th></tr></thead>
       <tbody>''')
             for c2, a2 in near:
                 cls = ' class="me"' if c2 == code else ''
@@ -261,7 +263,7 @@ def build(basis: dict) -> int:
     # ---- 一覧 ----
     canonical = f"{SITE_URL}city/"
     idx = [head("一都三県の市区町村別 大規模修繕統計",
-                "東京・神奈川・埼玉・千葉の市区町村別に、築26〜45年の非木造共同住宅の戸数を並べています。"
+                f"東京・神奈川・埼玉・千葉の市区町村別に、築{age_lo}〜{age_hi}年の非木造共同住宅の戸数を並べています。"
                 "総務省「令和5年住宅・土地統計調査」の公表値。",
                 canonical, crumb="市区町村別")]
     idx.append(f'''  <div class="srcband">
@@ -271,7 +273,7 @@ def build(basis: dict) -> int:
 
   <span class="toplabel">公表統計 ／ 一都三県</span>
   <h1>一都三県の市区町村別
-    <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数です。分譲と賃貸を合わせた数で、各ページに所有の関係別の内訳を載せています。</span>
+    <span class="sub">非木造共同住宅のうち{win[0]}〜{win[1]}年に建築されたもの＝{ref}年時点で築{age_lo}〜{age_hi}年の戸数です。分譲と賃貸を合わせた数で、各ページに所有の関係別の内訳を載せています。</span>
   </h1>
 ''')
     for pre in ["13", "14", "11", "12"]:
@@ -298,7 +300,7 @@ def build(basis: dict) -> int:
         else:
             idx.append('</div></section>\n')
     idx.append(f'  <p class="colophon">単位：戸。多い順。'
-               f'<strong>築26〜45年の非木造共同住宅が {MIN_UNITS:,}戸 以上の市区町村だけ</strong>を'
+               f'<strong>築{age_lo}〜{age_hi}年の非木造共同住宅が {MIN_UNITS:,}戸 以上の市区町村だけ</strong>を'
                f'載せています（それ未満は個別ページを作っていません）。'
                f'特別区部・政令市の集計行は、市区町村と二重に数えることになるので'
                f'順位の一覧からは外し、各県の下に別途置いています。</p>\n')

@@ -2165,9 +2165,9 @@ var primary = byName[D.primary];
     var rank=Object.keys(v).sort(function(a,b){return v[b]-v[a];});
     var ageF=NOW-hi, ageT=NOW-lo;
 
-    put('eraAge','2026年時点で築'+ageF+'〜'+ageT+'年');
+    put('eraAge',NOW+'年時点で築'+ageF+'〜'+ageT+'年');
     $('eraTotal').innerHTML=nf0.format(tot)+'<small>戸</small>';
-    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。2026年時点で築'+ageF+'〜'+ageT+'年です。');
+    put('eraTotalNote',lo+'〜'+hi+'年度の全国合計。'+NOW+'年時点で築'+ageF+'〜'+ageT+'年です。');
     $('eraMetroPct').innerHTML=nf1.format(met/tot*100)+'<small>%</small>';
     put('eraMetroNote','東京・神奈川・埼玉・千葉の合計 '+nf0.format(met)+' 戸。');
     $('eraTop1').innerHTML=nf0.format(v[rank[0]])+'<small>戸</small>';

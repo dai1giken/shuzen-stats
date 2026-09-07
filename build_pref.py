@@ -31,6 +31,7 @@ Ref. セクションとして残してある（3点の違いをその場に書�
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -288,8 +289,38 @@ FOOT = TIP_JS + f"""
 """
 
 
-def period_chart(periods: dict[str, int], cohort: list[str]) -> str:
-    """建築の時期別の住宅数。コホートの帯だけ朱で塗る。"""
+def ref_ages(basis: dict) -> tuple[int, int, int]:
+    """(基準年, 築年数の下限, 築年数の上限) を返す。
+
+    基準年は basis を作った年（JST）。**ここを 2026 と直書きしないこと。**
+    直書きすると、年が明けた瞬間に全229ページが「2026年時点で築26〜45年」と
+    表示したまま古くなる。数字は正しいので誰も気づけない。
+    """
+    ref = int(basis["generated"][:4])
+    lo, hi = basis["city"]["stock_window"]
+    return ref, ref - hi, ref - lo
+
+
+def age_of(label: str, ref: int) -> str:
+    """建築の時期の区分ラベルを、基準年時点の築年数に直す。
+
+    「1991～2000年」→「築26-35年」。「1970年以前」のような片側だけの区分は
+    「築56年〜」になる。読む側に引き算をさせないためだけの表示用。
+    """
+    ys = [int(y) for y in re.findall(r"(\d{4})", label)]
+    if not ys:
+        return ""
+    if len(ys) == 1:
+        return f"築{ref - ys[0]}年〜" if "以前" in label else f"築〜{ref - ys[0]}年"
+    return f"築{ref - max(ys)}-{ref - min(ys)}年"
+
+
+def period_chart(periods: dict[str, int], cohort: list[str], ref: int = 0) -> str:
+    """建築の時期別の住宅数。コホートの帯だけ朱で塗る。
+
+    ref を渡すと、横軸に築年数の行を足す。区分は「建築の時期」なので、
+    読む側が毎回引き算しないと築年数が分からなかった。
+    """
     labels = list(periods)
     vals = [periods[k] for k in labels]
     n = len(labels)
@@ -328,15 +359,22 @@ def period_chart(periods: dict[str, int], cohort: list[str]) -> str:
                  f'font-size="11.5" fill="{"var(--shu)" if on else "var(--ink3)"}">{v:,}</text>')
         s.append(f'<text x="{x + bw/2:.1f}" y="{ybase + 17}" text-anchor="middle" font-family="{MONO}" '
                  f'font-size="10.5" fill="var(--ink3)">{lb.replace("年", "").replace("～", "-")}</text>')
+        if ref:
+            s.append(f'<text x="{x + bw/2:.1f}" y="{ybase + 31}" text-anchor="middle" '
+                     f'font-family="{MONO}" font-size="9.5" '
+                     f'fill="{"var(--shu)" if on else "var(--ink3)"}" opacity="{1 if on else 0.7}">'
+                     f'{age_of(lb, ref)}</text>')
 
     s.append(f'<g font-family="{MONO}" font-size="11">')
     s.append(f'<rect x="{x0}" y="290" width="24" height="10" rx="2" fill="var(--shu)"/>')
-    s.append(f'<text x="{x0 + 31}" y="299" fill="var(--ink2)">1981〜2000年建築＝2026年時点で築26〜45年</text>')
+    if ref:
+        s.append(f'<text x="{x0 + 31}" y="299" fill="var(--ink2)">'
+                 f'朱色＝{ref}年時点で{age_of(cohort[0], ref)}と{age_of(cohort[-1], ref)}</text>')
     s.append('</g></svg>')
     return "\n      ".join(s)
 
 
-def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
+def year_chart(series: dict[str, int], lo: int, hi: int, ref: int) -> str:
     """年度別の着工戸数。コホート期間だけ朱で塗る。"""
     years = list(series)
     vals = [series[y] for y in years]
@@ -383,7 +421,7 @@ def year_chart(series: dict[str, int], lo: int, hi: int) -> str:
     s.append('</g>')
     s.append(f'<g font-family="{MONO}" font-size="11">')
     s.append(f'<rect x="{x0}" y="292" width="24" height="10" rx="2" fill="var(--shu)"/>')
-    s.append(f'<text x="{x0 + 31}" y="301" fill="var(--ink2)">{lo}〜{hi}年度＝2026年時点で築{2026-hi}〜{2026-lo}年</text>')
+    s.append(f'<text x="{x0 + 31}" y="301" fill="var(--ink2)">{lo}〜{hi}年度＝築{ref-hi}〜{ref-lo}年</text>')
     s.append(f'<rect x="{x0 + 330}" y="292" width="24" height="10" rx="2" fill="var(--ai)" opacity=".42"/>')
     s.append(f'<text x="{x0 + 361}" y="301" fill="var(--ink2)">その他の年度</text>')
     s.append('</g>')
@@ -445,6 +483,7 @@ def stock_by_pref(basis: dict) -> tuple[dict[str, int], dict[str, str], int, int
 
 def build(basis: dict) -> int:
     pref = basis["prefecture"]
+    ref, age_lo, age_hi = ref_ages(basis)
     lo, hi = FLOW_COHORT                  # basis.json の cohort ではなくこちらが効く
     units = flow_by_pref(basis, lo, hi)   # 着工（フロー）。Ref. セクションで使う
     by_year = pref["by_year"]
@@ -472,9 +511,9 @@ def build(basis: dict) -> int:
         series = {k: v for k, v in by_year[name].items()}
         canonical = f"{SITE_URL}pref/{slug}.html"
         # 日本語SERPは約32字で切れる。定義は h1 と description が担う
-        title = f"{name}の大規模修繕統計｜築26〜45年 {val:,}戸"
+        title = f"{name}の大規模修繕統計｜築{age_lo}〜{age_hi}年 {val:,}戸"
         desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{val:,}戸。"
-                f"2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。"
+                f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
                 f"全国{r}位、全国の{share:.1f}%。分譲と賃貸を合わせた数です。"
                 f"総務省「令和5年住宅・土地統計調査」の公表値。")
 
@@ -495,12 +534,12 @@ def build(basis: dict) -> int:
 
   <span class="toplabel">総務省 公表統計 ／ 都道府県別</span>
   <h1>{name}の大規模修繕統計
-    <span class="sub">{name}の非木造共同住宅のうち、<strong>1981〜2000年に建築されたものは {val:,}戸</strong>。2026年時点で築26〜45年、大規模修繕の2回目から3回目にあたります。</span>
+    <span class="sub">{name}の非木造共同住宅のうち、<strong>{basis["city"]["stock_window"][0]}〜{basis["city"]["stock_window"][1]}年に建築されたものは {val:,}戸</strong>。{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2回目から3回目にあたります。</span>
   </h1>
 
   <div class="kpis">
     <div class="kpi hi">
-      <span class="k">築26〜45年の非木造共同住宅</span>
+      <span class="k">築{age_lo}〜{age_hi}年の非木造共同住宅</span>
       <div class="v">{val:,}<small>戸</small></div>
       <p>1981〜2000年建築。{name}の非木造共同住宅 {total:,}戸 の {tshare:.1f}%。分譲・賃貸の区別はありません。</p>
     </div>
@@ -513,9 +552,9 @@ def build(basis: dict) -> int:
 
   <section>
     <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
-    <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、2026年時点で築26〜45年にあたります。</p>
+    <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、{ref}年時点で築{age_lo}〜{age_hi}年にあたります。</p>
     <div class="chartbox">
-      {period_chart(area["periods"], city["cohort"])}
+      {period_chart(area["periods"], city["cohort"], ref)}
       <div class="chart-foot">
         出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a><br>
         {city["filter"]}　取得日 {day}
@@ -546,12 +585,12 @@ def build(basis: dict) -> int:
       年度別の推移が見られるのは<strong>国土交通省「住宅着工統計調査」</strong>のほうです。
       <strong>{lo}〜{hi}年度に{name}で着工した分譲マンションは {flow:,}戸</strong>
       （共同住宅・鉄筋コンクリート造・分譲住宅）。上の {val:,}戸 とは
-      <strong>着工か現存か・分譲のみか賃貸込みか・築{2026-hi}〜{2026-lo}年か築26〜45年か</strong>の3点が違うため、
+      <strong>着工か現存か・分譲のみか賃貸込みか・築{ref-hi}〜{ref-lo}年か築{age_lo}〜{age_hi}年か</strong>の3点が違うため、
       直接は比べられません。
     </div>
-    <p class="lede">朱色の期間が、2026年時点で築{2026-hi}〜{2026-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
+    <p class="lede">朱色の期間が、{ref}年時点で築{ref-hi}〜{ref-lo}年にあたる住戸です。棒にカーソルを重ねると実数が出ます。</p>
     <div class="chartbox">
-      {year_chart(series, lo, hi)}
+      {year_chart(series, lo, hi, ref)}
       <div class="tip"></div>
       <div class="chart-foot">
         出典：国土交通省「住宅着工統計調査」時系列表／<a href="{pref["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={pref["statsDataId"]}</a><br>
@@ -577,7 +616,7 @@ def build(basis: dict) -> int:
     # ---- 一覧 ----
     canonical = f"{SITE_URL}pref/"
     idx = [head("都道府県別の大規模修繕統計｜全47都道府県",
-                f"築26〜45年（1981〜2000年建築）の非木造共同住宅の戸数を都道府県別に。全国{national:,}戸。"
+                f"築{age_lo}〜{age_hi}年（{basis['city']['stock_window'][0]}〜{basis['city']['stock_window'][1]}年建築）の非木造共同住宅の戸数を都道府県別に。全国{national:,}戸。"
                 f"分譲と賃貸を合わせた数です。総務省「令和5年住宅・土地統計調査」の公表値。",
                 canonical)]
     idx.append(f'''  <div class="srcband">
@@ -588,7 +627,7 @@ def build(basis: dict) -> int:
 
   <span class="toplabel">総務省 公表統計 ／ 都道府県別</span>
   <h1>都道府県別の大規模修繕統計
-    <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数を、都道府県別に並べたものです。全国では <strong>{national:,}戸</strong>。分譲と賃貸の区別はありません。</span>
+    <span class="sub">非木造共同住宅のうち{basis["city"]["stock_window"][0]}〜{basis["city"]["stock_window"][1]}年に建築されたもの＝{ref}年時点で築{age_lo}〜{age_hi}年の戸数を、都道府県別に並べたものです。全国では <strong>{national:,}戸</strong>。分譲と賃貸の区別はありません。</span>
   </h1>
 
   <div class="prefgrid">''')
