@@ -97,6 +97,11 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
 .warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
 .warn strong{color:var(--ink)}
+.finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+.finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.finder input:focus{outline:2px solid var(--ai);outline-offset:1px;border-color:var(--ai)}
+.qnote{margin:8px 0 0;min-height:1.2em;font-family:var(--mono);font-size:12px;color:var(--ink2)}
 a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
   text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
 a.cta:hover{background:var(--sunk);border-color:var(--ai)}
@@ -249,6 +254,13 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
     <span class="k">都道府県の統計へ</span>
     <span class="n">埼玉県の大規模修繕統計</span>
     <span class="d">県全体の戸数と、順位の近い都道府県</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.github.io/shuzen-stats/#calc">
+    <span class="k">Tool ／ 自分のマンションで試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
     <span class="arrow">→</span>
   </a>
 

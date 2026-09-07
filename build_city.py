@@ -47,6 +47,13 @@ FOOT_T = """
     <span class="arrow">→</span>
   </a>
 
+  <a class="cta" href="{site}#calc">
+    <span class="k">Tool ／ 自分のマンションで試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
+    <span class="arrow">→</span>
+  </a>
+
   <a class="cta" href="{site}">
     <span class="k">全国の統計へ</span>
     <span class="n">大規模修繕統計ビューア</span>
@@ -275,6 +282,14 @@ def build(basis: dict) -> int:
   <h1>一都三県の市区町村別
     <span class="sub">非木造共同住宅のうち{win[0]}〜{win[1]}年に建築されたもの＝{ref}年時点で築{age_lo}〜{age_hi}年の戸数です。分譲と賃貸を合わせた数で、各ページに所有の関係別の内訳を載せています。</span>
   </h1>
+
+  <div class="finder">
+    <label for="q">市区町村をさがす</label>
+    <input type="search" id="q" autocomplete="off" placeholder="例：江東　世田谷　川崎　浦安"
+           aria-describedby="qnote" aria-controls="qlist">
+    <p id="qnote" class="qnote" role="status" aria-live="polite"></p>
+  </div>
+  <div id="qlist">
 ''')
     for pre in ["13", "14", "11", "12"]:
         if pre not in leaves:
@@ -299,11 +314,43 @@ def build(basis: dict) -> int:
                        + '</p></section>\n')
         else:
             idx.append('</div></section>\n')
+    idx.append('  </div>\n')
     idx.append(f'  <p class="colophon">単位：戸。多い順。'
                f'<strong>築{age_lo}〜{age_hi}年の非木造共同住宅が {MIN_UNITS:,}戸 以上の市区町村だけ</strong>を'
                f'載せています（それ未満は個別ページを作っていません）。'
                f'特別区部・政令市の集計行は、市区町村と二重に数えることになるので'
                f'順位の一覧からは外し、各県の下に別途置いています。</p>\n')
+    idx.append('''  <script>
+  // 入力を端末の外へ出さない。fetch も localStorage も使わず、
+  // すでにページにある173件のリンクを絞り込むだけ。JS が無効なら全件が出たまま。
+  (function(){
+    var q = document.getElementById('q'), note = document.getElementById('qnote');
+    if (!q) return;
+    var cells = [].slice.call(document.querySelectorAll('#qlist .prefgrid a'));
+    var secs  = [].slice.call(document.querySelectorAll('#qlist section'));
+    var total = cells.length;
+    function apply(){
+      var v = q.value.trim();
+      var hit = 0;
+      cells.forEach(function(a){
+        var nm = a.querySelector('.nm');
+        var on = !v || (nm && nm.textContent.indexOf(v) >= 0);
+        a.hidden = !on;
+        if (on) hit++;
+      });
+      secs.forEach(function(sec){
+        var any = [].slice.call(sec.querySelectorAll('.prefgrid a')).some(function(a){ return !a.hidden; });
+        // 集計行の段落だけが残った県は、見出しごと隠す
+        sec.hidden = !any;
+      });
+      note.textContent = !v ? '' :
+        (hit ? hit + ' 件' : '該当なし。市区町村名の一部を漢字で入れてください（例：江東）');
+    }
+    q.addEventListener('input', apply);
+    apply();
+  })();
+  </script>
+''')
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")

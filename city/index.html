@@ -97,6 +97,11 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
 .warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
 .warn strong{color:var(--ink)}
+.finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+.finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.finder input:focus{outline:2px solid var(--ai);outline-offset:1px;border-color:var(--ai)}
+.qnote{margin:8px 0 0;min-height:1.2em;font-family:var(--mono);font-size:12px;color:var(--ink2)}
 a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
   text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
 a.cta:hover{background:var(--sunk);border-color:var(--ai)}
@@ -141,6 +146,14 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
   <h1>一都三県の市区町村別
     <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数です。分譲と賃貸を合わせた数で、各ページに所有の関係別の内訳を載せています。</span>
   </h1>
+
+  <div class="finder">
+    <label for="q">市区町村をさがす</label>
+    <input type="search" id="q" autocomplete="off" placeholder="例：江東　世田谷　川崎　浦安"
+           aria-describedby="qnote" aria-controls="qlist">
+    <p id="qnote" class="qnote" role="status" aria-live="polite"></p>
+  </div>
+  <div id="qlist">
 <section><h2><span class="idx">東京都</span>50 市区町村</h2>
   <div class="prefgrid"><a href="13112.html"><span class="nm">世田谷区</span><span class="vv">104,940</span></a><a href="13111.html"><span class="nm">大田区</span><span class="vv">91,650</span></a><a href="13123.html"><span class="nm">江戸川区</span><span class="vv">90,870</span></a><a href="13120.html"><span class="nm">練馬区</span><span class="vv">82,490</span></a><a href="13119.html"><span class="nm">板橋区</span><span class="vv">81,810</span></a><a href="13121.html"><span class="nm">足立区</span><span class="vv">70,580</span></a><a href="13108.html"><span class="nm">江東区</span><span class="vv">67,630</span></a><a href="13115.html"><span class="nm">杉並区</span><span class="vv">67,610</span></a><a href="13201.html"><span class="nm">八王子市</span><span class="vv">59,990</span></a><a href="13104.html"><span class="nm">新宿区</span><span class="vv">53,380</span></a><a href="13109.html"><span class="nm">品川区</span><span class="vv">53,140</span></a><a href="13122.html"><span class="nm">葛飾区</span><span class="vv">50,870</span></a><a href="13116.html"><span class="nm">豊島区</span><span class="vv">44,590</span></a><a href="13114.html"><span class="nm">中野区</span><span class="vv">38,840</span></a><a href="13117.html"><span class="nm">北区</span><span class="vv">37,190</span></a><a href="13110.html"><span class="nm">目黒区</span><span class="vv">35,740</span></a><a href="13107.html"><span class="nm">墨田区</span><span class="vv">34,130</span></a><a href="13113.html"><span class="nm">渋谷区</span><span class="vv">33,170</span></a><a href="13105.html"><span class="nm">文京区</span><span class="vv">31,550</span></a><a href="13209.html"><span class="nm">町田市</span><span class="vv">31,340</span></a><a href="13103.html"><span class="nm">港区</span><span class="vv">29,650</span></a><a href="13118.html"><span class="nm">荒川区</span><span class="vv">27,650</span></a><a href="13206.html"><span class="nm">府中市</span><span class="vv">26,830</span></a><a href="13208.html"><span class="nm">調布市</span><span class="vv">26,260</span></a><a href="13106.html"><span class="nm">台東区</span><span class="vv">23,990</span></a><a href="13224.html"><span class="nm">多摩市</span><span class="vv">20,790</span></a><a href="13229.html"><span class="nm">西東京市</span><span class="vv">19,530</span></a><a href="13211.html"><span class="nm">小平市</span><span class="vv">19,070</span></a><a href="13203.html"><span class="nm">武蔵野市</span><span class="vv">19,010</span></a><a href="13202.html"><span class="nm">立川市</span><span class="vv">18,990</span></a><a href="13212.html"><span class="nm">日野市</span><span class="vv">16,880</span></a><a href="13204.html"><span class="nm">三鷹市</span><span class="vv">16,730</span></a><a href="13102.html"><span class="nm">中央区</span><span class="vv">16,470</span></a><a href="13213.html"><span class="nm">東村山市</span><span class="vv">14,200</span></a><a href="13207.html"><span class="nm">昭島市</span><span class="vv">12,990</span></a><a href="13214.html"><span class="nm">国分寺市</span><span class="vv">11,990</span></a><a href="13205.html"><span class="nm">青梅市</span><span class="vv">11,930</span></a><a href="13210.html"><span class="nm">小金井市</span><span class="vv">10,710</span></a><a href="13225.html"><span class="nm">稲城市</span><span class="vv">9,910</span></a><a href="13222.html"><span class="nm">東久留米市</span><span class="vv">8,210</span></a><a href="13219.html"><span class="nm">狛江市</span><span class="vv">7,650</span></a><a href="13215.html"><span class="nm">国立市</span><span class="vv">7,620</span></a><a href="13218.html"><span class="nm">福生市</span><span class="vv">7,180</span></a><a href="13221.html"><span class="nm">清瀬市</span><span class="vv">6,950</span></a><a href="13220.html"><span class="nm">東大和市</span><span class="vv">5,920</span></a><a href="13101.html"><span class="nm">千代田区</span><span class="vv">5,890</span></a><a href="13227.html"><span class="nm">羽村市</span><span class="vv">5,000</span></a><a href="13223.html"><span class="nm">武蔵村山市</span><span class="vv">3,280</span></a><a href="13228.html"><span class="nm">あきる野市</span><span class="vv">1,830</span></a><a href="13303.html"><span class="nm">瑞穂町</span><span class="vv">1,730</span></a></div>
   <p class="colophon">集計行（順位は付けていません）：<a href="13100.html">特別区部</a> 1,173,800</p></section>
@@ -153,12 +166,50 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 <section><h2><span class="idx">千葉県</span>28 市区町村</h2>
   <div class="prefgrid"><a href="12203.html"><span class="nm">市川市</span><span class="vv">59,400</span></a><a href="12204.html"><span class="nm">船橋市</span><span class="vv">43,030</span></a><a href="12207.html"><span class="nm">松戸市</span><span class="vv">36,780</span></a><a href="12217.html"><span class="nm">柏市</span><span class="vv">26,110</span></a><a href="12227.html"><span class="nm">浦安市</span><span class="vv">23,750</span></a><a href="12101.html"><span class="nm">千葉市中央区</span><span class="vv">20,150</span></a><a href="12216.html"><span class="nm">習志野市</span><span class="vv">14,850</span></a><a href="12102.html"><span class="nm">千葉市花見川区</span><span class="vv">14,790</span></a><a href="12103.html"><span class="nm">千葉市稲毛区</span><span class="vv">12,900</span></a><a href="12106.html"><span class="nm">千葉市美浜区</span><span class="vv">12,530</span></a><a href="12219.html"><span class="nm">市原市</span><span class="vv">11,010</span></a><a href="12220.html"><span class="nm">流山市</span><span class="vv">9,400</span></a><a href="12104.html"><span class="nm">千葉市若葉区</span><span class="vv">9,090</span></a><a href="12105.html"><span class="nm">千葉市緑区</span><span class="vv">9,050</span></a><a href="12221.html"><span class="nm">八千代市</span><span class="vv">8,770</span></a><a href="12231.html"><span class="nm">印西市</span><span class="vv">8,160</span></a><a href="12212.html"><span class="nm">佐倉市</span><span class="vv">7,690</span></a><a href="12222.html"><span class="nm">我孫子市</span><span class="vv">7,460</span></a><a href="12224.html"><span class="nm">鎌ケ谷市</span><span class="vv">6,240</span></a><a href="12211.html"><span class="nm">成田市</span><span class="vv">6,190</span></a><a href="12232.html"><span class="nm">白井市</span><span class="vv">4,400</span></a><a href="12208.html"><span class="nm">野田市</span><span class="vv">3,100</span></a><a href="12228.html"><span class="nm">四街道市</span><span class="vv">3,080</span></a><a href="12206.html"><span class="nm">木更津市</span><span class="vv">2,600</span></a><a href="12210.html"><span class="nm">茂原市</span><span class="vv">2,050</span></a><a href="12213.html"><span class="nm">東金市</span><span class="vv">1,630</span></a><a href="12225.html"><span class="nm">君津市</span><span class="vv">1,600</span></a><a href="12322.html"><span class="nm">酒々井町</span><span class="vv">1,190</span></a></div>
   <p class="colophon">集計行（順位は付けていません）：<a href="12100.html">千葉市</a> 78,500</p></section>
+  </div>
   <p class="colophon">単位：戸。多い順。<strong>築26〜45年の非木造共同住宅が 1,000戸 以上の市区町村だけ</strong>を載せています（それ未満は個別ページを作っていません）。特別区部・政令市の集計行は、市区町村と二重に数えることになるので順位の一覧からは外し、各県の下に別途置いています。</p>
+  <script>
+  // 入力を端末の外へ出さない。fetch も localStorage も使わず、
+  // すでにページにある173件のリンクを絞り込むだけ。JS が無効なら全件が出たまま。
+  (function(){
+    var q = document.getElementById('q'), note = document.getElementById('qnote');
+    if (!q) return;
+    var cells = [].slice.call(document.querySelectorAll('#qlist .prefgrid a'));
+    var secs  = [].slice.call(document.querySelectorAll('#qlist section'));
+    var total = cells.length;
+    function apply(){
+      var v = q.value.trim();
+      var hit = 0;
+      cells.forEach(function(a){
+        var nm = a.querySelector('.nm');
+        var on = !v || (nm && nm.textContent.indexOf(v) >= 0);
+        a.hidden = !on;
+        if (on) hit++;
+      });
+      secs.forEach(function(sec){
+        var any = [].slice.call(sec.querySelectorAll('.prefgrid a')).some(function(a){ return !a.hidden; });
+        // 集計行の段落だけが残った県は、見出しごと隠す
+        sec.hidden = !any;
+      });
+      note.textContent = !v ? '' :
+        (hit ? hit + ' 件' : '該当なし。市区町村名の一部を漢字で入れてください（例：江東）');
+    }
+    q.addEventListener('input', apply);
+    apply();
+  })();
+  </script>
 
   <a class="cta" href="../pref/">
     <span class="k">都道府県の統計へ</span>
     <span class="n">都道府県別の大規模修繕統計</span>
     <span class="d">都道府県全体の戸数と、順位の近い都道府県</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.github.io/shuzen-stats/#calc">
+    <span class="k">Tool ／ 自分のマンションで試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
     <span class="arrow">→</span>
   </a>
 
