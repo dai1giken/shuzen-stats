@@ -12,8 +12,12 @@
 **修繕の対象は現存ストックなので、こちらのほうが指標として正しい。**
 
 --- 引き換えに失うもの ---------------------------------------------------
-この表には所有関係（持ち家／借家）の軸が無い。だから絞れるのは
-「非木造の共同住宅」までで、**分譲と賃貸が混ざる**。ページに明記すること。
+この表には所有関係（持ち家／借家）の軸が無い。だから見出しの数は
+「非木造の共同住宅」までで、**分譲と賃貸を合わせた数**になる。
+**これは誤りではない。**1棟オーナーの賃貸マンションも大規模修繕はするので、
+合計は合計として意味がある。分譲とは別のものというだけ。
+そこで合計は置き換えず、所有の関係の内訳を別表（0004021758）から足してある。
+その別表は市区までで町村が無いので、町村のページには内訳が出ない。
 
 --- URL にローマ字を使わない理由 -----------------------------------------
 210市区町村分のローマ字表記を手で用意すると誤りが混入する。JISコードなら
@@ -158,6 +162,70 @@ def build(basis: dict) -> int:
   </section>
 ''')
 
+        # --- 階数別 ---------------------------------------------------------
+        # 数字を並べるだけにする。「何階だからこの工法」といった読み方は
+        # 当社の見解であって公表値ではない。このページは公表値だけを載せると
+        # 上のSOURCE欄で宣言しているので、解釈は書かない。
+        fl = a.get("floors") or {}
+        if sum(fl.values()):
+            fsum = sum(fl.values())
+            rows = "".join(
+                f'<tr><td>{k}</td><td class="n">{fl[k]:,}</td>'
+                f'<td class="n">{fl[k] / fsum * 100:.1f}%</td></tr>'
+                for k in city["floor_order"] if k in fl)
+            gap = v - fsum
+            # 両方とも100戸単位に丸めた公表値なので、合計は一致しないことがある。
+            # 黙って揃えたり、どちらかを書き換えたりしない。
+            note = (f'階数別の合計は {fsum:,}戸 で、上の {v:,}戸 と {abs(gap):,}戸 ちがいます。'
+                    '公表値が100戸単位に丸めてあるためです。' if gap else
+                    f'階数別の合計は上の {v:,}戸 と一致します。')
+            h.append(f'''  <section>
+    <h2><span class="idx">Floor</span>{name}の築26〜45年（階数別）</h2>
+    <p class="lede">上と同じ 1981〜2000年建築の非木造共同住宅を、建物の階数で分けたものです。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>階数</th><th>戸数</th><th>構成比</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table></div>
+    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a>（上の数字と同じ表）。{note}</p>
+  </section>
+''')
+
+        # --- 所有の関係別 ---------------------------------------------------
+        # 見出しの数（分譲と賃貸の合計）は置き換えない。1棟オーナーの賃貸マンションも
+        # 大規模修繕はするので、合計が誤りなのではなく分譲とは別のものというだけ。
+        # 内訳は別表から取る。**別表どうしを引き算しない**（丸め差が賃貸の戸数に化ける）
+        # ため、合計もその表から取ってある。実測では227件すべて見出しと一致した。
+        ten = a.get("tenure")
+        tn = city.get("tenure", {})
+        if ten and ten.get("total"):
+            own, tot_t = ten["owned"], ten["total"]
+            other = tot_t - own
+            rows = "".join(
+                f'<tr><td>{k}</td><td class="n">{x:,}</td>'
+                f'<td class="n">{x / tot_t * 100:.1f}%</td></tr>'
+                for k, x in [("持ち家（分譲）", own), ("持ち家以外", other)])
+            same = ("上の {:,}戸 と一致します。".format(v) if tot_t == v
+                    else "この表での合計は {:,}戸 で、上の {:,}戸 と {:,}戸 ちがいます。"
+                         .format(tot_t, v, abs(tot_t - v)))
+            h.append(f'''  <section>
+    <h2><span class="idx">Own</span>{name}の築26〜45年（所有の関係別）</h2>
+    <p class="lede">同じ調査の別の統計表から。「持ち家」は住戸ごとに所有者がいるもの、「持ち家以外」は借りて住んでいるものです。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>所有の関係</th><th>戸数</th><th>構成比</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table></div>
+    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{tn.get("url", "")}" target="_blank" rel="noopener">e-Stat statsDataId={tn.get("statsDataId", "")}</a>。{tn.get("filter", "")}　取得日 {day}。合計 {tot_t:,}戸 は{same}</p>
+  </section>
+''')
+        else:
+            h.append(f'''  <section>
+    <h2><span class="idx">Own</span>{name}の築26〜45年（所有の関係別）</h2>
+    <p class="lede">所有の関係（持ち家か、そうでないか）の内訳は、同じ調査の別の統計表
+    （<a href="{tn.get("url", "")}" target="_blank" rel="noopener">statsDataId={tn.get("statsDataId", "")}</a>）にありますが、
+    <strong>その表は市区までで、町村は収録されていません</strong>。{name}はこれに当たるため、内訳を出していません。</p>
+  </section>
+''')
+
         if r:
             i = r - 1
             near = leaves[pre][max(0, i - 2): i + 3]
@@ -179,7 +247,7 @@ def build(basis: dict) -> int:
         h.append(f'''  <div class="warn">
     <h4>この数字が指しているもの</h4>
     <ul>
-      <li><strong>分譲と賃貸の区別はありません。</strong>この統計表には所有関係の軸が無く、絞り込めるのは「非木造の共同住宅」までです。賃貸マンションも含まれています。</li>
+      <li><strong>見出しの戸数は、分譲と賃貸を合わせた数です。</strong>この統計表で絞り込めるのは「非木造の共同住宅」までで、賃貸マンションを含みます。持ち家かどうかの内訳は、上の「所有の関係別」に別の統計表から載せています（その表は市区までで、町村はありません）。</li>
       <li><strong>標本調査にもとづく推計値です。</strong>全数調査ではありません。また小規模な町村は個別に公表されないため、市区町村の合計は{u}の値と一致しません（一都三県で0.1〜0.5%の差）。</li>
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
     </ul>
@@ -203,7 +271,7 @@ def build(basis: dict) -> int:
 
   <span class="toplabel">公表統計 ／ 一都三県</span>
   <h1>一都三県の市区町村別
-    <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数です。分譲と賃貸の区別はありません。</span>
+    <span class="sub">非木造共同住宅のうち1981〜2000年に建築されたもの＝2026年時点で築26〜45年の戸数です。分譲と賃貸を合わせた数で、各ページに所有の関係別の内訳を載せています。</span>
   </h1>
 ''')
     for pre in ["13", "14", "11", "12"]:

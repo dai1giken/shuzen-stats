@@ -46,6 +46,11 @@ CPI_ID = "0003427113"
 # 着工統計（フロー）ではなく現存ストック。修繕の対象はストックなのでこちらが正しい。
 # ただし所有関係の軸が無いため「非木造の共同住宅」までしか絞れず、賃貸が混ざる。
 CITY_ID = "0004021796"
+# 所有の関係（持ち家／借家）の内訳だけを別表から足す。**見出しの数字は置き換えない。**
+# 1棟オーナーの賃貸マンションも商業ビルも大規模修繕はするので、賃貸込みの数が
+# 誤りなのではなく、分譲とは別のものというだけ。両方を、それぞれ何かを書いて出す。
+# この表は「市区」までで町村が無い（一都三県で26件）。無い市区町村は内訳を出さない。
+TENURE_ID = "0004021758"
 CITY_PREFS = {"13": "東京都", "14": "神奈川県", "11": "埼玉県", "12": "千葉県"}
 # コホートは「築26〜45年」という意味で決まる。表示ラベルを直書きすると、
 # e-Stat 側が波ダッシュを ～(U+FF5E) から 〜(U+301C) に直しただけで一致しなくなり、
@@ -211,6 +216,66 @@ def fetch_cpi(months: list[str]) -> dict:
     }
 
 
+def fetch_tenure(cohort: list[str]) -> dict[str, dict[str, int]]:
+    """築26〜45年の非木造共同住宅のうち、持ち家（＝分譲）の戸数を市区別に返す。
+
+    **見出しの数字を置き換えるためではなく、内訳として添えるために取る。**
+    1棟オーナーの賃貸マンションも商業ビルも大規模修繕はする。賃貸込みの数が
+    誤っているのではなく、分譲とは別のものというだけなので、両方を出して
+    それぞれが何かを書く。
+
+    この表（0004021758）は「市区」までで町村が無い。返らなかった市区町村は
+    呼び出し側で None のままにし、ページには内訳を出さない。0 と書くと
+    「分譲が無い」という誤った意味になる。
+    """
+    meta = _call("getMetaInfo", statsDataId=TENURE_ID)["GET_META_INFO"]["METADATA_INF"]
+    classes = meta["CLASS_INF"]["CLASS_OBJ"]
+    axis = {c["@id"]: {i["@name"]: i["@code"] for i in _as_list(c["CLASS"])}
+            for c in classes if c["@id"] != "area"}
+    period = {}
+    for c in classes:
+        if c["@id"] == "cat05":
+            period = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+
+    missing = [k for k in cohort if k not in period.values()]
+    if missing:
+        sys.exit(f"所有関係の表に区分 {missing} がありません。ラベルが変わった可能性があります。"
+                 f" この表の区分: {sorted(set(period.values()))}")
+
+    def pull(own: str) -> dict[str, int]:
+        d = _call("getStatsData", statsDataId=TENURE_ID,
+                  cdCat01=axis["cat01"][own], cdCat02=axis["cat02"]["非木造"],
+                  cdCat03=axis["cat03"]["共同住宅"], cdCat04=axis["cat04"]["総数"],
+                  limit=100000)
+        sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+        got = int(sd["RESULT_INF"]["TOTAL_NUMBER"])
+        if got >= 100000:
+            sys.exit(f"所有関係の表が {got} 件で limit に達しました。分割取得が要ります。")
+        acc: dict[str, int] = {}
+        for v in _as_list(sd["DATA_INF"]["VALUE"]):
+            if period.get(v["@cat05"]) not in cohort:
+                continue
+            try:
+                acc[v["@area"]] = acc.get(v["@area"], 0) + int(v["$"])
+            except (ValueError, TypeError):
+                continue                  # 「-」「X」（秘匿）
+        return acc
+
+    # 総数もこの表から取る。**見出しの数（別表）と引き算しないため。**
+    # 両表とも100戸単位に丸めてあるので、同じ市区でも数十戸ずれる。
+    # 別表どうしを引き算すると、その丸め差が「賃貸の戸数」に化ける。
+    owned, whole = pull("持ち家"), pull("総数")
+    # 総数の側に出てくる市区は、この表に収録されている市区。そこで持ち家が
+    # 取れなかったものは 0 でよい。e-Stat の「-」は該当なし（ゼロ）であって
+    # 秘匿ではない（秘匿は「X」）。実例: 木更津市は築26〜45年の分譲が 0 戸。
+    # 逆に whole に出てこない市区町村は、表そのものに無い（町村）。区別すること。
+    out = {c: {"owned": owned.get(c, 0), "total": whole[c]} for c in whole}
+    if not out:
+        sys.exit("所有関係の表から1件も取れませんでした。軸の指定が変わった可能性があります。")
+    print(f"  所有の関係の内訳: {len(out)} 市区（町村はこの表に無い）")
+    return out
+
+
 def fetch_city() -> dict:
     """一都三県の市区町村別に、非木造・共同住宅の住宅数を建築の時期別で取る。"""
     meta = _call("getMetaInfo", statsDataId=CITY_ID)["GET_META_INFO"]["METADATA_INF"]
@@ -223,15 +288,29 @@ def fetch_city() -> dict:
             periods = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
     order = [periods[k] for k in sorted(periods) if periods[k] != "総数"]
     cohort = pick_cohort(order)
+    owned = fetch_tenure(cohort)
 
-    d = _call("getStatsData", statsDataId=CITY_ID, cdCat01="2", cdCat02="3", cdCat03="00",
-              limit=100000)
+    # cdCat03（階数）は指定しない。4区分ぶんまとめて返させて、総数と内訳を一度に取る。
+    # 階数は公表値をそのまま並べるだけにする。「何階だからこの工法」といった
+    # 読み方は当社の見解であって公表値ではないので、ページにも書かない。
+    floor_name = {}
+    for c in classes:
+        if c["@id"] == "cat03":
+            floor_name = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+    floors = [floor_name[k] for k in sorted(floor_name) if floor_name[k] != "総数"]
+
+    d = _call("getStatsData", statsDataId=CITY_ID, cdCat01="2", cdCat02="3", limit=100000)
     sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+    got = int(sd["RESULT_INF"]["TOTAL_NUMBER"])
+    if got >= 100000:
+        sys.exit(f"住宅ストックが {got} 件で limit に達しました。分割取得が要ります。")
 
-    raw: dict[str, dict[str, int]] = {}
+    # raw[area][階数][建築の時期]。階数「総数」が従来どおりの見出し用の数。
+    raw: dict[str, dict[str, dict[str, int]]] = {}
     for v in _as_list(sd["DATA_INF"]["VALUE"]):
         try:
-            raw.setdefault(v["@area"], {})[periods[v["@cat04"]]] = int(v["$"])
+            raw.setdefault(v["@area"], {}).setdefault(
+                floor_name[v["@cat03"]], {})[periods[v["@cat04"]]] = int(v["$"])
         except (ValueError, TypeError, KeyError):
             continue
 
@@ -244,7 +323,7 @@ def fetch_city() -> dict:
         is_total_row = code.endswith("000")
         if not (is_total_row or code[:2] in CITY_PREFS) or code not in raw:
             continue
-        vals = raw[code]
+        vals = raw[code].get("総数", {})
         out[code] = {
             "name": a["@name"],
             # 一都三県の市区町村は所属県名。合計行は自分の名前（「全国」「北海道」など）
@@ -253,6 +332,13 @@ def fetch_city() -> dict:
             "is_leaf": code not in parents,          # 集計行（政令市・特別区部）を除くため
             "total": vals.get("総数", 0),
             "periods": {k: vals.get(k, 0) for k in order},
+            # 築26〜45年ぶんの階数の内訳。丸めが100戸単位なので総数とは数十戸ずれる。
+            # 解釈は付けずに数字だけ出す（このサイトは分析・見解を載せないと書いている）
+            "floors": {f: sum(raw[code].get(f, {}).get(k, 0) for k in cohort)
+                       for f in floors},
+            # 所有の関係の内訳（築26〜45年）。別表から取った持ち家と、その表の総数。
+            # 町村はこの表に無いので None のまま。0 と書くと「分譲が無い」の意味になる。
+            "tenure": owned.get(code),
         }
 
     for pre, nm in CITY_PREFS.items():
@@ -275,6 +361,13 @@ def fetch_city() -> dict:
         "filter": "建物の構造=非木造／建て方=共同住宅／階数=総数",
         "cohort": cohort,
         "order": order,
+        "floor_order": floors,
+        "tenure": {
+            "statsDataId": TENURE_ID,
+            "url": f"https://www.e-stat.go.jp/dbview?sid={TENURE_ID}",
+            "filter": "所有の関係=持ち家／構造=非木造／建て方=共同住宅",
+            "note": "この統計表は市区までで、町村は収録されていません。",
+        },
         "areas": out,
     }
 
