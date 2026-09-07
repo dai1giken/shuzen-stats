@@ -25,7 +25,7 @@ import json
 from pathlib import Path
 
 from build_pref import CSS, SITE_URL, SLUG, head, period_chart
-from pref_city import MIN_UNITS, cohort_sum, published_leaves
+from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
 HERE = Path(__file__).resolve().parent
 
@@ -100,7 +100,7 @@ def build(basis: dict) -> int:
         if code not in publish:           # 閾値未満。中身が空のページを作らない
             continue
         pre = code[:2]
-        name, pref_name = a["name"], a["pref"]
+        name, pref_name = label(areas, code), a["pref"]
         u = unit(pref_name)
         v = coh(a)
         total = a["total"]
@@ -169,7 +169,8 @@ def build(basis: dict) -> int:
             for c2, a2 in near:
                 cls = ' class="me"' if c2 == code else ''
                 v2 = coh(a2)
-                nm2 = a2["name"] if c2 == code else f'<a href="{c2}.html">{a2["name"]}</a>'
+                nm2 = (label(areas, c2) if c2 == code
+                       else f'<a href="{c2}.html">{label(areas, c2)}</a>')
                 h.append(f'<tr{cls}><td class="n">{ranks[pre][c2]}</td><td>{nm2}</td>'
                          f'<td class="n">{v2:,}</td><td class="n">{v2/pref_v*100:.1f}%</td></tr>')
             h.append('</tbody></table></div>\n    <p class="lede"><a href="index.html">'
@@ -212,7 +213,7 @@ def build(basis: dict) -> int:
         idx.append(f'<section><h2><span class="idx">{pname}</span>'
                    f'{len(leaves[pre])} 市区町村</h2>\n  <div class="prefgrid">')
         for c2, a2 in leaves[pre]:
-            idx.append(f'<a href="{c2}.html"><span class="nm">{a2["name"]}</span>'
+            idx.append(f'<a href="{c2}.html"><span class="nm">{label(areas, c2)}</span>'
                        f'<span class="vv">{coh(a2):,}</span></a>')
         # 集計行（特別区部・政令市）は市区町村と二重に数えるので順位一覧には入れられないが、
         # ページ自体は作っている。ここに出さないと内部リンクゼロのまま sitemap にだけ載る。

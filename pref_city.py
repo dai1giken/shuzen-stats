@@ -23,6 +23,27 @@ from __future__ import annotations
 MIN_UNITS = 1000
 
 
+def label(areas: dict, code: str) -> str:
+    """表示用の市区町村名。政令指定都市の区は、親の市名を前に付ける。
+
+    住宅・土地統計の name は区名だけで、親の市名が入らない。そのまま出すと
+    千葉市中央区が「中央区（千葉県）」になり、どこの中央区か分からない。
+    同名の区は一都三県だけで4組、全国では「南区」12・「西区」12ある。
+
+    **東京23区の親は「特別区部」で市ではないので付けない。**
+    「特別区部中央区」は誤りで、東京都中央区が正しい。親名が「市」で終わる
+    ときだけ前置する、という判定にしてあるのはこのため。全国へ広げても
+    札幌市・大阪市・福岡市はすべて「市」で終わるのでそのまま効く。
+    """
+    a = areas[code]
+    parent = a.get("parent")
+    if parent and not parent.endswith("000"):
+        pname = areas.get(parent, {}).get("name", "")
+        if pname.endswith("市"):
+            return pname + a["name"]
+    return a["name"]
+
+
 def cohort_sum(a: dict, cohort: list[str]) -> int:
     """築26〜45年の戸数。
 
@@ -79,7 +100,7 @@ def city_section(basis: dict, pref_name: str) -> str:
              '市区町村名をクリックすると個別のページへ移動します。</p>')
     h.append('    <div class="prefgrid">')
     for code, a in leaves:
-        h.append(f'<a href="../city/{code}.html"><span class="nm">{a["name"]}</span>'
+        h.append(f'<a href="../city/{code}.html"><span class="nm">{label(areas, code)}</span>'
                  f'<span class="vv">{coh(a):,}</span></a>')
     h.append('</div>')
     drop_v = sum(coh(a) for _, a in dropped)
