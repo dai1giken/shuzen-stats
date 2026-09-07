@@ -216,7 +216,7 @@ def fetch_cpi(months: list[str]) -> dict:
     }
 
 
-def fetch_tenure(cohort: list[str]) -> dict[str, dict[str, int]]:
+def fetch_tenure(order: list[str]) -> dict[str, dict[str, dict[str, int]]]:
     """築26〜45年の非木造共同住宅のうち、持ち家（＝分譲）の戸数を市区別に返す。
 
     **見出しの数字を置き換えるためではなく、内訳として添えるために取る。**
@@ -237,12 +237,12 @@ def fetch_tenure(cohort: list[str]) -> dict[str, dict[str, int]]:
         if c["@id"] == "cat05":
             period = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
 
-    missing = [k for k in cohort if k not in period.values()]
+    missing = [k for k in order if k not in period.values()]
     if missing:
         sys.exit(f"所有関係の表に区分 {missing} がありません。ラベルが変わった可能性があります。"
                  f" この表の区分: {sorted(set(period.values()))}")
 
-    def pull(own: str) -> dict[str, int]:
+    def pull(own: str) -> dict[str, dict[str, int]]:
         d = _call("getStatsData", statsDataId=TENURE_ID,
                   cdCat01=axis["cat01"][own], cdCat02=axis["cat02"]["非木造"],
                   cdCat03=axis["cat03"]["共同住宅"], cdCat04=axis["cat04"]["総数"],
@@ -251,12 +251,13 @@ def fetch_tenure(cohort: list[str]) -> dict[str, dict[str, int]]:
         got = int(sd["RESULT_INF"]["TOTAL_NUMBER"])
         if got >= 100000:
             sys.exit(f"所有関係の表が {got} 件で limit に達しました。分割取得が要ります。")
-        acc: dict[str, int] = {}
+        acc: dict[str, dict[str, int]] = {}
         for v in _as_list(sd["DATA_INF"]["VALUE"]):
-            if period.get(v["@cat05"]) not in cohort:
+            lb = period.get(v["@cat05"])
+            if lb not in order:
                 continue
             try:
-                acc[v["@area"]] = acc.get(v["@area"], 0) + int(v["$"])
+                acc.setdefault(v["@area"], {})[lb] = int(v["$"])
             except (ValueError, TypeError):
                 continue                  # 「-」「X」（秘匿）
         return acc
@@ -269,7 +270,8 @@ def fetch_tenure(cohort: list[str]) -> dict[str, dict[str, int]]:
     # 取れなかったものは 0 でよい。e-Stat の「-」は該当なし（ゼロ）であって
     # 秘匿ではない（秘匿は「X」）。実例: 木更津市は築26〜45年の分譲が 0 戸。
     # 逆に whole に出てこない市区町村は、表そのものに無い（町村）。区別すること。
-    out = {c: {"owned": owned.get(c, 0), "total": whole[c]} for c in whole}
+    out = {c: {"owned": {k: owned.get(c, {}).get(k, 0) for k in order},
+               "total": {k: whole[c].get(k, 0) for k in order}} for c in whole}
     if not out:
         sys.exit("所有関係の表から1件も取れませんでした。軸の指定が変わった可能性があります。")
     print(f"  所有の関係の内訳: {len(out)} 市区（町村はこの表に無い）")
@@ -288,7 +290,7 @@ def fetch_city() -> dict:
             periods = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
     order = [periods[k] for k in sorted(periods) if periods[k] != "総数"]
     cohort = pick_cohort(order)
-    owned = fetch_tenure(cohort)
+    owned = fetch_tenure(order)
 
     # cdCat03（階数）は指定しない。4区分ぶんまとめて返させて、総数と内訳を一度に取る。
     # 階数は公表値をそのまま並べるだけにする。「何階だからこの工法」といった
@@ -336,9 +338,16 @@ def fetch_city() -> dict:
             # 解釈は付けずに数字だけ出す（このサイトは分析・見解を載せないと書いている）
             "floors": {f: sum(raw[code].get(f, {}).get(k, 0) for k in cohort)
                        for f in floors},
+            # 築年数帯を選べるようにするため、期間ごとにも持つ。API 呼び出しは増えない
+            # （もともと全期間ぶん返ってきていて、コホート以外を捨てていただけ）
+            "floors_by_period": {f: {k: raw[code].get(f, {}).get(k, 0) for k in order}
+                                 for f in floors},
             # 所有の関係の内訳（築26〜45年）。別表から取った持ち家と、その表の総数。
             # 町村はこの表に無いので None のまま。0 と書くと「分譲が無い」の意味になる。
-            "tenure": owned.get(code),
+            "tenure": ({"owned": sum(owned[code]["owned"][k] for k in cohort),
+                        "total": sum(owned[code]["total"][k] for k in cohort)}
+                       if code in owned else None),
+            "tenure_by_period": owned.get(code),
         }
 
     for pre, nm in CITY_PREFS.items():

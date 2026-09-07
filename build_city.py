@@ -28,7 +28,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import CSS, SITE_URL, SLUG, head, period_chart, ref_ages
+from build_pref import CSS, SITE_URL, SLUG, age_of, head, period_chart, ref_ages
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
 HERE = Path(__file__).resolve().parent
@@ -38,6 +38,78 @@ def unit(pref_name: str) -> str:
     """東京都→「都」、北海道→「道」、大阪府→「府」、それ以外→「県」。
     ラベルを「県全体」「県内比」と決め打ちにすると東京都で誤りになる。"""
     return pref_name[-1] if pref_name[-1] in "都道府県" else "県"
+
+BAND_JS = """  <script>
+  // 築年数帯を選ぶと、階数別と所有の関係別の表を差し替える。
+  // 通信も保存もしない。数字はこのページに埋め込んだ公表値だけを足し合わせる。
+  // 解釈は書かない（このサイトは当社の分析・見解を載せないと宣言している）。
+  (function(){
+    var el = document.getElementById('bandData');
+    if (!el) return;
+    var D; try { D = JSON.parse(el.textContent); } catch (e) { return; }
+    var floorBody = document.getElementById('floorBody'),
+        ownBody   = document.getElementById('ownBody');
+    if (!floorBody) return;
+
+    var host = floorBody.closest('section');
+    var pick = document.createElement('div');
+    pick.className = 'bandpick';
+    var opts = '<option value="">' + D.cohortLabel + '（' + D.win[0] + '〜' + D.win[1] + '年建築・既定）</option>';
+    D.order.forEach(function(k){
+      opts += '<option value="' + k + '">' + D.ages[k] + '（' + k + '建築）</option>';
+    });
+    pick.innerHTML = '<label for="band">築年数で見る</label>' +
+                     '<select id="band">' + opts + '</select>' +
+                     '<p class="qnote" id="bandNote"></p>';
+    host.parentNode.insertBefore(pick, host);
+
+    function fmt(n){ return n.toLocaleString('ja-JP'); }
+    function sum(o, ks){ var t = 0; ks.forEach(function(k){ t += (o && o[k]) || 0; }); return t; }
+    function rows(pairs, tot){
+      return pairs.map(function(p){
+        var pc = tot ? (p[1] / tot * 100).toFixed(1) : '0.0';
+        return '<tr><td>' + p[0] + '</td><td class="n">' + fmt(p[1]) +
+               '</td><td class="n">' + pc + '%</td></tr>';
+      }).join('');
+    }
+    function apply(){
+      var v = document.getElementById('band').value;
+      var ks = v ? [v] : D.cohort;
+      var label = v ? D.ages[v] : D.cohortLabel;
+      var total = sum(D.periods, ks);
+
+      [].forEach.call(document.querySelectorAll('.bandlab'), function(e){ e.textContent = label; });
+      document.getElementById('bandNote').textContent =
+        label + '（' + (v ? v : D.win[0] + '〜' + D.win[1] + '年') + '建築）の非木造共同住宅は ' + fmt(total) + ' 戸';
+
+      var fl = D.floorOrder.map(function(f){ return [f, sum(D.floors[f], ks)]; });
+      var fsum = fl.reduce(function(t, p){ return t + p[1]; }, 0);
+      floorBody.innerHTML = rows(fl, fsum);
+      var lede = document.getElementById('floorLede');
+      if (lede) lede.textContent = '対象は ' + (v ? v : D.win[0] + '〜' + D.win[1] + '年') + '建築。';
+      var gap = total - fsum;
+      var fn = document.getElementById('floorNote');
+      if (fn) fn.textContent = gap
+        ? '階数別の合計は ' + fmt(fsum) + '戸 で、' + fmt(total) + '戸 と ' + fmt(Math.abs(gap)) +
+          '戸 ちがいます。公表値が100戸単位に丸めてあるためです。'
+        : '階数別の合計は ' + fmt(total) + '戸 と一致します。';
+
+      if (ownBody && D.tenure) {
+        var own = sum(D.tenure.owned, ks), tot = sum(D.tenure.total, ks);
+        ownBody.innerHTML = rows([['持ち家（分譲）', own], ['持ち家以外', tot - own]], tot);
+        var on = document.getElementById('ownNote');
+        if (on) on.textContent = tot === total
+          ? '合計 ' + fmt(tot) + '戸 は上の ' + fmt(total) + '戸 と一致します。'
+          : 'この表での合計は ' + fmt(tot) + '戸 で、上の ' + fmt(total) + '戸 と ' +
+            fmt(Math.abs(tot - total)) + '戸 ちがいます。';
+      }
+    }
+    document.getElementById('band').addEventListener('change', apply);
+    apply();
+  })();
+  </script>
+"""
+
 
 FOOT_T = """
   <a class="cta" href="{back}">
@@ -189,13 +261,13 @@ def build(basis: dict) -> int:
                     '公表値が100戸単位に丸めてあるためです。' if gap else
                     f'階数別の合計は上の {v:,}戸 と一致します。')
             h.append(f'''  <section>
-    <h2><span class="idx">Floor</span>{name}の築{age_lo}〜{age_hi}年（階数別）</h2>
-    <p class="lede">上と同じ {win[0]}〜{win[1]}年建築の非木造共同住宅を、建物の階数で分けたものです。</p>
+    <h2><span class="idx">Floor</span>{name}の<span class="bandlab">築{age_lo}〜{age_hi}年</span>（階数別）</h2>
+    <p class="lede">非木造共同住宅を建物の階数で分けたものです。<span id="floorLede">対象は上と同じ {win[0]}〜{win[1]}年建築。</span></p>
     <div class="tablebox"><table>
       <thead><tr><th>階数</th><th>戸数</th><th>構成比</th></tr></thead>
-      <tbody>{rows}</tbody>
+      <tbody id="floorBody">{rows}</tbody>
     </table></div>
-    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a>（上の数字と同じ表）。{note}</p>
+    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{city["url"]}" target="_blank" rel="noopener">e-Stat statsDataId={city["statsDataId"]}</a>（上の数字と同じ表）。<span id="floorNote">{note}</span></p>
   </section>
 ''')
 
@@ -217,13 +289,13 @@ def build(basis: dict) -> int:
                     else "この表での合計は {:,}戸 で、上の {:,}戸 と {:,}戸 ちがいます。"
                          .format(tot_t, v, abs(tot_t - v)))
             h.append(f'''  <section>
-    <h2><span class="idx">Own</span>{name}の築{age_lo}〜{age_hi}年（所有の関係別）</h2>
+    <h2><span class="idx">Own</span>{name}の<span class="bandlab">築{age_lo}〜{age_hi}年</span>（所有の関係別）</h2>
     <p class="lede">同じ調査の別の統計表から。「持ち家」は住戸ごとに所有者がいるもの、「持ち家以外」は借りて住んでいるものです。</p>
     <div class="tablebox"><table>
       <thead><tr><th>所有の関係</th><th>戸数</th><th>構成比</th></tr></thead>
-      <tbody>{rows}</tbody>
+      <tbody id="ownBody">{rows}</tbody>
     </table></div>
-    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{tn.get("url", "")}" target="_blank" rel="noopener">e-Stat statsDataId={tn.get("statsDataId", "")}</a>。{tn.get("filter", "")}　取得日 {day}。合計 {tot_t:,}戸 は{same}</p>
+    <p class="colophon">単位：戸。出典：{city["survey"]}／<a href="{tn.get("url", "")}" target="_blank" rel="noopener">e-Stat statsDataId={tn.get("statsDataId", "")}</a>。{tn.get("filter", "")}　取得日 {day}。<span id="ownNote">合計 {tot_t:,}戸 は{same}</span></p>
   </section>
 ''')
         else:
@@ -234,6 +306,26 @@ def build(basis: dict) -> int:
     <strong>その表は市区までで、町村は収録されていません</strong>。{name}はこれに当たるため、内訳を出していません。</p>
   </section>
 ''')
+
+        # --- 築年数帯の切り替え -----------------------------------------
+        # 上の2つの表は既定で築26〜45年ぶん。JS があるときだけ、帯を選べる
+        # ようにする。**選択肢を出すのも JS 側**にしてあるので、JS が無効なら
+        # 既定の表がそのまま残り、空のセレクトが出て壊れて見えることがない。
+        # データはこの市区町村ぶんだけを埋め込む（通信しない）。
+        band = {
+            "order": city["order"],
+            "ages": {k: age_of(k, ref) for k in city["order"]},
+            "cohort": cohort,
+            "cohortLabel": f"築{age_lo}〜{age_hi}年",
+            "win": win,
+            "floorOrder": city["floor_order"],
+            "periods": a["periods"],
+            "floors": a.get("floors_by_period") or {},
+            "tenure": a.get("tenure_by_period"),
+        }
+        h.append('  <script id="bandData" type="application/json">'
+                 + json.dumps(band, ensure_ascii=False) + '</script>' + chr(10))
+        h.append(BAND_JS)
 
         if r:
             i = r - 1

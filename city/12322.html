@@ -97,6 +97,10 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
 .warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
 .warn strong{color:var(--ink)}
+.bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+.bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.bandpick select:focus{outline:2px solid var(--ai);outline-offset:1px}
 .finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
 .finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
 .finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
@@ -215,18 +219,18 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       </g></svg>
       <div class="chart-foot">
         出典：令和5年住宅・土地統計調査（2023年10月1日現在）／<a href="https://www.e-stat.go.jp/dbview?sid=0004021796" target="_blank" rel="noopener">e-Stat statsDataId=0004021796</a><br>
-        建物の構造=非木造／建て方=共同住宅／階数=総数　取得日 2026-09-07
+        建物の構造=非木造／建て方=共同住宅／階数=総数　取得日 2026-09-08
       </div>
     </div>
   </section>
   <section>
-    <h2><span class="idx">Floor</span>酒々井町の築26〜45年（階数別）</h2>
-    <p class="lede">上と同じ 1981〜2000年建築の非木造共同住宅を、建物の階数で分けたものです。</p>
+    <h2><span class="idx">Floor</span>酒々井町の<span class="bandlab">築26〜45年</span>（階数別）</h2>
+    <p class="lede">非木造共同住宅を建物の階数で分けたものです。<span id="floorLede">対象は上と同じ 1981〜2000年建築。</span></p>
     <div class="tablebox"><table>
       <thead><tr><th>階数</th><th>戸数</th><th>構成比</th></tr></thead>
-      <tbody><tr><td>１～２階建</td><td class="n">390</td><td class="n">32.8%</td></tr><tr><td>３～５階建</td><td class="n">800</td><td class="n">67.2%</td></tr><tr><td>６階建以上</td><td class="n">0</td><td class="n">0.0%</td></tr></tbody>
+      <tbody id="floorBody"><tr><td>１～２階建</td><td class="n">390</td><td class="n">32.8%</td></tr><tr><td>３～５階建</td><td class="n">800</td><td class="n">67.2%</td></tr><tr><td>６階建以上</td><td class="n">0</td><td class="n">0.0%</td></tr></tbody>
     </table></div>
-    <p class="colophon">単位：戸。出典：令和5年住宅・土地統計調査（2023年10月1日現在）／<a href="https://www.e-stat.go.jp/dbview?sid=0004021796" target="_blank" rel="noopener">e-Stat statsDataId=0004021796</a>（上の数字と同じ表）。階数別の合計は上の 1,190戸 と一致します。</p>
+    <p class="colophon">単位：戸。出典：令和5年住宅・土地統計調査（2023年10月1日現在）／<a href="https://www.e-stat.go.jp/dbview?sid=0004021796" target="_blank" rel="noopener">e-Stat statsDataId=0004021796</a>（上の数字と同じ表）。<span id="floorNote">階数別の合計は上の 1,190戸 と一致します。</span></p>
   </section>
   <section>
     <h2><span class="idx">Own</span>酒々井町の築26〜45年（所有の関係別）</h2>
@@ -234,6 +238,76 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
     （<a href="https://www.e-stat.go.jp/dbview?sid=0004021758" target="_blank" rel="noopener">statsDataId=0004021758</a>）にありますが、
     <strong>その表は市区までで、町村は収録されていません</strong>。酒々井町はこれに当たるため、内訳を出していません。</p>
   </section>
+  <script id="bandData" type="application/json">{"order": ["1970年以前", "1971～1980年", "1981～1990年", "1991～2000年", "2001～2010年", "2011～2020年", "2021～2023年9月"], "ages": {"1970年以前": "築56年〜", "1971～1980年": "築46-55年", "1981～1990年": "築36-45年", "1991～2000年": "築26-35年", "2001～2010年": "築16-25年", "2011～2020年": "築6-15年", "2021～2023年9月": "築3-5年"}, "cohort": ["1981～1990年", "1991～2000年"], "cohortLabel": "築26〜45年", "win": [1981, 2000], "floorOrder": ["１～２階建", "３～５階建", "６階建以上"], "periods": {"1970年以前": 120, "1971～1980年": 370, "1981～1990年": 810, "1991～2000年": 380, "2001～2010年": 320, "2011～2020年": 270, "2021～2023年9月": 0}, "floors": {"１～２階建": {"1970年以前": 0, "1971～1980年": 0, "1981～1990年": 270, "1991～2000年": 120, "2001～2010年": 120, "2011～2020年": 230, "2021～2023年9月": 0}, "３～５階建": {"1970年以前": 120, "1971～1980年": 370, "1981～1990年": 540, "1991～2000年": 260, "2001～2010年": 30, "2011～2020年": 10, "2021～2023年9月": 0}, "６階建以上": {"1970年以前": 0, "1971～1980年": 0, "1981～1990年": 0, "1991～2000年": 0, "2001～2010年": 180, "2011～2020年": 20, "2021～2023年9月": 0}}, "tenure": null}</script>
+  <script>
+  // 築年数帯を選ぶと、階数別と所有の関係別の表を差し替える。
+  // 通信も保存もしない。数字はこのページに埋め込んだ公表値だけを足し合わせる。
+  // 解釈は書かない（このサイトは当社の分析・見解を載せないと宣言している）。
+  (function(){
+    var el = document.getElementById('bandData');
+    if (!el) return;
+    var D; try { D = JSON.parse(el.textContent); } catch (e) { return; }
+    var floorBody = document.getElementById('floorBody'),
+        ownBody   = document.getElementById('ownBody');
+    if (!floorBody) return;
+
+    var host = floorBody.closest('section');
+    var pick = document.createElement('div');
+    pick.className = 'bandpick';
+    var opts = '<option value="">' + D.cohortLabel + '（' + D.win[0] + '〜' + D.win[1] + '年建築・既定）</option>';
+    D.order.forEach(function(k){
+      opts += '<option value="' + k + '">' + D.ages[k] + '（' + k + '建築）</option>';
+    });
+    pick.innerHTML = '<label for="band">築年数で見る</label>' +
+                     '<select id="band">' + opts + '</select>' +
+                     '<p class="qnote" id="bandNote"></p>';
+    host.parentNode.insertBefore(pick, host);
+
+    function fmt(n){ return n.toLocaleString('ja-JP'); }
+    function sum(o, ks){ var t = 0; ks.forEach(function(k){ t += (o && o[k]) || 0; }); return t; }
+    function rows(pairs, tot){
+      return pairs.map(function(p){
+        var pc = tot ? (p[1] / tot * 100).toFixed(1) : '0.0';
+        return '<tr><td>' + p[0] + '</td><td class="n">' + fmt(p[1]) +
+               '</td><td class="n">' + pc + '%</td></tr>';
+      }).join('');
+    }
+    function apply(){
+      var v = document.getElementById('band').value;
+      var ks = v ? [v] : D.cohort;
+      var label = v ? D.ages[v] : D.cohortLabel;
+      var total = sum(D.periods, ks);
+
+      [].forEach.call(document.querySelectorAll('.bandlab'), function(e){ e.textContent = label; });
+      document.getElementById('bandNote').textContent =
+        label + '（' + (v ? v : D.win[0] + '〜' + D.win[1] + '年') + '建築）の非木造共同住宅は ' + fmt(total) + ' 戸';
+
+      var fl = D.floorOrder.map(function(f){ return [f, sum(D.floors[f], ks)]; });
+      var fsum = fl.reduce(function(t, p){ return t + p[1]; }, 0);
+      floorBody.innerHTML = rows(fl, fsum);
+      var lede = document.getElementById('floorLede');
+      if (lede) lede.textContent = '対象は ' + (v ? v : D.win[0] + '〜' + D.win[1] + '年') + '建築。';
+      var gap = total - fsum;
+      var fn = document.getElementById('floorNote');
+      if (fn) fn.textContent = gap
+        ? '階数別の合計は ' + fmt(fsum) + '戸 で、' + fmt(total) + '戸 と ' + fmt(Math.abs(gap)) +
+          '戸 ちがいます。公表値が100戸単位に丸めてあるためです。'
+        : '階数別の合計は ' + fmt(total) + '戸 と一致します。';
+
+      if (ownBody && D.tenure) {
+        var own = sum(D.tenure.owned, ks), tot = sum(D.tenure.total, ks);
+        ownBody.innerHTML = rows([['持ち家（分譲）', own], ['持ち家以外', tot - own]], tot);
+        var on = document.getElementById('ownNote');
+        if (on) on.textContent = tot === total
+          ? '合計 ' + fmt(tot) + '戸 は上の ' + fmt(total) + '戸 と一致します。'
+          : 'この表での合計は ' + fmt(tot) + '戸 で、上の ' + fmt(total) + '戸 と ' +
+            fmt(Math.abs(tot - total)) + '戸 ちがいます。';
+      }
+    }
+    document.getElementById('band').addEventListener('change', apply);
+    apply();
+  })();
+  </script>
   <section>
     <h2><span class="idx">Rank</span>千葉県内で順位の近い市区町村</h2>
     <div class="tablebox"><table>

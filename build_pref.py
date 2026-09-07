@@ -171,6 +171,10 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
 .warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
 .warn strong{color:var(--ink)}
+.bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+.bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.bandpick select:focus{outline:2px solid var(--ai);outline-offset:1px}
 .finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
 .finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
 .finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
