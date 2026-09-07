@@ -205,6 +205,12 @@ def waffle_chart(panels) -> str:
     return "\n      ".join(s)
 
 
+def _iso_month(label: str) -> str:
+    """'2026年6月' → '2026-06'。schema.org の temporalCoverage は ISO 8601 を要求する。"""
+    y, m = label.replace("年", " ").replace("月", "").split()
+    return f"{int(y):04d}-{int(m):02d}"
+
+
 def _yr(label: str) -> int:
     """'1988年度' → 1988。by_year のキーから年度の数字だけを取り出す。"""
     return int("".join(c for c in label if c.isdigit()))
@@ -310,6 +316,9 @@ def main() -> None:
     tokens = {
         "{{DATA}}": json.dumps(runtime, ensure_ascii=False, separators=(",", ":")),
         "{{DEF_MONTH}}": dmonths[-1],
+        # 構造化データ用。temporalCoverage は ISO 8601 でないと解釈されない
+        "{{DEF_MONTH_ISO}}": _iso_month(dmonths[-1]),
+        "{{DEF_FIRST_ISO}}": _iso_month(dmonths[0]),
         "{{DEF_FIRST}}": dmonths[0],
         "{{DEF_VALUE}}": f"{prim[-1]:.1f}",
         "{{DEF_BASE}}": d["base"],
