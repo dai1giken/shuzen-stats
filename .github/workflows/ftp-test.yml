@@ -1,0 +1,111 @@
+name: ftp-test
+
+# Bizメール&ウェブ への FTPS 接続と、www/ への書き込み権限だけを確かめる。
+# **本番ファイルは1つも触らない。** 作るのは shuzen-stats/_ftp_test.txt だけで、
+# 最後に消す。手動実行専用。
+#
+# 一般ユーザーが www に書けるかはサービス側の仕様で、外からは分からない。
+# 推測で本番デプロイを組んで失敗すると原因の切り分けが難しくなるので、先にここで確かめる。
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: FTPS で接続して権限を確かめる
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import ftplib, os, ssl, sys
+
+          class ReusingFTP_TLS(ftplib.FTP_TLS):
+              """vsFTPd が ssl_session_reuse=YES のとき、データ接続で
+              セッションを再利用しないと 425 で落ちる。ftplib は既定で
+              再利用しないので、ここで差し込む。"""
+              def ntransfercmd(self, cmd, rest=None):
+                  conn, size = ftplib.FTP.ntransfercmd(self, cmd, rest)
+                  if self._prot_p:
+                      conn = self.context.wrap_socket(
+                          conn, server_hostname=self.host,
+                          session=self.sock.session)
+                  return conn, size
+
+          host = os.environ["FTP_HOST"]
+          user = os.environ["FTP_USER"]
+          pw   = os.environ["FTP_PASSWORD"]
+          ok = True
+
+          def step(msg): print(f"\n=== {msg}")
+
+          for cls, nm in [(ReusingFTP_TLS, "FTPS(セッション再利用あり)"),
+                          (ftplib.FTP_TLS, "FTPS(通常)")]:
+              step(f"{nm} で接続")
+              try:
+                  ftp = cls(timeout=30)
+                  ftp.connect(host, 21)
+                  ftp.auth()                 # AUTH TLS
+                  ftp.login(user, pw)
+                  ftp.prot_p()               # データ接続も暗号化
+                  ftp.set_pasv(True)
+                  print("  ログイン成功。暗号化: 有効")
+                  break
+              except Exception as e:
+                  print(f"  失敗: {e.__class__.__name__}: {e}")
+                  ftp = None
+          if ftp is None:
+              sys.exit("FTPS で接続できませんでした。ホスト・ユーザー・パスワードを確認してください。")
+
+          step("ログイン直後のディレクトリと中身")
+          print("  pwd:", ftp.pwd())
+          names = ftp.nlst()
+          print("  中身:", names[:20], f"（全{len(names)}件）")
+
+          step("www に入れるか")
+          try:
+                  ftp.cwd("www")
+                  print("  www に移動できました。pwd:", ftp.pwd())
+          except Exception as e:
+              print(f"  www に入れません: {e}")
+              print("  → このユーザーは公開領域に書けません。管理者アカウントか手動運用に切り替えます。")
+              ok = False
+
+          if ok:
+              step("shuzen-stats ディレクトリを作れるか")
+              try:
+                  if "shuzen-stats" not in ftp.nlst():
+                      ftp.mkd("shuzen-stats")
+                      print("  作成しました")
+                  else:
+                      print("  すでにあります")
+                  ftp.cwd("shuzen-stats")
+              except Exception as e:
+                  print(f"  作れません: {e}")
+                  ok = False
+
+          if ok:
+              step("テストファイルを1つ置いて、消す")
+              import io
+              try:
+                  ftp.storbinary("STOR _ftp_test.txt",
+                                 io.BytesIO(b"ftp write test\n"))
+                  print("  書き込み成功:", ftp.nlst())
+                  ftp.delete("_ftp_test.txt")
+                  print("  削除成功（後片付け完了）")
+              except Exception as e:
+                  print(f"  書き込めません: {e}")
+                  ok = False
+
+          ftp.quit()
+          print("\n" + ("=== 判定: 自動デプロイ可能です" if ok
+                        else "=== 判定: このユーザーでは自動デプロイできません"))
+          sys.exit(0 if ok else 1)
+          PY
