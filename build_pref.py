@@ -46,7 +46,7 @@ MONO = "IBM Plex Mono, monospace"
 # Insights → Traffic はリポジトリの閲覧数であって、公開サイトの数字ではない）。
 # だから外部の道具を入れるしかない。2つは役割が違うので両方入れる。
 #
-#   GSC_TOKEN … Google Search Console の所有権確認。**スクリプトを読み込まない**。
+#   GSC_TOKENS … Google Search Console の所有権確認（複数可）。**スクリプトを読み込まない**。
 #               検索クエリ・表示回数・クリック・インデックス済みページ数が見える。
 #               「検索から来ているか」に答えるのはこちら。
 #   GA_ID     … Google Analytics 4 の測定ID（G- で始まる）。訪問者の行動が見える。
@@ -55,19 +55,29 @@ MONO = "IBM Plex Mono, monospace"
 #
 # どちらも公開して差し支えない値なので Secrets には置かない。
 # **空文字なら何も出力しない。** 先に Search Console だけ入れて、GA4 は後から足せる。
-# 2026-09-07 に所有権の確認済み。**空にすると確認が外れる。**
-# Search Console は「確認状態を維持するためにメタタグを削除しないでください」と言っている。
-# タグが消えても画面は何も変わらないので、消したことに気づけるのは
-# Search Console からデータが来なくなったときになる。
-GSC_TOKEN = "NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw"
+# **1つでも消すと、そのプロパティの所有権の確認が外れる。**
+# Search Console は「確認状態を維持するためにメタタグを削除しないでください」と言う。
+# タグが消えても画面は何も変わらないので、気づけるのは Search Console から
+# データが来なくなったときになる。
+#
+# 本番を dai1giken.co.jp へ移したあとも、github.io 側のプロパティは
+# 移行の経過を見るために残してある。両方のタグを並べておけば、
+# どちらのプロパティも確認済みのまま保てる。
+GSC_TOKENS = [
+    # dai1giken.co.jp/shuzen-stats/（本番。2026-09-09〜）
+    "JlYgLf9EFV1wkzDSkqkpfB-sqjNbemJtMv0qBqcQf90",
+    # dai1giken.github.io/shuzen-stats/（旧。2026-09-07 確認済み）
+    "NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw",
+]
 GA_ID = ""
 
 
 def analytics_tags() -> str:
     """head に差し込む解析タグ。定数が空なら空文字を返す。"""
     t = []
-    if GSC_TOKEN:
-        t.append(f'<meta name="google-site-verification" content="{GSC_TOKEN}">')
+    for token in GSC_TOKENS:
+        if token:
+            t.append(f'<meta name="google-site-verification" content="{token}">')
     if GA_ID:
         t.append(f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>'
                  '<script>window.dataLayer=window.dataLayer||[];'
