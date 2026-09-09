@@ -17,7 +17,8 @@ on:
     branches: [main]
 
 permissions:
-  contents: write              # 生成物の書き戻しに必要
+  contents: write              # 生成物の書き戻しと Release の作成に必要
+  issues: write                # 月次のお知らせ Issue を立てるのに必要
   pages: write
   id-token: write
 
@@ -95,7 +96,8 @@ jobs:
           touch _site/.nojekyll
           echo "公開ファイル数: $(find _site -type f | wc -l)"
           # 手でアップロードする用。トップに shuzen-stats/ を作っておくと、
-          # www/ 直下で解凍するだけで済み、既存ファイルに混ざる事故を防げる。
+          # www/htdocs 直下で解凍するだけで済み、既存ファイルに混ざる事故を防げる。
+          # **公開領域は www ではなく www/htdocs。**www に置くと URL から見えない。
           # .nojekyll は GitHub Pages 専用なので入れない。
           mkdir -p upload/shuzen-stats
           cp -r _site/. upload/shuzen-stats/
@@ -105,6 +107,44 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
+      # ---- 月次のお知らせ ----------------------------------------------
+      # **push のたびには走らせない。**毎回 Release と Issue ができてしまう。
+      # 定期実行（毎月10日）と手動実行のときだけ。
+      #
+      # メールは GitHub に送らせる。SMTP の認証情報をどこにも置かずに済み、
+      # 社内PCの稼働にも依存しない。Issue の @メンションで本人に通知が飛ぶ。
+      - name: アップロード用 ZIP を作る
+        if: github.event_name != 'push'
+        run: |
+          cd upload && zip -qr ../shuzen-stats.zip shuzen-stats && cd ..
+          ls -l shuzen-stats.zip
+
+      - name: Release に ZIP を載せ、手順つきの Issue を立てる
+        if: github.event_name != 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          YM=$(TZ=Asia/Tokyo date +%Y-%m)
+          WA=$(TZ=Asia/Tokyo date "+%Y年%-m月")
+          TAG="upload-$YM"
+          ASSET="https://github.com/${{ github.repository }}/releases/download/$TAG/shuzen-stats.zip"
+
+          # Release（ZIP の置き場。同月に再実行したら上書きする）
+          NOTE="dai1giken.co.jp/shuzen-stats/ に手でアップロードするための ZIP です。手順は同月の Issue に書いてあります。"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" shuzen-stats.zip --clobber
+          else
+            gh release create "$TAG" shuzen-stats.zip --title "$WA 分 アップロード用ファイル" --notes "$NOTE"
+          fi
+
+          # 本文は .github/monthly-upload.md に置いてある。
+          # ヒアドキュメントの終端は行頭に無いと効かず、YAML のブロック内には
+          # 行頭を置けない。テンプレートを別ファイルにするとその問題ごと消える。
+          sed -e "s|__WA__|$WA|g" -e "s|__ASSET__|$ASSET|g" .github/monthly-upload.md > /tmp/issue.md
+
+          gh issue create --title "【$WA】統計サイトの更新ファイルをアップロードしてください" --body-file /tmp/issue.md --assignee yojirofujioka
 
       # 本番は dai1giken.co.jp/shuzen-stats/（Bizメール&ウェブ）。
       # FTP の自動化はユーザー数上限で専用アカウントが作れず見送ったので、
