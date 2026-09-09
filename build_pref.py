@@ -38,7 +38,7 @@ from pathlib import Path
 from pref_city import city_section
 
 HERE = Path(__file__).resolve().parent
-SITE_URL = "https://dai1giken.github.io/shuzen-stats/"
+SITE_URL = "https://dai1giken.co.jp/shuzen-stats/"
 MONO = "IBM Plex Mono, monospace"
 
 # ---- アクセス解析 -------------------------------------------------------

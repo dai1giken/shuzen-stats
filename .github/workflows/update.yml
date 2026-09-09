@@ -93,11 +93,29 @@ jobs:
           cp basis.json _site/
           cp -r pref city _site/
           touch _site/.nojekyll
-          echo "公開ファイル数: $(find _site -type f | wc -l)" 
+          echo "公開ファイル数: $(find _site -type f | wc -l)"
+          # 手でアップロードする用。トップに shuzen-stats/ を作っておくと、
+          # www/ 直下で解凍するだけで済み、既存ファイルに混ざる事故を防げる。
+          # .nojekyll は GitHub Pages 専用なので入れない。
+          mkdir -p upload/shuzen-stats
+          cp -r _site/. upload/shuzen-stats/
+          rm -f upload/shuzen-stats/.nojekyll
+          echo "アップロード用ファイル数: $(find upload -type f | wc -l)" 
 
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
+      # 本番は dai1giken.co.jp/shuzen-stats/（Bizメール&ウェブ）。
+      # FTP の自動化はユーザー数上限で専用アカウントが作れず見送ったので、
+      # 月次でここから ZIP を取り出して手でアップロードする。
+      # 展開すると shuzen-stats/ ができるので、www/ 直下で解凍すればよい。
+      - name: 手動アップロード用の ZIP を残す
+        uses: actions/upload-artifact@v4
+        with:
+          name: shuzen-stats-upload
+          path: upload/
+          retention-days: 90
 
   deploy:
     needs: build

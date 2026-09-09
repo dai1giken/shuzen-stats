@@ -3,7 +3,10 @@
 マンションの大規模修繕にかかわる日本の政府統計を、読める形へ並べ直した公開ページです。
 数値はすべて公表値で、そこに施した計算（合計・単位換算・物価換算）も算式ごと公開しています。
 
-**https://dai1giken.github.io/shuzen-stats/**
+**https://dai1giken.co.jp/shuzen-stats/**
+
+GitHub Pages（`https://dai1giken.github.io/shuzen-stats/`）にも同じものが出るが、
+canonical は上の本番URLを指している。本番は Bizメール&ウェブ で、公開は手動アップロード。
 
 制作・提供：株式会社第一技研
 

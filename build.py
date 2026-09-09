@@ -16,16 +16,17 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
-from build_pref import (FLOW_COHORT, SLUG, analytics_tags, build as build_pref,
+from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
 from cartogram import cartogram
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
 HERE = Path(__file__).resolve().parent
 
-# 公開先の実URL。og:image と canonical に使う。
-# 独自ドメイン（例 shuzen.dai1giken.co.jp）に移すときはここだけ直す。
-SITE_URL = "https://dai1giken.github.io/shuzen-stats/"
+# 公開先の実URL（og:image・canonical・サイトマップ・構造化データ）。
+# **build_pref.py の SITE_URL が唯一の定義**。ここで二重に定義していたので
+# import に変えた。片方だけ直すと、トップと個別ページでドメインが食い違い、
+# canonical が別サイトを指したまま気づけない。
 
 # ---- Fig.1 の描画領域 ----
 C1 = dict(w=900, h=340, x0=80, x1=872, ytop=40, ybase=288, ymax=200_000_000)
@@ -359,6 +360,7 @@ def main() -> None:
         "{{PREF_AGE_FROM}}": str(ref - fhi),
         "{{PREF_AGE_TO}}": str(ref - flo),
         # 基準年。ページに直書きすると年が明けた瞬間に全ページが古くなる
+        "{{SITE_URL}}": SITE_URL,
         "{{REF_YEAR}}": str(ref),
         "{{STOCK_FROM}}": str(swin[0]),
         "{{STOCK_TO}}": str(swin[1]),
