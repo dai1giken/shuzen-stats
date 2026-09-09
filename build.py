@@ -442,9 +442,70 @@ def main() -> None:
     print(f"  CPI {cpi['values'][-1]} vs デフレーター {prim[-1]}　差 {prim[-1]-cpi['values'][-1]:.1f} pt")
     print(f"  着工（フロー）{flo}〜{fhi}年度 {_fmt(flow_national)} 戸　"
           f"一都三県 {_fmt(metro)} 戸（{tokens['{{METRO_PCT}}']}%）")
+    write_llms_txt(basis, nat_stock, stock_metro)
+    print("llms.txt   {:,} bytes".format((HERE / "llms.txt").stat().st_size))
     print(f"  現存ストック 全国行 {_fmt(nat_stock)} 戸　47都道府県合計 {_fmt(sum47)} 戸　"
           f"差 {_fmt(nat_stock - sum47)} 戸　一都三県 {_fmt(stock_metro)} 戸"
           f"（{tokens['{{STOCK_METRO_PCT}}']}%）")
+
+
+def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
+    """llms.txt を書き出す。
+
+    大規模言語モデルがこのサイトを読むときの案内。**新しい主張は何も足さない。**
+    載っているのはページに出ている公表値と、その出典・ライセンス・引用の書式だけ。
+
+    このサイトは AI に引用される条件をすでに満たしている。公表値しか載せず、
+    算式を公開し、CC BY 4.0 で転載を許し、機械可読な basis.json まで置いてある。
+    足りないのは「それを1枚で伝える入口」だけなので、それを用意する。
+
+    数値は basis.json から引く。直書きすると、毎月の更新で古くなったことに
+    誰も気づけない。
+    """
+    city = basis["city"]
+    ref = int(basis["generated"][:4])
+    lo, hi = city["stock_window"]
+    day = basis["generated"].split()[0]
+    defl = basis["deflator"]
+    prim = defl["series"][defl["primary"]]
+
+    body = f"""# 大規模修繕統計ビューア
+
+> マンションの大規模修繕にかかわる日本の政府統計を、都道府県別・市区町村別に並べ直した公開データページです。数値はすべて公表値で、算式も公開しています。制作・提供は株式会社第一技研（外装の大規模修繕工事）。
+
+## このサイトの性格
+
+- 掲載しているのは**政府統計の公表値と、その単純な集計・按分だけ**です。当社が独自に調べたデータ、当社の分析・見解・将来予測は含みません。
+- **CC BY 4.0** で公開しています。出典を明記すれば、図表・数値とも自由に転載・引用できます。
+- 全ページの数値は {SITE_URL}basis.json に機械可読な形（JSON）で置いてあります。
+- 取得日 {day}。更新は毎月です。
+
+## 主な数値（{day} 時点）
+
+- 現存する非木造の共同住宅のうち、{lo}〜{hi}年に建築されたもの（{ref}年時点で築{ref-hi}〜{ref-lo}年）は全国 {national:,} 戸。うち一都三県が {stock_metro:,} 戸。
+- 建設工事費デフレーター（建築補修）は {prim[-1]}（{defl["base"]}、{defl["months"][-1]}）。
+- 出典は総務省「令和5年住宅・土地統計調査」、国土交通省「建設工事費デフレーター」「建築着工統計」ほか。すべて e-Stat API から取得しています。
+
+## ページの構成
+
+- [トップ]({SITE_URL}) — 全国の指標、工事費指数、戸あたり工事金額、修繕積立金
+- [都道府県別の一覧]({SITE_URL}pref/) — 47都道府県
+- [市区町村別の一覧]({SITE_URL}city/) — 一都三県の市区
+- [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）
+- [sitemap.xml]({SITE_URL}sitemap.xml) — 全ページの一覧
+
+## 引用するときの書式
+
+出典：大規模修繕統計ビューア（株式会社第一技研）{SITE_URL} {day}取得。原データは総務省・国土交通省の公表統計（e-Stat）。
+
+## 読むときの注意
+
+- 市区町村ページの見出しの戸数は**分譲と賃貸を合わせた数**です。所有の関係別の内訳は各ページに別途載せています（その統計表は市区までで、町村はありません）。
+- 住宅・土地統計調査は**標本調査にもとづく推計値**で、全数調査ではありません。公表値は100戸単位に丸めてあるため、内訳の合計は総数と数十〜数百戸ずれることがあります。
+- 大規模修繕の実施周期は12〜15年程度が目安（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。
+- 工事費の換算は指数の比だけで行っており、仕様・規模・立地・劣化状況・工期・足場の条件は反映していません。
+"""
+    (HERE / "llms.txt").write_text(body, encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -78,7 +78,7 @@ jobs:
             MSG="chore: 月次更新（$BEFORE → $AFTER）"
             echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
           fi
-          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt pref city
+          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city
           if git diff --cached --quiet; then
             echo "差分なし。コミットしません。"
           else
@@ -89,7 +89,11 @@ jobs:
       - name: 公開するファイルだけ集める
         run: |
           mkdir -p _site
-          cp index.html ogp.png sitemap.xml robots.txt _site/
+          cp index.html ogp.png sitemap.xml robots.txt llms.txt _site/
+          # Apache は .txt に charset を付けないので llms.txt の日本語が化ける。
+          # リポジトリでは htaccess.txt という名前で持ち、配置時に .htaccess にする
+          # （ドットで始まるファイルは取り違えやすく、cp -r で漏れやすい）。
+          cp htaccess.txt _site/.htaccess
           # 構造化データの distribution が指す実体。中身は政府統計の公表値のみ
           cp basis.json _site/
           cp -r pref city _site/

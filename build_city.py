@@ -28,7 +28,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import CSS, SITE_URL, SLUG, age_of, head, period_chart, ref_ages
+from build_pref import (CSS, SITE_URL, SLUG, age_of, cite_block, head,
+                        period_chart, ref_ages)
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
 HERE = Path(__file__).resolve().parent
@@ -354,6 +355,7 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
+        h.append(cite_block(canonical, day))
         h.append(FOOT_T.format(back=f"../pref/{SLUG[pref_name]}.html", pref=pref_name,
                                whole=f"{u}全体", site=SITE_URL))
         (out / f"{code}.html").write_text("".join(h), encoding="utf-8")
@@ -443,6 +445,7 @@ def build(basis: dict) -> int:
   })();
   </script>
 ''')
+    idx.append(cite_block(canonical, day))
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")

@@ -181,6 +181,8 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
 .warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
 .warn strong{color:var(--ink)}
+.cite .citebox{margin:0;padding:14px 16px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-family:var(--mono);font-size:12.5px;line-height:1.95;color:var(--ink2);word-break:break-all}
 .bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
 .bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
 .bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
@@ -339,6 +341,24 @@ def age_of(label: str, ref: int) -> str:
     if len(ys) == 1:
         return f"築{ref - ys[0]}年〜" if "以前" in label else f"築〜{ref - ys[0]}年"
     return f"築{ref - max(ys)}-{ref - min(ys)}年"
+
+
+def cite_block(url: str, day: str) -> str:
+    """そのページを引用するときの書式を、そのまま貼れる形で出す。
+
+    このサイトは CC BY 4.0 で、出典さえ書けば自由に転載できる。
+    それを書いてあるだけでは、読む側が毎回どう書けばいいか考えることになる。
+    **書式を用意しておくと、人も言語モデルも同じ形で引用できる。**
+
+    新しい主張は足さない。並べるのはページのURL・取得日・原データの出所だけ。
+    """
+    return f'''  <section class="cite">
+    <h2><span class="idx">Cite</span>このページを引用する</h2>
+    <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>
+    <p class="citebox">出典：大規模修繕統計ビューア（株式会社第一技研）{url} {day}取得。原データは総務省・国土交通省の公表統計（e-Stat）。</p>
+    <p class="colophon">機械可読な全数値は <a href="{SITE_URL}basis.json">basis.json</a>、サイト全体の案内は <a href="{SITE_URL}llms.txt">llms.txt</a> にあります。</p>
+  </section>
+'''
 
 
 def period_chart(periods: dict[str, int], cohort: list[str], ref: int = 0) -> str:
@@ -635,6 +655,7 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
+        h.append(cite_block(canonical, day))
         h.append(FOOT)
         (out / f"{slug}.html").write_text("".join(h), encoding="utf-8")
         written.append(slug)
@@ -663,6 +684,7 @@ def build(basis: dict) -> int:
     idx.append(f'</div>\n  <p class="colophon">単位：戸。多い順。'
                f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'
                f'差 {nat_stock - sum47:,}戸 があります（標本調査のため）。</p>\n')
+    idx.append(cite_block(canonical, day))
     idx.append(FOOT)
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
 
@@ -686,6 +708,19 @@ def build(basis: dict) -> int:
                       f'<priority>0.5</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
+
+    # robots.txt も SITE_URL から作る。**静的ファイルとして置いていたので、
+    # ドメインを移したときに旧ドメインのサイトマップを指したまま残っていた。**
+    # 生成物にしておけば、SITE_URL を直せば必ず追随する。
+    #
+    # なお robots.txt はホスト直下のものしかクローラは読まない。
+    # dai1giken.co.jp/robots.txt が正で、ここに置く /shuzen-stats/robots.txt は
+    # 実際には読まれない。それでも出典として辿れるように置いてある。
+    (HERE / "robots.txt").write_text(f"""User-agent: *
+Allow: /
+
+Sitemap: {SITE_URL}sitemap.xml
+""", encoding="utf-8")
 
     return len(written)
 

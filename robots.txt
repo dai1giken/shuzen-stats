@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dai1giken.github.io/shuzen-stats/sitemap.xml
+Sitemap: https://dai1giken.co.jp/shuzen-stats/sitemap.xml

@@ -1,0 +1,6 @@
+# このディレクトリ（/shuzen-stats/）だけに効く設定。企業サイト側には影響しない。
+#
+# Apache が .txt に charset を付けないので、llms.txt の日本語が化ける
+# （本番の Content-Type は "text/plain" のみで charset が無いことを実測）。
+# .html は meta で宣言しているので化けないが、.txt にはその手段が無い。
+AddCharset UTF-8 .txt
