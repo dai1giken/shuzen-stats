@@ -9,3 +9,7 @@ README_内部.md
 # 社内PC用のローカル実行ラッパー。OneDrive配下の運用基盤を参照するので公開しない。
 # 自動更新は .github/workflows/update.yml が担う。
 run_update.ps1
+
+# 企業サイト用に生成する技術コラム。**公開先が違う**（dai1giken.co.jp/column/）ので
+# statsサイトのデプロイには混ぜない。生成器 build_column.py はリポジトリに置く。
+column/
