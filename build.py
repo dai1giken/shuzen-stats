@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
+from build_column import build as build_column
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
@@ -432,10 +433,12 @@ def main() -> None:
     # サイトマップに残る（実際に37件残った）。
     n_city = build_city(basis)
     n_nonres = build_nonres(basis)
+    n_col = build_column(basis)
     n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
+    print(f"column/    {n_col} 本 ＋ 一覧（企業サイト用）")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
     print(f"  A={_fmt(a)} m² ({latest})　ピーク {peak_year} {_fmt(peak)} m² → {tokens['{{DECLINE_PCT}}']}%減")
@@ -445,6 +448,8 @@ def main() -> None:
     print(f"  CPI {cpi['values'][-1]} vs デフレーター {prim[-1]}　差 {prim[-1]-cpi['values'][-1]:.1f} pt")
     print(f"  着工（フロー）{flo}〜{fhi}年度 {_fmt(flow_national)} 戸　"
           f"一都三県 {_fmt(metro)} 戸（{tokens['{{METRO_PCT}}']}%）")
+    n_root = build_root_sitemap()
+    print(f"_root/     sitemap.xml {n_root} URL ＋ robots.txt（htdocs 直下用）")
     write_llms_txt(basis, nat_stock, stock_metro)
     print("llms.txt   {:,} bytes".format((HERE / "llms.txt").stat().st_size))
     print(f"  現存ストック 全国行 {_fmt(nat_stock)} 戸　47都道府県合計 {_fmt(sum47)} 戸　"
@@ -509,6 +514,55 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - 工事費の換算は指数の比だけで行っており、仕様・規模・立地・劣化状況・工期・足場の条件は反映していません。
 """
     (HERE / "llms.txt").write_text(body, encoding="utf-8")
+
+
+def build_root_sitemap() -> int:
+    """ホスト直下（dai1giken.co.jp/）に置く robots.txt と sitemap.xml を作る。
+
+    **クローラが読む robots.txt はホスト直下の1本だけ。**
+    /shuzen-stats/robots.txt は置いてあるが読まれない（build_pref.py の
+    同名生成部にも同じ注意書きがある）。だからここで作る。
+
+    サイトマップも同じ理由でサイト全体を1本にまとめる。統計側の
+    /shuzen-stats/sitemap.xml は URL-prefix プロパティ用にそのまま残し、
+    こちらは企業サイトのトップと /column/ を含めた全体版にする。
+
+    出力先は _root/。企業サイト用のZIPに入れて htdocs/ 直下へ置く。
+    **shuzen-stats/ の中ではない。**間違えると404になる。
+    """
+    root = "https://dai1giken.co.jp/"
+    out = HERE / "_root"
+    out.mkdir(exist_ok=True)
+    day = json.loads((HERE / "basis.json").read_text(encoding="utf-8"))["generated"].split()[0]
+
+    urls = [(root, "1.0")]
+    # 技術コラム（企業サイト側。build_column.py が生成する）
+    col = HERE / "column"
+    if col.is_dir():
+        urls.append((root + "column/", "0.8"))
+        urls += [(f"{root}column/{f.name}", "0.7")
+                 for f in sorted(col.glob("*.html")) if f.name != "index.html"]
+    # 統計サイト。既存の sitemap.xml から URL をそのまま拾う。
+    # ここで作り直すと、閾値で落としたページを二重管理することになる
+    sm = HERE / "sitemap.xml"
+    if sm.is_file():
+        import re
+        for loc in re.findall(r"<loc>([^<]+)</loc>", sm.read_text(encoding="utf-8")):
+            urls.append((loc, "0.6"))
+
+    body = ['<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    body += [f"<url><loc>{u}</loc><lastmod>{day}</lastmod><priority>{p}</priority></url>"
+             for u, p in urls]
+    body.append("</urlset>")
+    (out / "sitemap.xml").write_text(chr(10).join(body), encoding="utf-8")
+
+    (out / "robots.txt").write_text(f"""User-agent: *
+Allow: /
+
+Sitemap: {root}sitemap.xml
+""", encoding="utf-8")
+    return len(urls)
 
 
 if __name__ == "__main__":

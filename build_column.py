@@ -32,6 +32,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+# 解析タグは統計サイト側と同じものを使う。ここを独自に持つと、
+# 測定IDを変えたときにコラムだけ古いままになる。
+from build_pref import analytics_tags
+
 HERE = Path(__file__).resolve().parent
 
 SLUG = {"事務所": "office", "店舗": "shop", "工場・作業場": "factory",
@@ -107,6 +111,7 @@ CSS = """<style>
 .col-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;margin:30px 0 0}
 .col-cards a{display:block;padding:22px 24px;border:1px solid var(--line);text-decoration:none;background:var(--paper)}
 .col-cards a:hover{background:var(--tint);border-color:var(--bronze)}
+.footer-col-link{margin-top:18px}
 .cc-t{display:block;font-family:"Noto Serif JP",serif;font-weight:700;font-size:1.05rem;color:var(--ink);margin-bottom:6px}
 .cc-d{display:block;font-size:.84rem;line-height:1.9;color:var(--muted)}
 @media (max-width:680px){.col-main{padding-top:88px}.col-trades li{grid-template-columns:1fr;gap:6px}}
@@ -130,7 +135,7 @@ def _head(title: str, desc: str, canonical: str, og_desc: str) -> str:
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../styles.css" />{analytics_tags()}
 {CSS}
 </head>
 <body>
@@ -165,7 +170,15 @@ FOOTER = """  </div>
 
 <footer class="site-footer">
   <div class="container footer-stats">
-    <a class="footer-stats-link" href="/shuzen-stats/">
+    <!-- 問い合わせ導線。ここは企業サイト側なので .cta ではなく
+         企業サイトの .footer-stats-link を使う（統計サイトとCSSが違う）。 -->
+    <a class="footer-stats-link" href="../#contact">
+      <span class="footer-stats-label">建物の外装改修をご検討中の方へ</span>
+      <span class="footer-stats-title">建物調査・お見積は一件から</span>
+      <span class="footer-stats-desc">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。</span>
+      <span class="footer-stats-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="footer-stats-link footer-col-link" href="/shuzen-stats/">
       <span class="footer-stats-label">公開統計</span>
       <span class="footer-stats-title">大規模修繕統計ビューア</span>
       <span class="footer-stats-desc">国土交通省・総務省の統計を、都道府県別・市区町村別に整理して公開しています。出典と算式はすべて明記しています。</span>

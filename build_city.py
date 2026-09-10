@@ -28,8 +28,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, SITE_URL, SLUG, age_of, cite_block, head,
-                        period_chart, ref_ages)
+from build_pref import (CSS, CTA_HOUSING, SITE_URL, SLUG, age_of, cite_block,
+                        head, period_chart, ref_ages)
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
 HERE = Path(__file__).resolve().parent
@@ -112,7 +112,7 @@ BAND_JS = """  <script>
 """
 
 
-FOOT_T = """
+FOOT_T = CTA_HOUSING + """
   <a class="cta" href="{back}">
     <span class="k">都道府県の統計へ</span>
     <span class="n">{pref}の大規模修繕統計</span>

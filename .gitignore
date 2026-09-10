@@ -13,3 +13,7 @@ run_update.ps1
 # 企業サイト用に生成する技術コラム。**公開先が違う**（dai1giken.co.jp/column/）ので
 # statsサイトのデプロイには混ぜない。生成器 build_column.py はリポジトリに置く。
 column/
+
+# ホスト直下（htdocs/）用の robots.txt と sitemap.xml。
+# statsサイトのデプロイには混ぜない（公開先が違う）。
+_root/

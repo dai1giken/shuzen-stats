@@ -69,7 +69,9 @@ GSC_TOKENS = [
     # dai1giken.github.io/shuzen-stats/（旧。2026-09-07 確認済み）
     "NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw",
 ]
-GA_ID = ""
+# 企業サイトのトップで稼働している測定ID。dai1giken.co.jp 配下は同じIDで揃える。
+# **別プロパティにすると、統計ページ→企業サイト→問い合わせ の経路が切れる。**
+GA_ID = "G-SZ37494LGY"
 
 
 def analytics_tags() -> str:
@@ -287,6 +289,37 @@ TIP_JS = '''<script>
 '''
 
 
+# 問い合わせへの導線。**一都三県と、その市区町村・非住宅・コラムにだけ出す。**
+# 47都道府県すべてに出すと、施工エリア外の人を呼ぶことになる。
+#
+# 文言は読む人で変える。住宅ストックのページ（分譲・賃貸）と、非住宅・コラム
+# （事務所・倉庫などのオーナー）では立場が違う。
+#
+# **「直接ご相談ください」「中間マージン」とは書かない。**第一技研は元請ゼネコンの
+# 協力会社で、そう読める文言は元請の顧客を取りに行く姿勢に映る。事実だけ置く。
+CONTACT_URL = "https://dai1giken.co.jp/#contact"
+
+CTA_HOUSING = f"""
+  <a class="cta" href="{CONTACT_URL}">
+    <span class="k">この地域の大規模修繕をご検討中の方へ</span>
+    <span class="n">建物調査・お見積は一件から</span>
+    <span class="d">足場・下地補修・シーリング・塗装・防水を自社管理で一貫対応しています。株式会社第一技研</span>
+    <span class="arrow">→</span>
+  </a>
+"""
+
+CTA_BUILDING = f"""
+  <a class="cta" href="{CONTACT_URL}">
+    <span class="k">建物の外装改修をご検討中の方へ</span>
+    <span class="n">建物調査・お見積は一件から</span>
+    <span class="d">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。株式会社第一技研</span>
+    <span class="arrow">→</span>
+  </a>
+"""
+
+KANTO = ("東京都", "神奈川県", "埼玉県", "千葉県")
+
+
 FOOT = TIP_JS + f"""
   <a class="cta" href="{SITE_URL}#calc">
     <span class="k">Tool ／ 自分のマンションで試す</span>
@@ -315,6 +348,17 @@ FOOT = TIP_JS + f"""
 </body>
 </html>
 """
+
+
+def foot(pref_name: str = "") -> str:
+    """フッター。一都三県のときだけ問い合わせ導線を足す。
+
+    FOOT を定数のまま2種類用意すると、文言を直すとき片方が残る。
+    分岐はここ1箇所に閉じ込める。
+    """
+    if pref_name in KANTO:
+        return CTA_HOUSING + FOOT
+    return FOOT
 
 
 def ref_ages(basis: dict) -> tuple[int, int, int]:
@@ -656,7 +700,7 @@ def build(basis: dict) -> int:
   </div>
 ''')
         h.append(cite_block(canonical, day))
-        h.append(FOOT)
+        h.append(foot(name))
         (out / f"{slug}.html").write_text("".join(h), encoding="utf-8")
         written.append(slug)
 
@@ -685,7 +729,7 @@ def build(basis: dict) -> int:
                f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'
                f'差 {nat_stock - sum47:,}戸 があります（標本調査のため）。</p>\n')
     idx.append(cite_block(canonical, day))
-    idx.append(FOOT)
+    idx.append(foot())
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
 
     # ---- サイトマップ ----

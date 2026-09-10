@@ -29,7 +29,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, SITE_URL, cite_block, head, ref_ages, year_chart)
+from build_pref import (CSS, CTA_BUILDING, SITE_URL, cite_block, head,
+                        ref_ages, year_chart)
 
 HERE = Path(__file__).resolve().parent
 
@@ -47,7 +48,7 @@ NOTE = {
     "病院・診療所": "病院、診療所、介護・福祉の施設を含みます。",
 }
 
-FOOT = """
+FOOT = CTA_BUILDING + """
   <a class="cta" href="index.html">
     <span class="k">用途別の一覧へ</span>
     <span class="n">首都圏の非住宅建築物</span>
