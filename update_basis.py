@@ -51,6 +51,19 @@ CITY_ID = "0004021796"
 # 誤りなのではなく、分譲とは別のものというだけ。両方を、それぞれ何かを書いて出す。
 # この表は「市区」までで町村が無い（一都三県で26件）。無い市区町村は内訳を出さない。
 TENURE_ID = "0004021758"
+
+# ---- 非住宅建築物（事務所・店舗・倉庫ほか）----
+# 住宅側はストック（現存戸数）だが、こちらは着工（フロー）。**性格が違う。**
+# 用途は産業分類（A〜R）ではなく「再掲」の6区分を使う。事務所・店舗・倉庫と
+# いう建物の呼び方のほうが、探している人の言葉に近い。
+NONRES_USES = ["（再掲）1事務所", "（再掲）2店舗", "（再掲）3工場及び作業場",
+               "（再掲）4倉庫", "（再掲）5学校の校舎", "（再掲）6病院・診療所"]
+NONRES_LABEL = {"（再掲）1事務所": "事務所", "（再掲）2店舗": "店舗",
+                "（再掲）3工場及び作業場": "工場・作業場", "（再掲）4倉庫": "倉庫",
+                "（再掲）5学校の校舎": "学校の校舎", "（再掲）6病院・診療所": "病院・診療所"}
+NONRES_SLUG = {"事務所": "office", "店舗": "shop", "工場・作業場": "factory",
+               "倉庫": "warehouse", "学校の校舎": "school", "病院・診療所": "hospital"}
+KANTO_PREFS = ["東京都", "神奈川県", "埼玉県", "千葉県"]
 CITY_PREFS = {"13": "東京都", "14": "神奈川県", "11": "埼玉県", "12": "千葉県"}
 # コホートは「築26〜45年」という意味で決まる。表示ラベルを直書きすると、
 # e-Stat 側が波ダッシュを ～(U+FF5E) から 〜(U+301C) に直しただけで一致しなくなり、
@@ -213,6 +226,74 @@ def fetch_cpi(months: list[str]) -> dict:
         "base": "2020年＝100",
         "url": f"https://www.e-stat.go.jp/dbview?sid={CPI_ID}",
         "values": values,
+    }
+
+
+def fetch_nonres() -> dict:
+    """非住宅建築物を、用途別・都道府県別・年度別に取る。
+
+    **これは着工（フロー）であってストックではない。**その年度に着工した棟数と
+    床面積で、いま現存する棟数ではない。取り壊しも用途変更も反映しない。
+    住宅側のページがストック（住宅・土地統計）を見出しに使っているのと性格が違うので、
+    ページには必ず「着工の累計」と書くこと。混ぜると以前の5.3倍問題と同じことになる。
+
+    用途は「再掲」の6区分を使う。A〜Rの産業分類より、事務所・店舗・倉庫といった
+    建物の呼び方のほうが、探している人の言葉に近い。
+
+    収録は2003年度から。2026年時点で最も古いものが築23年で、
+    1回目から2回目の修繕期にあたる。
+    """
+    meta = _call("getMetaInfo", statsDataId=STATS_DATA_ID)["GET_META_INFO"]["METADATA_INF"]
+    cl = meta["CLASS_INF"]["CLASS_OBJ"]
+    name = {c["@id"]: {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])} for c in cl}
+    code = {c["@id"]: {i["@name"]: i["@code"] for i in _as_list(c["CLASS"])} for c in cl}
+
+    missing = [u for u in NONRES_USES if u not in code["cat02"]]
+    if missing:
+        sys.exit(f"用途の区分が変わりました。見つからない: {missing}")
+
+    def pull(tab: str) -> dict:
+        d = _call("getStatsData", statsDataId=STATS_DATA_ID,
+                  cdTab=code["tab"][tab], cdCat01=code["cat01"]["計"],
+                  cdCat02=",".join(code["cat02"][u] for u in NONRES_USES),
+                  limit=100000)
+        sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+        got = int(sd["RESULT_INF"]["TOTAL_NUMBER"])
+        if got >= 100000:
+            sys.exit(f"非住宅（{tab}）が {got} 件で limit に達しました。分割取得が要ります。")
+        out = {}
+        for v in _as_list(sd["DATA_INF"]["VALUE"]):
+            use = NONRES_LABEL[name["cat02"][v["@cat02"]]]
+            area = name["area"][v["@area"]]
+            year = int(name["time"][v["@time"]][:4])
+            try:
+                out.setdefault(use, {}).setdefault(area, {})[year] = int(v["$"])
+            except (ValueError, TypeError):
+                continue
+        return out
+
+    buildings, floor = pull("建築物の数"), pull("床面積の合計")
+    years = sorted({y for u in buildings.values() for a in u.values() for y in a})
+    kanto = sum(buildings[u]["東京都"][y] for u in buildings for y in years
+                if "東京都" in buildings[u])
+    print("")
+    print(f"非住宅建築物（着工・{years[0]}〜{years[-1]}年度）:")
+    for u in NONRES_LABEL.values():
+        n = sum(buildings[u][a][y] for a in KANTO_PREFS if a in buildings[u]
+                for y in buildings[u][a])
+        print(f"  {u}: 一都三県 {n:,} 棟")
+
+    return {
+        "statsDataId": STATS_DATA_ID,
+        "url": f"https://www.e-stat.go.jp/dbview?sid={STATS_DATA_ID}",
+        "name": "国土交通省 建築着工統計調査（建築物着工統計 時系列表・年度次）",
+        "filter": "構造=計／用途=再掲6区分",
+        "kind": "着工（フロー）。現存する棟数ではない",
+        "uses": list(NONRES_LABEL.values()),
+        "years": years,
+        "prefs": KANTO_PREFS,
+        "buildings": buildings,
+        "floor_m2": floor,
     }
 
 
@@ -543,6 +624,7 @@ def main() -> None:
 
     print("\n一都三県の市区町村別 住宅ストック（令和5年）:")
     basis["city"] = fetch_city()
+    basis["nonres"] = fetch_nonres()
 
     out = HERE / "basis.json"
     out.write_text(json.dumps(basis, ensure_ascii=False, indent=2), encoding="utf-8")
