@@ -706,6 +706,15 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}city/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.5</priority></url>')
+    # 非住宅ページ（build_nonres が先に生成している前提。無ければ黙って飛ばす）
+    nr_dir = HERE / "nonres"
+    if nr_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}nonres/</loc><lastmod>{day}</lastmod><priority>0.7</priority></url>')
+        for f in sorted(nr_dir.glob("*.html")):
+            if f.name == "index.html":
+                continue
+            sm.append(f'<url><loc>{SITE_URL}nonres/{f.name}</loc><lastmod>{day}</lastmod>'
+                      f'<priority>0.6</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from build_city import build as build_city
+from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
 from cartogram import cartogram
@@ -430,9 +431,11 @@ def main() -> None:
     # ディスク上の city/*.html を glob するので、逆順だと閾値で消したページが
     # サイトマップに残る（実際に37件残った）。
     n_city = build_city(basis)
+    n_nonres = build_nonres(basis)
     n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
+    print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
     print(f"  A={_fmt(a)} m² ({latest})　ピーク {peak_year} {_fmt(peak)} m² → {tokens['{{DECLINE_PCT}}']}%減")

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首都圏の工場・作業場の大規模修繕統計｜築13〜23年 12,792棟</title>
+<meta name="description" content="一都三県で2003〜2013年度に着工した工場・作業場は 12,792棟。2026年時点で築13〜23年、1回目から2回目の修繕周期にあたります。国土交通省「建築着工統計」の公表値。">
+<meta property="og:title" content="首都圏の工場・作業場の大規模修繕統計｜築13〜23年 12,792棟">
+<meta property="og:description" content="一都三県で2003〜2013年度に着工した工場・作業場は 12,792棟。2026年時点で築13〜23年、1回目から2回目の修繕周期にあたります。国土交通省「建築着工統計」の公表値。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dai1giken.co.jp/shuzen-stats/nonres/factory.html">
+<meta property="og:image" content="https://dai1giken.co.jp/shuzen-stats/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dai1giken.co.jp/shuzen-stats/nonres/factory.html">
+<meta name="google-site-verification" content="JlYgLf9EFV1wkzDSkqkpfB-sqjNbemJtMv0qBqcQf90">
+<meta name="google-site-verification" content="NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
+  --ink:#191D16; --ink2:#4C5348; --ink3:#7D8578;
+  --rule:#D2D6CB; --rule-soft:#E2E5DC; --shu:#BE3A22; --ai:#2C5468;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}}
+:root[data-theme="dark"]{
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--jp);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 56px),
+                   repeating-linear-gradient(to bottom,var(--rule-soft) 0 1px,transparent 1px 56px)}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 96px}
+a{color:var(--ai);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--ink);padding:26px 0 10px}
+a.by{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);text-decoration:none}
+a.by b{color:var(--ink);font-weight:600;font-family:var(--jp);font-size:14px;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+a.by:hover b{color:var(--shu);text-decoration-color:var(--shu)}
+.masthead .spacer{flex:1 1 100px}
+.crumb{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.srcband{margin-top:18px;border:1px solid var(--ai);border-left-width:4px;background:var(--surface);
+  padding:12px 18px;font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.srcband b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ai);display:block;margin-bottom:4px}
+.srcband strong{color:var(--ink)}
+.toplabel{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ai);
+  margin:28px 0 10px;display:block;font-weight:500}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1;margin:0;text-wrap:balance}
+h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:15px;line-height:1.7;color:var(--ink2);margin-top:14px;max-width:60ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:30px}
+.kpi{background:var(--surface);padding:18px 20px}
+.kpi .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;margin:6px 0 4px}
+.kpi .v small{font-size:14px;font-weight:500;color:var(--ink2);margin-left:3px}
+.kpi.hi .v{color:var(--shu)}
+.kpi p{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+section{margin-top:56px}
+h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-bottom:9px;border-bottom:1px solid var(--ink);
+  display:flex;align-items:baseline;gap:12px;text-wrap:balance}
+h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
+.lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
+.chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
+.chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
+.chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
+  border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
+.tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:420px;background:var(--surface);font-size:13.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft)}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+tr.me td{background:var(--sunk);font-weight:600}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
+.warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
+.warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
+.warn strong{color:var(--ink)}
+.cite .citebox{margin:0;padding:14px 16px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-family:var(--mono);font-size:12.5px;line-height:1.95;color:var(--ink2);word-break:break-all}
+.bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+.bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.bandpick select:focus{outline:2px solid var(--ai);outline-offset:1px}
+.finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+.finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.finder input:focus{outline:2px solid var(--ai);outline-offset:1px;border-color:var(--ai)}
+.qnote{margin:8px 0 0;min-height:1.2em;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+a.cta:hover{background:var(--sunk);border-color:var(--ai)}
+a.cta .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.cta .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.cta:hover .n{color:var(--ai)}
+a.cta .d{font-size:12.5px;color:var(--ink2)}
+a.cta .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--ai)}
+a.sitelink{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:20px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+a.sitelink:hover{background:var(--sunk);border-color:var(--shu)}
+a.sitelink .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.sitelink .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.sitelink:hover .n{color:var(--shu)}
+a.sitelink .d{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--shu)}
+.credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+.prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:24px}
+.prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
+  align-items:baseline;gap:8px;color:var(--ink)}
+.prefgrid a:hover{background:var(--sunk)}
+.prefgrid .nm{font-size:14px}
+.prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b>↗</a>
+    <span class="spacer"></span>
+    <span class="crumb"><a href="https://dai1giken.co.jp/shuzen-stats/">大規模修繕統計ビューア</a> ／ 非住宅</span>
+  </header>
+  <div class="srcband">
+    <b>SOURCE ／ 出典</b>
+    <strong>このページの数値は、すべて国土交通省「建築着工統計調査」の公表値です。</strong>
+    e-Stat の API から取得し、<strong>用途と都県で絞って年度を合計するところまで</strong>を行っています。
+    当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+  </div>
+
+  <span class="toplabel">公表統計 ／ 一都三県</span>
+  <h1>首都圏の工場・作業場
+    <span class="sub">一都三県で2003〜2013年度に着工した工場・作業場は <strong>12,792棟</strong>。2026年時点で築13〜23年、大規模修繕の1回目から2回目にあたります。製造の工場、作業場、整備場など。</span>
+  </h1>
+
+  <div class="kpis">
+    <div class="kpi hi">
+      <span class="k">築13〜23年の工場・作業場</span>
+      <div class="v">12,792<small>棟</small></div>
+      <p>延べ床面積 15,718,044 m²。全国同期間の 11.1%。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">用途別の順位</span>
+      <div class="v">4<small>位 / 6</small></div>
+      <p>一都三県の非住宅建築物のうち、築13〜23年の棟数で。</p>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="idx">Fig.</span>一都三県の工場・作業場（着工年度別）</h2>
+    <p class="lede">各年度に着工した棟数です。朱色の期間が、2026年時点で築13〜23年にあたります。棒にカーソルを重ねると実数が出ます。</p>
+    <div class="chartbox">
+      <svg viewBox="0 0 900 320" role="img" aria-label="年度別の分譲マンション着工戸数。2003から2023まで。">
+      <g stroke="var(--rule-soft)" stroke-width="1">
+      <line x1="62" y1="209.5" x2="872" y2="209.5"/>
+      <line x1="62" y1="151.0" x2="872" y2="151.0"/>
+      <line x1="62" y1="92.5" x2="872" y2="92.5"/>
+      <line x1="62" y1="34.0" x2="872" y2="34.0"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" text-anchor="end">
+      <text x="53" y="272.0">0</text>
+      <text x="53" y="213.5">500</text>
+      <text x="53" y="155.0">1,000</text>
+      <text x="53" y="96.5">1,500</text>
+      <text x="53" y="38.0">2,000</text>
+      </g>
+      <text x="62" y="20" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ink3)">戸</text>
+      <line x1="62" y1="268" x2="872" y2="268" stroke="var(--rule)"/>
+      <rect class="bar" x="63.5" y="105.0" width="35.6" height="163.0" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="102.1" y="66.4" width="35.6" height="201.6" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="140.6" y="75.2" width="35.6" height="192.8" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="179.2" y="71.2" width="35.6" height="196.8" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="217.8" y="137.9" width="35.6" height="130.1" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="256.4" y="127.7" width="35.6" height="140.3" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="294.9" y="181.5" width="35.6" height="86.5" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="333.5" y="175.6" width="35.6" height="92.4" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="372.1" y="170.3" width="35.6" height="97.7" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="410.6" y="170.9" width="35.6" height="97.1" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="449.2" y="169.6" width="35.6" height="98.4" rx="2" fill="var(--shu)" opacity="1"/>
+      <rect class="bar" x="487.8" y="163.6" width="35.6" height="104.4" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="526.4" y="160.1" width="35.6" height="107.9" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="564.9" y="166.9" width="35.6" height="101.1" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="603.5" y="169.1" width="35.6" height="98.9" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="642.1" y="167.7" width="35.6" height="100.3" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="680.6" y="173.6" width="35.6" height="94.4" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="719.2" y="190.2" width="35.6" height="77.8" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="757.8" y="190.2" width="35.6" height="77.8" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="796.4" y="179.2" width="35.6" height="88.8" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <rect class="bar" x="834.9" y="192.4" width="35.6" height="75.6" rx="2" fill="var(--ai)" opacity="0.42"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink3)" text-anchor="middle">
+      <text x="156.9" y="286">2005</text>
+      <text x="349.8" y="286">2010</text>
+      <text x="542.6" y="286">2015</text>
+      <text x="735.5" y="286">2020</text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="11">
+      <rect x="62" y="292" width="24" height="10" rx="2" fill="var(--shu)"/>
+      <text x="93" y="301" fill="var(--ink2)">2003〜2013年度＝築13〜23年</text>
+      <rect x="392" y="292" width="24" height="10" rx="2" fill="var(--ai)" opacity=".42"/>
+      <text x="423" y="301" fill="var(--ink2)">その他の年度</text>
+      </g>
+      <g class="hits">
+      <rect class="barhit" x="62.0" y="34" width="38.6" height="234" fill="transparent" data-y="2003" data-v="1,393"/>
+      <rect class="barhit" x="100.6" y="34" width="38.6" height="234" fill="transparent" data-y="2004" data-v="1,723"/>
+      <rect class="barhit" x="139.1" y="34" width="38.6" height="234" fill="transparent" data-y="2005" data-v="1,648"/>
+      <rect class="barhit" x="177.7" y="34" width="38.6" height="234" fill="transparent" data-y="2006" data-v="1,682"/>
+      <rect class="barhit" x="216.3" y="34" width="38.6" height="234" fill="transparent" data-y="2007" data-v="1,112"/>
+      <rect class="barhit" x="254.9" y="34" width="38.6" height="234" fill="transparent" data-y="2008" data-v="1,199"/>
+      <rect class="barhit" x="293.4" y="34" width="38.6" height="234" fill="transparent" data-y="2009" data-v="739"/>
+      <rect class="barhit" x="332.0" y="34" width="38.6" height="234" fill="transparent" data-y="2010" data-v="790"/>
+      <rect class="barhit" x="370.6" y="34" width="38.6" height="234" fill="transparent" data-y="2011" data-v="835"/>
+      <rect class="barhit" x="409.1" y="34" width="38.6" height="234" fill="transparent" data-y="2012" data-v="830"/>
+      <rect class="barhit" x="447.7" y="34" width="38.6" height="234" fill="transparent" data-y="2013" data-v="841"/>
+      <rect class="barhit" x="486.3" y="34" width="38.6" height="234" fill="transparent" data-y="2014" data-v="892"/>
+      <rect class="barhit" x="524.9" y="34" width="38.6" height="234" fill="transparent" data-y="2015" data-v="922"/>
+      <rect class="barhit" x="563.4" y="34" width="38.6" height="234" fill="transparent" data-y="2016" data-v="864"/>
+      <rect class="barhit" x="602.0" y="34" width="38.6" height="234" fill="transparent" data-y="2017" data-v="845"/>
+      <rect class="barhit" x="640.6" y="34" width="38.6" height="234" fill="transparent" data-y="2018" data-v="857"/>
+      <rect class="barhit" x="679.1" y="34" width="38.6" height="234" fill="transparent" data-y="2019" data-v="807"/>
+      <rect class="barhit" x="717.7" y="34" width="38.6" height="234" fill="transparent" data-y="2020" data-v="665"/>
+      <rect class="barhit" x="756.3" y="34" width="38.6" height="234" fill="transparent" data-y="2021" data-v="665"/>
+      <rect class="barhit" x="794.9" y="34" width="38.6" height="234" fill="transparent" data-y="2022" data-v="759"/>
+      <rect class="barhit" x="833.4" y="34" width="38.6" height="234" fill="transparent" data-y="2023" data-v="646"/>
+      </g></svg>
+      <div class="chart-foot">
+        出典：国土交通省 建築着工統計調査（建築物着工統計 時系列表・年度次）／<a href="https://www.e-stat.go.jp/dbview?sid=0003119730" target="_blank" rel="noopener">e-Stat statsDataId=0003119730</a><br>
+        構造=計／用途=再掲6区分　取得日 2026-09-10
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2><span class="idx">Area</span>都県別の工場・作業場</h2>
+    <p class="lede">築13〜23年（2003〜2013年度着工）が多い順です。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>都県</th><th>築13〜23年</th><th>延べ床面積</th><th>2003〜2023年度 計</th></tr></thead>
+      <tbody><tr><td>埼玉県</td><td class="n">4,536</td><td class="n">5,619,345</td><td class="n">7,280</td></tr><tr><td>千葉県</td><td class="n">3,348</td><td class="n">3,348,327</td><td class="n">5,772</td></tr><tr><td>神奈川県</td><td class="n">2,930</td><td class="n">4,688,900</td><td class="n">4,534</td></tr><tr><td>東京都</td><td class="n">1,978</td><td class="n">2,061,472</td><td class="n">3,128</td></tr></tbody>
+    </table></div>
+    <p class="colophon">単位：棟／m²。出典：国土交通省 建築着工統計調査（建築物着工統計 時系列表・年度次）（statsDataId=0003119730）。着工の累計で、現存する棟数ではありません。</p>
+  </section>
+  <section>
+    <h2><span class="idx">Rank</span>用途別の比較（一都三県）</h2>
+    <div class="tablebox"><table>
+      <thead><tr><th>順位</th><th>用途</th><th>築13〜23年</th></tr></thead>
+      <tbody><tr><td class="n">1</td><td><a href="office.html">事務所</a></td><td class="n">27,658</td></tr><tr><td class="n">2</td><td><a href="shop.html">店舗</a></td><td class="n">21,809</td></tr><tr><td class="n">3</td><td><a href="warehouse.html">倉庫</a></td><td class="n">21,043</td></tr><tr class="me"><td class="n">4</td><td>工場・作業場</td><td class="n">12,792</td></tr><tr><td class="n">5</td><td><a href="school.html">学校の校舎</a></td><td class="n">7,156</td></tr><tr><td class="n">6</td><td><a href="hospital.html">病院・診療所</a></td><td class="n">4,669</td></tr></tbody>
+    </table></div>
+    <p class="lede"><a href="index.html">首都圏の非住宅建築物の一覧を見る →</a></p>
+  </section>
+
+  <div class="warn">
+    <h4>読むときの注意</h4>
+    <ul>
+      <li><strong>これは着工（フロー）の累計で、現存する棟数ではありません。</strong>その年度に着工した建物の数で、取り壊しや用途変更は反映していません。</li>
+      <li><strong>2003年度より前に建った建物は入っていません。</strong>この統計表の収録がそこから始まるためで、実際の建物はこれより多く存在します。数字は少なめに出ます。</li>
+      <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
+      <li>用途は着工時の区分です。その後の用途変更は反映していません。</li>
+    </ul>
+  </div>
+  <section class="cite">
+    <h2><span class="idx">Cite</span>このページを引用する</h2>
+    <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>
+    <p class="citebox">出典：大規模修繕統計ビューア（株式会社第一技研）https://dai1giken.co.jp/shuzen-stats/nonres/factory.html 2026-09-10取得。原データは総務省・国土交通省の公表統計（e-Stat）。</p>
+    <p class="colophon">機械可読な全数値は <a href="https://dai1giken.co.jp/shuzen-stats/basis.json">basis.json</a>、サイト全体の案内は <a href="https://dai1giken.co.jp/shuzen-stats/llms.txt">llms.txt</a> にあります。</p>
+  </section>
+
+  <a class="cta" href="index.html">
+    <span class="k">用途別の一覧へ</span>
+    <span class="n">首都圏の非住宅建築物</span>
+    <span class="d">事務所・店舗・工場・倉庫・学校・病院を並べて比べられます</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/#calc">
+    <span class="k">Tool ／ 自分の物件で試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/">
+    <span class="k">全国の統計へ</span>
+    <span class="n">大規模修繕統計ビューア</span>
+    <span class="d">住宅（分譲・賃貸）のストックは都道府県別・市区町村別に出しています</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="sitelink" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">
+    <span class="k">制作・提供</span>
+    <span class="n">株式会社第一技研</span>
+    <span class="d">マンション・ビルの外装大規模修繕　dai1giken.co.jp</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。<br>
+  本ページの図表・数値は、出典の明記だけで自由に転載できます（CC BY 4.0）。</p>
+</div>
+</body>
+</html>
