@@ -714,7 +714,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <section id="explorer">
     <h2><span class="idx">Explorer</span>工事種別ごとの建設工事費デフレーター</h2>
     <p class="lede">建設工事費デフレーター（{{DEF_BASE}}）の月次系列です。行をクリックするとグラフに重なります（最大5系列）。列見出しをクリックすると並べ替わります。改装・改修工事は「建築補修」の行です。ここに出している{{EXP_N}}区分は、{{DEF_FIRST}}から{{DEF_MONTH}}までの上昇が {{EXP_LO}}% 〜 {{EXP_HI}}%（幅 {{EXP_PT}} ポイント）の範囲に収まっており、建築補修はそのうち {{EXP_RANK}} 番目です。同じ期間の消費者物価指数は {{CPI_SINCE}}% でした。</p>
-    <p class="lede">この統計表は工事種別を {{DEF_N_ALL}} 区分持っています。そのうち建築にあたる区分は <a href="deflator/">工事種別ごとのページ</a> に1区分1ページで出しています。</p>
+    <p class="lede">この統計表は工事種別を {{DEF_N_ALL}} 区分持っています。下の表に出しているのは、そのうち主要な {{EXP_N}} 区分です。</p>
+    <p class="lede"><a href="deflator/">工事種別ごとのページ（建築系{{DEF_N_ARCH}}区分）を見る →</a></p>
 
     <div class="explorer">
       <div class="exp-chart" id="chartWrap">
@@ -745,6 +746,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
         出典：国土交通省「建設工事費デフレーター」{{DEF_BASE}}／<a href="{{DEF_URL}}" target="_blank" rel="noopener">e-Stat statsDataId={{DEF_SID}}</a>　表章項目「建設工事費デフレーター」（後方3ヶ月平均値ではない方）　取得日 {{GENERATED}}
       </div>
     </div>
+    <p class="lede"><a href="deflator/">工事種別ごとのページ（建築系{{DEF_N_ARCH}}区分）を見る →</a>　各区分の月次推移・各年の値・消費者物価との差を1区分1ページで出しています。</p>
   </section>
 
   <!-- ===== 着工床面積 ===== -->

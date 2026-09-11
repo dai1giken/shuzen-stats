@@ -22,3 +22,4 @@ _root/
 # 通常は GitHub Actions が Release に添付するので、リポジトリには置かない。
 shuzen-stats.zip
 shuzen-stats-delta.zip
+ZENBU-*.zip

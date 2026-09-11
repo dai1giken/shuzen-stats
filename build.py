@@ -17,6 +17,7 @@ from pathlib import Path
 
 from build_city import build as build_city
 from build_column import build as build_column
+from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
@@ -353,6 +354,7 @@ def main() -> None:
         "{{EXP_RANK}}": str(_exp[2]),
         "{{CPI_SINCE}}": f"{_exp[3]:+.1f}",
         "{{DEF_N_ALL}}": str(len(d.get("all", {}))),
+        "{{DEF_N_ARCH}}": str(len(DEFLATOR_SERIES)),
         "{{DEF_URL}}": d["url"],
         "{{CHART1}}": chart1(total),
         "{{CHART_COST}}": cost_range_chart(sv["per_unit"], factor, dmonths[-1]),
