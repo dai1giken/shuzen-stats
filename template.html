@@ -713,7 +713,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,tr
   <!-- ===== エクスプローラ ===== -->
   <section id="explorer">
     <h2><span class="idx">Explorer</span>工事種別ごとの建設工事費デフレーター</h2>
-    <p class="lede">建設工事費デフレーター（{{DEF_BASE}}）の月次系列です。行をクリックするとグラフに重なります（最大5系列）。列見出しをクリックすると並べ替わります。改装・改修工事は「建築補修」の行です。</p>
+    <p class="lede">建設工事費デフレーター（{{DEF_BASE}}）の月次系列です。行をクリックするとグラフに重なります（最大5系列）。列見出しをクリックすると並べ替わります。改装・改修工事は「建築補修」の行です。ここに出している{{EXP_N}}区分は、{{DEF_FIRST}}から{{DEF_MONTH}}までの上昇が {{EXP_LO}}% 〜 {{EXP_HI}}%（幅 {{EXP_PT}} ポイント）の範囲に収まっており、建築補修はそのうち {{EXP_RANK}} 番目です。同じ期間の消費者物価指数は {{CPI_SINCE}}% でした。</p>
+    <p class="lede">この統計表は工事種別を {{DEF_N_ALL}} 区分持っています。そのうち建築にあたる区分は <a href="deflator/">工事種別ごとのページ</a> に1区分1ページで出しています。</p>
 
     <div class="explorer">
       <div class="exp-chart" id="chartWrap">

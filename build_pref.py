@@ -759,6 +759,15 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}nonres/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.6</priority></url>')
+    # 工事種別ページ（build_deflator が先に生成している前提。無ければ黙って飛ばす）
+    df_dir = HERE / "deflator"
+    if df_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}deflator/</loc><lastmod>{day}</lastmod><priority>0.7</priority></url>')
+        for f in sorted(df_dir.glob("*.html")):
+            if f.name == "index.html":
+                continue
+            sm.append(f'<url><loc>{SITE_URL}deflator/{f.name}</loc><lastmod>{day}</lastmod>'
+                      f'<priority>0.6</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

@@ -17,6 +17,7 @@ from pathlib import Path
 
 from build_city import build as build_city
 from build_column import build as build_column
+from build_deflator import build as build_deflator
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
@@ -297,7 +298,10 @@ def main() -> None:
             "c_2034": m["c_2034_units"],
             "dome_m2": basis["dome_m2"],
         },
-        "deflator": d,
+        # **all（全75区分）はページに埋めない。**Explorer が使うのは series の
+        # 16区分だけで、all を入れると index.html が 59KB 太る（実測）。
+        # 全区分は deflator/ のページと basis.json から読める。
+        "deflator": {k: v for k, v in d.items() if k != "all"},
         "calc": {
             "factor": factor,
             "latest_month": dmonths[-1],
@@ -319,6 +323,15 @@ def main() -> None:
         },
     }
 
+    # Explorer のリード文に置く数字。系列は表示中の16区分だけを対象にする
+    # （画面に出ていない区分まで含めると、読者が表で確かめられない数字になる）。
+    _chg = {k: (v[-1] / v[0] - 1) * 100 for k, v in d["series"].items()}
+    # **端点を丸めてから引き算する。**丸める前の差を出すと、画面の
+    # 「35.1% 〜 38.3%」を読者が引き算した 3.2 と、表示した幅 3.3 が食い違う。
+    _exp = (round(min(_chg.values()), 1), round(max(_chg.values()), 1),
+            sorted(_chg, key=lambda k: -_chg[k]).index(d["primary"]) + 1,
+            (cpi["values"][-1] / cpi["values"][0] - 1) * 100)
+
     tokens = {
         "{{DATA}}": json.dumps(runtime, ensure_ascii=False, separators=(",", ":")),
         "{{DEF_MONTH}}": dmonths[-1],
@@ -330,6 +343,16 @@ def main() -> None:
         "{{DEF_BASE}}": d["base"],
         "{{DEF_BASE_PCT}}": f"{prim[-1] - 100:.1f}",
         "{{DEF_SID}}": d["statsDataId"],
+        # Explorer のリード文。**数字を直書きしないこと。**
+        # 対象範囲を変えると上昇幅のレンジも順位も動くので、すべてここで算出する。
+        # （実測: 主要16区分で幅3.2pt、建築系31区分で4.6pt、全75区分で15.1pt）
+        "{{EXP_N}}": str(len(d["series"])),
+        "{{EXP_LO}}": f"{_exp[0]:.1f}",
+        "{{EXP_HI}}": f"{_exp[1]:.1f}",
+        "{{EXP_PT}}": f"{_exp[1]-_exp[0]:.1f}",
+        "{{EXP_RANK}}": str(_exp[2]),
+        "{{CPI_SINCE}}": f"{_exp[3]:+.1f}",
+        "{{DEF_N_ALL}}": str(len(d.get("all", {}))),
         "{{DEF_URL}}": d["url"],
         "{{CHART1}}": chart1(total),
         "{{CHART_COST}}": cost_range_chart(sv["per_unit"], factor, dmonths[-1]),
@@ -433,11 +456,13 @@ def main() -> None:
     # サイトマップに残る（実際に37件残った）。
     n_city = build_city(basis)
     n_nonres = build_nonres(basis)
+    n_defl = build_deflator(basis)
     n_col = build_column(basis)
     n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
+    print(f"deflator/  {n_defl} 工事種別 ＋ 一覧")
     print(f"column/    {n_col} 本 ＋ 一覧（企業サイト用）")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
@@ -499,6 +524,8 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - [トップ]({SITE_URL}) — 全国の指標、工事費指数、戸あたり工事金額、修繕積立金
 - [都道府県別の一覧]({SITE_URL}pref/) — 47都道府県
 - [市区町村別の一覧]({SITE_URL}city/) — 一都三県の市区
+- [工事種別の一覧]({SITE_URL}deflator/) — 建設工事費デフレーターの建築系31区分
+- [非住宅建築物の一覧]({SITE_URL}nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）
 - [sitemap.xml]({SITE_URL}sitemap.xml) — 全ページの一覧
 

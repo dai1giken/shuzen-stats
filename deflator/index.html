@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>建設工事費デフレーター 工事種別一覧｜2026年6月（2020年度＝100）</title>
+<meta name="description" content="国土交通省「建設工事費デフレーター」の建築系31区分を、2026年6月時点の値と2016年4月比で並べています。上昇幅は 33.8% 〜 38.3%、同期間の消費者物価は +15.8%。e-Stat API の公表値。">
+<meta property="og:title" content="建設工事費デフレーター 工事種別一覧｜2026年6月（2020年度＝100）">
+<meta property="og:description" content="国土交通省「建設工事費デフレーター」の建築系31区分を、2026年6月時点の値と2016年4月比で並べています。上昇幅は 33.8% 〜 38.3%、同期間の消費者物価は +15.8%。e-Stat API の公表値。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dai1giken.co.jp/shuzen-stats/deflator/">
+<meta property="og:image" content="https://dai1giken.co.jp/shuzen-stats/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dai1giken.co.jp/shuzen-stats/deflator/">
+<meta name="google-site-verification" content="JlYgLf9EFV1wkzDSkqkpfB-sqjNbemJtMv0qBqcQf90">
+<meta name="google-site-verification" content="NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SZ37494LGY"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-SZ37494LGY');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
+  --ink:#191D16; --ink2:#4C5348; --ink3:#7D8578;
+  --rule:#D2D6CB; --rule-soft:#E2E5DC; --shu:#BE3A22; --ai:#2C5468;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}}
+:root[data-theme="dark"]{
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--jp);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 56px),
+                   repeating-linear-gradient(to bottom,var(--rule-soft) 0 1px,transparent 1px 56px)}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 96px}
+a{color:var(--ai);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--ink);padding:26px 0 10px}
+a.by{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);text-decoration:none}
+a.by b{color:var(--ink);font-weight:600;font-family:var(--jp);font-size:14px;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+a.by:hover b{color:var(--shu);text-decoration-color:var(--shu)}
+.masthead .spacer{flex:1 1 100px}
+.crumb{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.srcband{margin-top:18px;border:1px solid var(--ai);border-left-width:4px;background:var(--surface);
+  padding:12px 18px;font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.srcband b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ai);display:block;margin-bottom:4px}
+.srcband strong{color:var(--ink)}
+.toplabel{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ai);
+  margin:28px 0 10px;display:block;font-weight:500}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1;margin:0;text-wrap:balance}
+h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:15px;line-height:1.7;color:var(--ink2);margin-top:14px;max-width:60ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:30px}
+.kpi{background:var(--surface);padding:18px 20px}
+.kpi .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;margin:6px 0 4px}
+.kpi .v small{font-size:14px;font-weight:500;color:var(--ink2);margin-left:3px}
+.kpi.hi .v{color:var(--shu)}
+.kpi p{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+section{margin-top:56px}
+h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-bottom:9px;border-bottom:1px solid var(--ink);
+  display:flex;align-items:baseline;gap:12px;text-wrap:balance}
+h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
+.lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
+.chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
+.chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
+.chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
+  border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
+.tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:420px;background:var(--surface);font-size:13.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft)}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+tr.me td{background:var(--sunk);font-weight:600}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
+.warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
+.warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
+.warn strong{color:var(--ink)}
+.cite .citebox{margin:0;padding:14px 16px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-family:var(--mono);font-size:12.5px;line-height:1.95;color:var(--ink2);word-break:break-all}
+.bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+.bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.bandpick select:focus{outline:2px solid var(--ai);outline-offset:1px}
+.finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+.finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.finder input:focus{outline:2px solid var(--ai);outline-offset:1px;border-color:var(--ai)}
+.qnote{margin:8px 0 0;min-height:1.2em;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+a.cta:hover{background:var(--sunk);border-color:var(--ai)}
+a.cta .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.cta .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.cta:hover .n{color:var(--ai)}
+a.cta .d{font-size:12.5px;color:var(--ink2)}
+a.cta .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--ai)}
+a.sitelink{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:20px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+a.sitelink:hover{background:var(--sunk);border-color:var(--shu)}
+a.sitelink .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.sitelink .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.sitelink:hover .n{color:var(--shu)}
+a.sitelink .d{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--shu)}
+.credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+.prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:24px}
+.prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
+  align-items:baseline;gap:8px;color:var(--ink)}
+.prefgrid a:hover{background:var(--sunk)}
+.prefgrid .nm{font-size:14px}
+.prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b>↗</a>
+    <span class="spacer"></span>
+    <span class="crumb"><a href="https://dai1giken.co.jp/shuzen-stats/">大規模修繕統計ビューア</a> ／ 工事種別</span>
+  </header>
+  <div class="srcband">
+    <b>SOURCE ／ 出典</b>
+    <strong>このページの数値は、すべて国土交通省「建設工事費デフレーター」の公表値です。</strong>
+    e-Stat の API から取得し、<strong>変化率を割り算で出すところまで</strong>を行っています。
+    当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+  </div>
+
+  <span class="toplabel">公表統計 ／ 工事種別</span>
+  <h1>建設工事費デフレーター 工事種別一覧
+    <span class="sub">この統計表は工事種別を <strong>75区分</strong> 持っています。そのうち建築にあたる <strong>31区分</strong> を1区分1ページで出しています。2016年4月から2026年6月までの上昇は 33.8% 〜 38.3%（幅 4.5 ポイント）、同じ期間の消費者物価は +15.8% でした。</span>
+  </h1>
+  <section>
+    <h2><span class="idx">Rank</span>建築系31区分</h2>
+    <p class="lede">2016年4月からの上昇が大きい順です。工事種別名をクリックすると、その区分の月次推移と各年の値が出ます。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>順</th><th>工事種別</th><th>2026年6月</th><th>前月比</th><th>前年同月比</th><th>2016年4月比</th></tr></thead>
+      <tbody><tr><td class="n">1</td><td><a href="jutaku-s.html">住宅・鉄骨造</a></td><td class="n">128.8</td><td class="n">-0.1%</td><td class="n">+4.2%</td><td class="n">+38.3%</td></tr><tr><td class="n">2</td><td><a href="s-zairai.html">鉄骨・在来住宅</a></td><td class="n">127.0</td><td class="n">-0.2%</td><td class="n">+3.4%</td><td class="n">+38.2%</td></tr><tr><td class="n">3</td><td><a href="jutaku-cb.html">住宅・コンクリートブロックその他</a></td><td class="n">127.3</td><td class="n">+0.1%</td><td class="n">+4.3%</td><td class="n">+37.8%</td></tr><tr><td class="n">4</td><td><a href="s-ryosan.html">鉄骨・量産住宅</a></td><td class="n">129.5</td><td class="n">+0.0%</td><td class="n">+4.5%</td><td class="n">+37.8%</td></tr><tr><td class="n">5</td><td><a href="hi-mokuzo-jutaku.html">非木造住宅</a></td><td class="n">127.3</td><td class="n">-0.2%</td><td class="n">+4.2%</td><td class="n">+37.6%</td></tr><tr><td class="n">6</td><td><a href="jutaku-rc.html">住宅・鉄筋コンクリート造</a></td><td class="n">126.4</td><td class="n">-0.3%</td><td class="n">+4.3%</td><td class="n">+37.2%</td></tr><tr><td class="n">7</td><td><a href="rc-zairai.html">鉄筋・在来住宅</a></td><td class="n">126.4</td><td class="n">-0.3%</td><td class="n">+4.3%</td><td class="n">+37.2%</td></tr><tr><td class="n">8</td><td><a href="kenchiku-hoshu.html">建築補修（改装・改修）</a></td><td class="n">127.2</td><td class="n">-0.3%</td><td class="n">+4.0%</td><td class="n">+36.9%</td></tr><tr><td class="n">9</td><td><a href="jutaku-src.html">住宅・鉄骨鉄筋コンクリート造</a></td><td class="n">127.0</td><td class="n">-0.4%</td><td class="n">+4.2%</td><td class="n">+36.9%</td></tr><tr><td class="n">10</td><td><a href="rc-kojo.html">鉄筋・工場・倉庫</a></td><td class="n">124.8</td><td class="n">-0.6%</td><td class="n">+2.8%</td><td class="n">+36.4%</td></tr><tr><td class="n">11</td><td><a href="mokuzo-ryosan.html">木造・量産住宅</a></td><td class="n">128.3</td><td class="n">+0.2%</td><td class="n">+4.9%</td><td class="n">+36.3%</td></tr><tr><td class="n">12</td><td><a href="jutaku-sogo.html">住宅総合</a></td><td class="n">126.9</td><td class="n">-0.2%</td><td class="n">+4.4%</td><td class="n">+36.0%</td></tr><tr><td class="n">13</td><td><a href="s-kojo.html">鉄骨・工場・倉庫</a></td><td class="n">124.8</td><td class="n">-0.7%</td><td class="n">+2.3%</td><td class="n">+35.7%</td></tr><tr><td class="n">14</td><td><a href="kenchiku-sogo.html">建築総合</a></td><td class="n">126.0</td><td class="n">-0.3%</td><td class="n">+3.8%</td><td class="n">+35.6%</td></tr><tr><td class="n">15</td><td><a href="src-kojo.html">鉄骨鉄筋・工場・倉庫</a></td><td class="n">125.1</td><td class="n">-0.6%</td><td class="n">+2.5%</td><td class="n">+35.5%</td></tr><tr><td class="n">16</td><td><a href="rc-ryosan.html">鉄筋・量産住宅</a></td><td class="n">126.7</td><td class="n">-0.2%</td><td class="n">+4.6%</td><td class="n">+35.5%</td></tr><tr><td class="n">17</td><td><a href="hijutaku-s.html">非住宅・鉄骨造</a></td><td class="n">124.9</td><td class="n">-0.6%</td><td class="n">+2.7%</td><td class="n">+35.5%</td></tr><tr><td class="n">18</td><td><a href="s-jimusho.html">鉄骨・事務所その他</a></td><td class="n">125.0</td><td class="n">-0.5%</td><td class="n">+3.0%</td><td class="n">+35.4%</td></tr><tr><td class="n">19</td><td><a href="hi-mokuzo-hijutaku.html">非木造非住宅</a></td><td class="n">124.9</td><td class="n">-0.6%</td><td class="n">+3.0%</td><td class="n">+35.3%</td></tr><tr><td class="n">20</td><td><a href="mokuzo-kojo.html">木造・工場・倉庫</a></td><td class="n">125.8</td><td class="n">-0.4%</td><td class="n">+4.3%</td><td class="n">+35.3%</td></tr><tr><td class="n">21</td><td><a href="rc-jimusho.html">鉄筋・事務所その他</a></td><td class="n">125.1</td><td class="n">-0.5%</td><td class="n">+3.9%</td><td class="n">+35.2%</td></tr><tr><td class="n">22</td><td><a href="hijutaku-sogo.html">非住宅総合</a></td><td class="n">124.9</td><td class="n">-0.6%</td><td class="n">+3.1%</td><td class="n">+35.2%</td></tr><tr><td class="n">23</td><td><a href="hijutaku-rc.html">非住宅・鉄筋コンクリート造</a></td><td class="n">125.0</td><td class="n">-0.5%</td><td class="n">+3.7%</td><td class="n">+35.1%</td></tr><tr><td class="n">24</td><td><a href="mokuzo-jutaku.html">木造住宅</a></td><td class="n">126.7</td><td class="n">+0.0%</td><td class="n">+4.5%</td><td class="n">+35.1%</td></tr><tr><td class="n">25</td><td><a href="mokuzo-zairai.html">木造・在来住宅</a></td><td class="n">126.6</td><td class="n">-0.1%</td><td class="n">+4.5%</td><td class="n">+35.0%</td></tr><tr><td class="n">26</td><td><a href="hijutaku-src.html">非住宅・鉄骨鉄筋コンクリート造</a></td><td class="n">124.5</td><td class="n">-0.6%</td><td class="n">+3.1%</td><td class="n">+34.2%</td></tr><tr><td class="n">27</td><td><a href="rc-gakko.html">鉄筋・学校</a></td><td class="n">124.7</td><td class="n">-0.6%</td><td class="n">+3.8%</td><td class="n">+34.1%</td></tr><tr><td class="n">28</td><td><a href="hijutaku-cb.html">非住宅・コンクリートブロックその他</a></td><td class="n">123.8</td><td class="n">-0.5%</td><td class="n">+3.8%</td><td class="n">+34.0%</td></tr><tr><td class="n">29</td><td><a href="src-jimusho.html">鉄骨鉄筋・事務所その他</a></td><td class="n">124.3</td><td class="n">-0.6%</td><td class="n">+3.3%</td><td class="n">+33.9%</td></tr><tr><td class="n">30</td><td><a href="mokuzo-hijutaku.html">木造非住宅</a></td><td class="n">125.3</td><td class="n">-0.3%</td><td class="n">+4.2%</td><td class="n">+33.9%</td></tr><tr><td class="n">31</td><td><a href="mokuzo-jimusho.html">木造・事務所その他</a></td><td class="n">125.2</td><td class="n">-0.3%</td><td class="n">+4.2%</td><td class="n">+33.8%</td></tr></tbody>
+    </table></div>
+    <p class="colophon">単位：指数（2020年度＝100）。出典：国土交通省「建設工事費デフレーター」（statsDataId=0004055083）。取得日 2026-09-12。土木にあたる区分もこの統計表に含まれていますが、このサイトではページにしていません。</p>
+  </section>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/#explorer">
+    <span class="k">Tool ／ 重ねて見る</span>
+    <span class="n">工事種別エクスプローラ</span>
+    <span class="d">主要16区分を並べ替えたり、折れ線に重ねたりできます</span>
+    <span class="arrow">→</span>
+  </a>
+  <section class="cite">
+    <h2><span class="idx">Cite</span>このページを引用する</h2>
+    <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>
+    <p class="citebox">出典：大規模修繕統計ビューア（株式会社第一技研）https://dai1giken.co.jp/shuzen-stats/deflator/ 2026-09-12取得。原データは総務省・国土交通省の公表統計（e-Stat）。</p>
+    <p class="colophon">機械可読な全数値は <a href="https://dai1giken.co.jp/shuzen-stats/basis.json">basis.json</a>、サイト全体の案内は <a href="https://dai1giken.co.jp/shuzen-stats/llms.txt">llms.txt</a> にあります。</p>
+  </section>
+<script>
+(function(){
+  document.querySelectorAll('.chartbox').forEach(function(box){
+    var svg=box.querySelector('svg'), tip=box.querySelector('.tip');
+    if(!svg||!tip) return;
+    var bars=[].slice.call(svg.querySelectorAll('.bar'));
+    var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+    if(!hits.length) return;
+    function show(ev,i){
+      svg.classList.add('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+      tip.className='tip on';
+      tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'+hits[i].getAttribute('data-v')+' 戸';
+      var r=box.getBoundingClientRect();
+      var left=(ev.clientX-r.left)+box.scrollLeft+14;
+      if(left+tip.offsetWidth > r.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+      tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+      tip.style.top=Math.max(4,(ev.clientY-r.top)-tip.offsetHeight-12)+'px';
+    }
+    function hide(){
+      svg.classList.remove('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+      tip.className='tip';
+    }
+    hits.forEach(function(h,i){
+      h.addEventListener('mousemove',function(ev){ show(ev,i); });
+      h.addEventListener('touchstart',function(ev){ if(ev.touches[0]) show(ev.touches[0],i); },{passive:true});
+    });
+    svg.addEventListener('mouseleave',hide);
+    svg.addEventListener('touchend',hide);
+  });
+})();
+</script>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/#calc">
+    <span class="k">Tool ／ 自分のマンションで試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/">
+    <span class="k">全国の統計へ</span>
+    <span class="n">大規模修繕統計ビューア</span>
+    <span class="d">工事費指数・戸あたり工事金額・修繕周期・積立金は全国共通です</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="sitelink" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">
+    <span class="k">制作・提供</span>
+    <span class="n">株式会社第一技研</span>
+    <span class="d">マンション・ビルの外装大規模修繕　dai1giken.co.jp</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。<br>
+  本ページの図表・数値は、出典の明記だけで自由に転載できます（CC BY 4.0）。</p>
+</div>
+</body>
+</html>

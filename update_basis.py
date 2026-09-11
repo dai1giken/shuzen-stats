@@ -156,37 +156,79 @@ def _code(classes, cls_id: str, name: str) -> str:
 
 
 def fetch_deflator() -> dict:
-    """建設工事費デフレーターを工事種別ごとに引き、共通の月軸に揃えて返す。"""
+    """建設工事費デフレーターを **1回の呼び出しで全75区分** 取得する。
+
+    以前は cdCat01 を1区分ずつ指定して16回呼んでいた。区分指定を外すと
+    75区分 × 123ヶ月 = 9,225値 が1リクエスト（上限10万値）に収まるので、
+    **呼び出しは16回→1回に減り、16区分しか出していなかった制約も外れる。**
+
+    返す辞書は2階建てにしてある。
+
+      series : 従来どおりの16系列（表示名がキー）。トップページの Explorer 用。
+               **並び順が画面に出るので DEFLATOR_SERIES の順を保つこと。**
+      all    : 全75区分（e-Stat の @cat01 コードがキー）。工事種別ページ用。
+
+    月軸は **従来どおり16系列の共通部分** から作る。75区分の共通部分にすると、
+    収録の短い区分が1つ増えただけで Explorer の表示期間が黙って縮む。
+    """
     meta = _call("getMetaInfo", statsDataId=DEFLATOR_ID)["GET_META_INFO"]["METADATA_INF"]
     classes = meta["CLASS_INF"]["CLASS_OBJ"]
-    tname = {}
+    tname: dict[str, str] = {}
+    cname: dict[str, str] = {}
     for c in classes:
         if c["@id"] == "time":
             for i in _as_list(c["CLASS"]):
                 tname[i["@code"]] = i["@name"]
+        if c["@id"] == "cat01":
+            for i in _as_list(c["CLASS"]):
+                cname[i["@code"]] = i["@name"]
+
+    d = _call("getStatsData", statsDataId=DEFLATOR_ID, cdTab=DEFLATOR_TAB, limit=100000)
+    sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+    values = _as_list(sd["DATA_INF"]["VALUE"])
+
+    # ページングされていたら黙って欠ける。件数が合わなければ止める。
+    total = int(sd["RESULT_INF"].get("TOTAL_NUMBER", len(values)))
+    if total != len(values):
+        sys.exit(f"デフレーター: {total}値のうち{len(values)}値しか返っていません。"
+                 "limit を上げるかページングを実装してください。")
 
     raw: dict[str, dict[str, float]] = {}
-    for code, label, _ in DEFLATOR_SERIES:
-        d = _call("getStatsData", statsDataId=DEFLATOR_ID, cdTab=DEFLATOR_TAB,
-                  cdCat01=code, limit=500)
-        sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
-        got = {}
-        for v in _as_list(sd["DATA_INF"]["VALUE"]):
-            try:
-                got[tname.get(v["@time"], v["@time"])] = float(v["$"])
-            except (ValueError, TypeError):
-                continue
-        raw[label] = got
-        print(f"  {label:24s} {len(got):3d}ヶ月")
+    for v in values:
+        try:
+            raw.setdefault(v["@cat01"], {})[tname[v["@time"]]] = float(v["$"])
+        except (ValueError, TypeError, KeyError):
+            continue
+    print(f"  工事種別 {len(raw)} 区分 / {len(values):,} 値を1回で取得")
 
-    # 全系列に値がある月だけを共通軸にする
-    months = sorted(set.intersection(*(set(v) for v in raw.values())),
+    # 16系列は表示名で引く。コードが消えていたら Explorer が静かに壊れるので止める。
+    missing = [f"{code} {label}" for code, label, _ in DEFLATOR_SERIES if code not in raw]
+    if missing:
+        sys.exit("デフレーターの区分が見つかりません: " + "、".join(missing))
+
+    months = sorted(set.intersection(*(set(raw[code]) for code, _, _ in DEFLATOR_SERIES)),
                     key=lambda s: (int(s.split("年")[0]), int(s.split("年")[1].rstrip("月"))))
-    series = {label: [raw[label][m] for m in months] for label in raw}
+    series = {label: [raw[code][m] for m in months] for code, label, _ in DEFLATOR_SERIES}
+
+    # 全75区分。**16系列の月軸を全部そろえている区分だけ**を載せる。
+    # そろわない区分を混ぜると、ページごとに期間が違うまま順位を並べることになる。
+    all_series: dict[str, dict] = {}
+    short: list[str] = []
+    for code in sorted(raw):
+        if all(m in raw[code] for m in months):
+            all_series[code] = {"name": cname.get(code, code),
+                                "values": [raw[code][m] for m in months]}
+        else:
+            short.append(f"{code} {cname.get(code, code)}")
+    if short:
+        print(f"  収録期間が短いため全区分から除外: {len(short)}件 / " + "、".join(short[:5]))
+
     return {
         "months": months,
         "series": series,
+        "all": all_series,
         "primary": next(lbl for _, lbl, star in DEFLATOR_SERIES if star),
+        "primary_code": next(c for c, _, star in DEFLATOR_SERIES if star),
         "statsDataId": DEFLATOR_ID,
         "base": "2020年度＝100",
         "url": f"https://www.e-stat.go.jp/dbview?sid={DEFLATOR_ID}",

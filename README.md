@@ -47,6 +47,7 @@ basis.json        取得した基準値と系列
 build.py          template.html にトークンを埋め、チャートSVGを計算して埋め込む
       ↓
 index.html        公開されるページ
+deflator/         工事種別ごとのページ（建築系31区分＋一覧）
 make_ogp.py       basis.json から OGP 画像を生成
 ```
 
@@ -56,6 +57,7 @@ make_ogp.py       basis.json から OGP 画像を生成
 | `update_basis.py` | e-Stat API 3.0 からのデータ取得 |
 | `build.py` | HTML の生成。トークン展開とチャート描画 |
 | `cartogram.py` | 47都道府県タイルカートグラム（`TILES` が配置の定義） |
+| `build_deflator.py` | 工事種別ごとのページ（`deflator/`）。建築系31区分 |
 | `costfig.py` | 戸あたり工事金額のレンジ図・分布表、消費者物価との比較図 |
 | `make_ogp.py` | OGP 画像（1200×630 PNG） |
 | `fetch_estat.py` | 調査用。`--search` / `--meta` で統計表を探す |
@@ -78,6 +80,9 @@ python make_ogp.py
 
 `.github/workflows/update.yml` が毎月10日 07:00 JST に走り、
 e-Stat から取り直してページと OGP を再生成し、GitHub Pages へ公開します。
+
+建設工事費デフレーターは工事種別を **75区分** 持っており、`basis.json` にはその全部が入っています。
+うち建築にあたる **31区分** を `deflator/` に1区分1ページで出しています。
 
 建設工事費デフレーターと消費者物価指数は月次で更新されますが、
 **建築着工統計の DB 提供は 2023年度で止まっています**（統計表の更新日は新しくても収録期間は伸びません）。
