@@ -131,7 +131,7 @@ jobs:
       - name: アップロード用 ZIP を作る
         if: github.event_name != 'push'
         run: |
-          cd upload && zip -qr ../shuzen-stats.zip shuzen-stats && cd ..
+          cd upload && zip -qr ../shuzen-stats.zip shuzen-stats column robots.txt sitemap.xml && cd ..
           ls -l shuzen-stats.zip
 
       - name: Release に ZIP を載せ、手順つきの Issue を立てる
