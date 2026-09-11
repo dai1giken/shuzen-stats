@@ -78,7 +78,7 @@ jobs:
             MSG="chore: 月次更新（$BEFORE → $AFTER）"
             echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
           fi
-          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres column _root
+          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres
           if git diff --cached --quiet; then
             echo "差分なし。コミットしません。"
           else
