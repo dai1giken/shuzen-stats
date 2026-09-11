@@ -78,7 +78,7 @@ jobs:
             MSG="chore: 月次更新（$BEFORE → $AFTER）"
             echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
           fi
-          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres
+          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres column _root
           if git diff --cached --quiet; then
             echo "差分なし。コミットしません。"
           else
@@ -96,7 +96,7 @@ jobs:
           cp htaccess.txt _site/.htaccess
           # 構造化データの distribution が指す実体。中身は政府統計の公表値のみ
           cp basis.json _site/
-          cp -r pref city nonres _site/
+          cp -r pref city nonres column _site/
           touch _site/.nojekyll
           echo "公開ファイル数: $(find _site -type f | wc -l)"
           # 手でアップロードする用。トップに shuzen-stats/ を作っておくと、
@@ -106,6 +106,16 @@ jobs:
           mkdir -p upload/shuzen-stats
           cp -r _site/. upload/shuzen-stats/
           rm -f upload/shuzen-stats/.nojekyll
+          rm -rf upload/shuzen-stats/column
+          # column/ は企業サイト側（htdocs/column/）の直下に置くものなので、
+          # shuzen-stats/ の外、upload/ 直下に置く。_site の中に入れたのは
+          # GitHub Pages 側の表示確認用で、手動アップロードの構成とは別。
+          cp -r column upload/column
+          # ホスト直下（htdocs/ 直下）に置く robots.txt・sitemap.xml（245件版）。
+          # /shuzen-stats/ 配下のものとは別物で、これが無いとクローラが読む
+          # 本来の robots.txt / sitemap.xml が更新されないままになる。
+          cp _root/robots.txt upload/robots.txt
+          cp _root/sitemap.xml upload/sitemap.xml
           echo "アップロード用ファイル数: $(find upload -type f | wc -l)" 
 
       - uses: actions/upload-pages-artifact@v3

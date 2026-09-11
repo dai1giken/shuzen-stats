@@ -16,12 +16,19 @@ __ASSET__
 5. 右下の **解凍** をクリック
 6. **⚠ 保存先ディレクトリを `ホームディレクトリ/www/htdocs` に変更する**
    既定は「ホームディレクトリ」のままで、**そのまま解凍すると公開されません**。毎回いちばん間違えやすい箇所です
-7. **解凍** を実行（`shuzen-stats` フォルダが上書きされます）
+7. **解凍** を実行
+
+   このZIPは **`shuzen-stats/`・`column/`・`robots.txt`・`sitemap.xml` の4つ**を含んでいます。
+   `htdocs` 直下で解凍すると、この4つが **すべて上書き**されます
+   （企業サイトの `index.html`・`contact.php`・`img/` などには触れません）。
 8. `shuzen-stats.zip` を **削除**（公開領域にZIPを残さないため）
 
 ## 確認
 
-https://dai1giken.co.jp/shuzen-stats/ を開いて、ページ下部の「取得日」が新しくなっていれば完了です。
+- https://dai1giken.co.jp/shuzen-stats/ を開いて、ページ下部の「取得日」が新しくなっていること
+- https://dai1giken.co.jp/column/ を開いて、正常に表示されること
+
+の2つが確認できれば完了です。
 
 終わったらこの Issue を閉じてください。
 
