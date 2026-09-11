@@ -81,6 +81,28 @@ def stage(dest: Path) -> None:
         shutil.copy2(HERE / "_root" / f, dest / f)
 
 
+def write_dir_entries(z: zipfile.ZipFile, root: Path, files: list[Path]) -> None:
+    """フォルダそのものの項目を ZIP に書く。**省略してはいけない。**
+
+    2026-09-12、ディレクトリ項目の無い ZIP を Bizメール&ウェブ の
+    コントロールパネルで解凍したところ、**トップのファイルだけが展開され、
+    shuzen-stats/ 配下の36ファイルが黙って飛ばされた**（エラーは出ず、画面は
+    「解凍されました」と表示した）。中身が古いままなことにも気づきにくい。
+
+    Actions 側は `zip -r` を使っていてディレクトリ項目が入るので通っていた。
+    Python の ZipFile.write() はファイルしか書かないので、明示的に足す。
+    """
+    dirs = set()
+    for p in files:
+        for parent in p.relative_to(root).parents:
+            if parent.as_posix() != ".":
+                dirs.add(parent.as_posix())
+    for d in sorted(dirs):
+        info = zipfile.ZipInfo(d + "/")
+        info.external_attr = (0o40755 << 16) | 0x10   # ディレクトリ属性
+        z.writestr(info, b"")
+
+
 def changed_since(ref: str) -> list[str]:
     """ref から今までに変わった／増えた、公開対象のファイルを返す。
 
@@ -147,6 +169,7 @@ def main() -> None:
 
         files = sorted(p for p in dest.rglob("*") if p.is_file())
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+            write_dir_entries(z, dest, files)
             for p in files:
                 z.write(p, p.relative_to(dest).as_posix())
 
@@ -176,6 +199,17 @@ def main() -> None:
         # 第一技研のサイト本体の設定で、このリポジトリの持ち物ではない。
         assert ".htaccess" not in names, \
             "ZIP のトップに .htaccess があります。企業サイトの設定を壊します"
+        # **入れ子のファイルには、必ず親フォルダの項目が要る。**
+        # 無いと解凍側が黙って飛ばす（2026-09-12 に本番で実際に起きた）。
+        entries = set(names)
+        for n in names:
+            parts = n.split("/")[:-1]
+            for i in range(1, len(parts) + 1):
+                d = "/".join(parts[:i]) + "/"
+                assert d in entries, \
+                    f"ZIP にフォルダ項目 {d} がありません。解凍時に配下が飛ばされます"
+        ndirs = sum(1 for n in names if n.endswith("/"))
+        print(f"  検査：フォルダ項目 {ndirs} 件あり（無いと解凍で配下が飛ぶ）")
         print(f"  検査：必須ファイルあり／.nojekyll なし／"
               f"トップに .htaccess なし（企業サイトの設定を壊さない）")
 
