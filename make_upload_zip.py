@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
 """本番（dai1giken.co.jp）へ手でアップロードする ZIP を、手元で作る。
 
-    py make_upload_zip.py          # shuzen-stats.zip を作る
+    py make_upload_zip.py               # 全部入り（shuzen-stats.zip）
+    py make_upload_zip.py --since HEAD~1   # 前回から変わったものだけ
     py make_upload_zip.py --out D:\\tmp\\x.zip
+
+--- 差分アップロードのすすめ ---------------------------------------------
+全部入りは 284ファイル・2.7MB ある。**pref/ city/ nonres/ column/ は
+元データが伸びた月しか変わらない**ので、毎月それを上げ直すのは無駄が多い
+（コントロールパネルからの手作業だとなおさら）。
+
+`--since <ref>` を付けると、その時点から実際に変わった公開ファイルだけを
+集める。ホスト直下の robots.txt / sitemap.xml は git 管理外（_root/）で
+差分が取れないので、**この2つは常に入れる**（合わせて数十KB）。
 
 通常は GitHub Actions（毎月10日）が同じ ZIP を Release に添付する。
 **このスクリプトは、Actions を待たずに手元で同じものが要るとき用。**
@@ -30,6 +40,8 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
+import sys
 import tempfile
 import zipfile
 from pathlib import Path
@@ -69,16 +81,69 @@ def stage(dest: Path) -> None:
         shutil.copy2(HERE / "_root" / f, dest / f)
 
 
+def changed_since(ref: str) -> list[str]:
+    """ref から今までに変わった／増えた、公開対象のファイルを返す。
+
+    削除（D）は拾わない。**アップロードでは消せない**ので、消したページが
+    あるときは手で消す必要がある。件数を出して気づけるようにしてある。
+    """
+    r = subprocess.run(["git", "diff", "--name-status", ref, "--"],
+                       cwd=HERE, capture_output=True, text=True, encoding="utf-8")
+    if r.returncode != 0:
+        raise SystemExit(f"git diff が失敗しました（ref={ref}）:\n{r.stderr.strip()}")
+
+    pub, deleted = [], []
+    for line in r.stdout.splitlines():
+        if not line.strip():
+            continue
+        st, _, path = line.partition("\t")
+        path = path.strip().split("\t")[-1]
+        top = path.split("/")[0]
+        if not (path in FILES or top in DIRS):
+            continue          # ソース・README・ワークフローは公開しない
+        (deleted if st.startswith("D") else pub).append(path)
+
+    if deleted:
+        print(f"  ⚠ 削除されたページが {len(deleted)}件 あります。"
+              "アップロードでは消えないので、コントロールパネルで手で消してください:")
+        for p in deleted[:10]:
+            print(f"      {p}")
+    return sorted(pub)
+
+
+def stage_delta(dest: Path, paths: list[str]) -> None:
+    site = dest / "shuzen-stats"
+    for rel in paths:
+        src = HERE / rel
+        if not src.is_file():
+            continue
+        dst = site / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+    # ホスト直下ぶんは git 管理外（_root/）なので差分が取れない。常に入れる。
+    for f in ("robots.txt", "sitemap.xml"):
+        shutil.copy2(HERE / "_root" / f, dest / f)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=str(HERE / "shuzen-stats.zip"))
+    ap.add_argument("--out")
+    ap.add_argument("--since", metavar="REF",
+                    help="この git ref から変わった公開ファイルだけを集める（例: HEAD~1）")
     a = ap.parse_args()
-    out = Path(a.out).resolve()
+    default = "shuzen-stats-delta.zip" if a.since else "shuzen-stats.zip"
+    out = Path(a.out).resolve() if a.out else (HERE / default).resolve()
 
     with tempfile.TemporaryDirectory() as td:
         dest = Path(td) / "upload"
         dest.mkdir()
-        stage(dest)
+        if a.since:
+            paths = changed_since(a.since)
+            if not paths:
+                sys.exit(f"{a.since} から公開ファイルの変更はありません。")
+            stage_delta(dest, paths)
+        else:
+            stage(dest)
 
         files = sorted(p for p in dest.rglob("*") if p.is_file())
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
@@ -95,16 +160,24 @@ def main() -> None:
         for k in sorted(by_top):
             print(f"    {k:<16}{by_top[k]:>5}")
 
-    # 書き出した ZIP を開き直して、隠しファイルが実際に入っているか確かめる。
+    # 書き出した ZIP を開き直して確かめる。「ZIPができた」は中身の証明にならない。
     with zipfile.ZipFile(out) as z:
         names = z.namelist()
-        for must in ("shuzen-stats/.htaccess", "shuzen-stats/index.html",
-                     "shuzen-stats/deflator/index.html", "column/index.html",
-                     "robots.txt", "sitemap.xml"):
-            assert must in names, f"ZIP に {must} が入っていません"
+        must = ["robots.txt", "sitemap.xml"]
+        if not a.since:
+            # 全部入りのときだけ。差分には変わったものしか入らない。
+            must += ["shuzen-stats/.htaccess", "shuzen-stats/index.html",
+                     "shuzen-stats/deflator/index.html", "column/index.html"]
+        for m in must:
+            assert m in names, f"ZIP に {m} が入っていません"
         assert not any(n.endswith(".nojekyll") for n in names), \
             ".nojekyll は GitHub Pages 専用です。ZIP に入れてはいけません"
-        print("  検査：.htaccess あり／.nojekyll なし／必須ファイルあり")
+        # **企業サイトの .htaccess を上書きしないこと。**htdocs 直下のそれは
+        # 第一技研のサイト本体の設定で、このリポジトリの持ち物ではない。
+        assert ".htaccess" not in names, \
+            "ZIP のトップに .htaccess があります。企業サイトの設定を壊します"
+        print(f"  検査：必須ファイルあり／.nojekyll なし／"
+              f"トップに .htaccess なし（企業サイトの設定を壊さない）")
 
 
 if __name__ == "__main__":

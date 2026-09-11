@@ -21,3 +21,4 @@ _root/
 # 手元で作るアップロード用 ZIP（make_upload_zip.py）。
 # 通常は GitHub Actions が Release に添付するので、リポジトリには置かない。
 shuzen-stats.zip
+shuzen-stats-delta.zip
