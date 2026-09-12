@@ -19,11 +19,13 @@ from build_city import build as build_city
 from build_column import build as build_column
 from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
+from build_rent import SLUG as RENT_SLUG
 from build_rent import build as build_rent
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
 from cartogram import cartogram
+from pref_city import MIN_UNITS, cohort_sum, published_leaves
 from costfig import cost_range_chart, cost_tables, cpi_chart
 
 HERE = Path(__file__).resolve().parent
@@ -327,6 +329,23 @@ def main() -> None:
 
     # Explorer のリード文に置く数字。系列は表示中の16区分だけを対象にする
     # （画面に出ていない区分まで含めると、読者が表で確かめられない数字になる）。
+    # トップの目次に出す件数。**直書きしないこと。**閾値や区分を変えたときに
+    # 数字だけが古くなり、リンク先と食い違っても誰も気づけない。
+    # index.html は各ビルダーより先に書き出されるので、戻り値は使えない。
+    # 同じ元（basis と各ビルダーの定義）から数え直す。
+    _areas = basis["city"]["areas"]
+    _coh = basis["city"]["cohort"]
+    # **build_city.py の publish と同じ作り方をすること。**leaves だけだと
+    # 集計行（特別区部・政令市）が抜けて 173 になり、実際に生成される 179 と
+    # 食い違う（2026-09-12 に実際にずれた）。
+    _pub = {c for pre in {c[:2] for c in _areas}
+            for c, _ in published_leaves(_areas, _coh, pre)}
+    _pub |= {c for c, a in _areas.items()
+             if not a["is_leaf"] and not c.endswith("000")
+             and cohort_sum(a, _coh) >= MIN_UNITS}
+    _n_city = len(_pub)
+    _n_rent = len([a for a in basis.get("rent", {}).get("areas", {}) if a in RENT_SLUG])
+
     _chg = {k: (v[-1] / v[0] - 1) * 100 for k, v in d["series"].items()}
     # **端点を丸めてから引き算する。**丸める前の差を出すと、画面の
     # 「35.1% 〜 38.3%」を読者が引き算した 3.2 と、表示した幅 3.3 が食い違う。
@@ -356,6 +375,10 @@ def main() -> None:
         "{{CPI_SINCE}}": f"{_exp[3]:+.1f}",
         "{{DEF_N_ALL}}": str(len(d.get("all", {}))),
         "{{DEF_N_ARCH}}": str(len(DEFLATOR_SERIES)),
+        "{{N_PREF}}": "47",
+        "{{N_CITY}}": str(_n_city),
+        "{{N_NONRES}}": str(len(basis["nonres"]["uses"])),
+        "{{N_RENT}}": str(_n_rent),
         "{{DEF_URL}}": d["url"],
         "{{CHART1}}": chart1(total),
         "{{CHART_COST}}": cost_range_chart(sv["per_unit"], factor, dmonths[-1]),

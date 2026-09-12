@@ -26,18 +26,20 @@ v1.0 で「同じページの上と下で東京都が5.3倍ちがう」事故を
 （メタには67地域あるが表が持っていない。2026-09-12 実測）。
 中分類の家賃は公営・UR・公社を含む。**この違いを各ページに書くこと。**
 
---- CSS は共有のものに足さない（重要） -----------------------------------
-`build_pref.CSS` は全ページにインライン展開される。**1行足すだけで276ファイルの
-中身が変わり**、手動アップロードが毎回「全部入り」になる（2026-09-12 実測）。
-このファイルで使う表現は PAGE_CSS に閉じ込めて、各ページの <style> で出す。
+--- バーの表現は共有に移した -----------------------------------------
+最初はこのファイル専用の <style> に置いていた。`build_pref.CSS` に1行足すと
+全ページにインライン展開されて**276ファイルの中身が変わり**、手動アップロードが
+毎回「全部入り」になるため（2026-09-12 実測）。
+その後 pref/city/nonres/deflator でも使うことにしたので `build_pref` へ移した。
+**1ファイルでしか使わない CSS は、今後もページ専用の <style> に置くこと。**
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from build_pref import (CSS, CTA_BUILDING, SITE_URL, cite_block, foot,  # noqa: F401
-                        head)
+from build_pref import (CSS, CTA_BUILDING, SITE_URL, bar_cell,  # noqa: F401
+                        cite_block, foot, head)
 
 HERE = Path(__file__).resolve().parent
 
@@ -82,26 +84,6 @@ SLUG = {
 }
 assert len(set(SLUG.values())) == len(SLUG), "スラッグが重複しています"
 
-# このファイルが出すページだけで使う CSS。共有CSSには足さない（冒頭の注記参照）。
-PAGE_CSS = """<style>
-/* 数字だけの表では状況が伝わらないので、値の横に長さで見えるバーを置く。
-   JS は使わない。幅はビルド時に計算してインラインで書き込む。 */
-td.b{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
-td.b .n{display:inline-block;min-width:4.8em;text-align:right}
-td.b .t{display:inline-block;width:84px;height:10px;margin-left:10px;background:var(--sunk);
-  border:1px solid var(--rule-soft);position:relative;vertical-align:middle}
-td.b .t i{position:absolute;top:0;bottom:0;display:block}
-td.b .t u{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink3);opacity:.6}
-td.grp{background:var(--sunk);font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.11em;color:var(--ink3);text-transform:uppercase}
-.lgd{display:flex;flex-wrap:wrap;gap:8px 22px;margin:16px 0 0;
-  font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
-.lgd span{display:inline-flex;align-items:center;gap:8px}
-.lgd em{width:24px;height:10px;display:inline-block;font-style:normal;border:1px solid var(--rule-soft)}
-@media (max-width:640px){td.b .t{display:none}}
-</style>"""
-
-
 def _pct(a: float, b: float) -> float:
     return (a / b - 1) * 100 if b else 0.0
 
@@ -119,30 +101,6 @@ def area_group(name: str) -> str:
     if name.endswith("地方"):
         return "地方"
     return "市"
-
-
-def bar_cell(v: float, lo: float, hi: float, color: str, zero: bool = False) -> str:
-    """数値と、その大きさを長さで示すバーを1つのセルに入れる。
-
-    `zero=True` のときは 0 の位置に目盛りを置いて左右に伸ばす。家賃は下がった
-    地域があるので、0起点にしないと「少し上がった」と「下がった」が
-    同じ見た目になる。
-    """
-    span = (hi - lo) or 1.0
-    if zero:
-        z = (0 - lo) / span * 100
-        if v >= 0:
-            left, w = z, v / span * 100
-        else:
-            left, w = z + v / span * 100, -v / span * 100
-        tick = f'<u style="left:{z:.1f}%"></u>'
-    else:
-        base = max(hi, 0.001)
-        left, w = 0.0, max(v, 0) / base * 100
-        tick = ""
-    return (f'<td class="b"><span class="n">{_sign(v)}</span>'
-            f'<span class="t"><i style="left:{left:.1f}%;width:{max(w, 0.8):.1f}%;'
-            f'background:{color}"></i>{tick}</span></td>')
 
 
 def multi_chart(months: list[str],
@@ -251,9 +209,9 @@ def rank_table(pairs: list[tuple[str, float, float]], mark: str = "") -> str:
         cls = ' class="me"' if nm == mark else ""
         label = nm if nm == mark else f'<a href="{SLUG[nm]}.html">{nm}</a>'
         return (f"<tr{cls}><td>{label}</td>"
-                + bar_cell(ry, ylo, yhi, "var(--ai)", zero=True)
-                + bar_cell(rs, 0, shi, "var(--shu)")
-                + bar_cell(rs - ry, 0, dhi, "var(--ink3)") + "</tr>")
+                + bar_cell(_sign(ry), ry, ylo, yhi, "var(--ai)", zero=True)
+                + bar_cell(_sign(rs), rs, 0, shi, "var(--shu)")
+                + bar_cell(f"{rs - ry:.1f}", rs - ry, 0, dhi, "var(--ink3)") + "</tr>")
 
     groups: dict[str, list] = {"全国": [], "都市階級": [], "地方": [], "市": []}
     for nm, ry, rs in pairs:
@@ -339,7 +297,7 @@ def build(basis: dict) -> int:
             f"同じ期間の消費者物価は {_sign(sogo)}。"
             f"賃貸マンション・ビルの所有者向けに、政府統計の公表値を{len(pairs)}地域ぶん並べています。")
 
-    h = [head(title, desc, canonical, crumb="家賃と修繕費"), PAGE_CSS]
+    h = [head(title, desc, canonical, crumb="家賃と修繕費")]
     h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省・国土交通省の公表値です。</strong>
@@ -474,7 +432,7 @@ def build(basis: dict) -> int:
         desc = (f"{nm}の消費者物価指数は、{first}から{last}までで家賃 {_sign(ry)}、"
                 f"設備修繕・維持 {_sign(rs)}。差は {rs - ry:.1f} ポイント。"
                 f"掲載{len(pairs)}地域中、家賃の上昇は {rank[nm]} 位です。")
-        g = [head(title, desc, canonical, crumb="家賃と修繕費"), PAGE_CSS]
+        g = [head(title, desc, canonical, crumb="家賃と修繕費")]
         g.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「消費者物価指数」の公表値です。</strong>

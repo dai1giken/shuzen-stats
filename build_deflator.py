@@ -34,9 +34,11 @@ v0.7 で決めた「ページ名で内容が分かることを語感より優先
 from __future__ import annotations
 
 import json
+import statistics
 from pathlib import Path
 
-from build_pref import CSS, SITE_URL, cite_block, foot, head  # noqa: F401
+from build_pref import (CSS, SITE_URL, bar_cell, cite_block,  # noqa: F401
+                        foot, head)
 
 HERE = Path(__file__).resolve().parent
 
@@ -221,6 +223,12 @@ def build(basis: dict) -> int:
     # **端点を丸めてから引き算する。**丸める前の差を出すと、画面に並ぶ
     # 「33.8% 〜 38.3%」を読者が引き算した 4.5 と、表示した幅 4.6 が食い違う。
     spread_lo, spread_hi = round(chg(ranked[-1]), 1), round(chg(ranked[0]), 1)
+    # バーは「中央値との差」に付ける。**上昇率そのものに 0 起点のバーを
+    # 付けてはいけない。**31区分は 33.8〜38.3% の狭い帯にあるので、
+    # 0 からの長さにすると全部ほぼ満タンになって何も見えない（実際にそうなった）。
+    # 中央値からの差なら、どれが上でどれが下かが一目で分かる。
+    _med = statistics.median(chg(c) for c in ranked)
+    _dev = max(abs(chg(c) - _med) for c in ranked) or 1.0
     cpi_chg = _pct(cpi[-1], cpi[0])
 
     out = HERE / "deflator"
@@ -333,15 +341,17 @@ def build(basis: dict) -> int:
             rows.append(f'<tr{cls}><td class="n">{ranked.index(c)+1}</td><td>{lab}</td>'
                         f'<td class="n">{vv[-1]:.1f}</td>'
                         f'<td class="n">{_sign(_pct(vv[-1], vv[-13]))}</td>'
-                        f'<td class="n">{_sign(chg(c))}</td></tr>')
+                        f'<td class="n">{_sign(chg(c))}</td>'
+                        + bar_cell(f'{chg(c) - _med:+.1f}', chg(c) - _med,
+                                   -_dev, _dev, "var(--shu)", zero=True) + '</tr>')
         h.append(f'''  <section>
     <h2><span class="idx">Rank</span>建築系{len(target)}区分の比較</h2>
     <p class="lede">{first}からの上昇が大きい順です。{spread_hi:.1f}% から {spread_lo:.1f}% までの範囲に収まっており、幅は {spread_hi-spread_lo:.1f} ポイントです。同じ期間の消費者物価は {_sign(cpi_chg)} でした。</p>
     <div class="tablebox"><table>
-      <thead><tr><th>順</th><th>工事種別</th><th>{last}</th><th>前年同月比</th><th>{first}比</th></tr></thead>
+      <thead><tr><th>順</th><th>工事種別</th><th>{last}</th><th>前年同月比</th><th>{first}比</th><th>中央値との差</th></tr></thead>
       <tbody>{"".join(rows)}</tbody>
     </table></div>
-    <p class="colophon">出典：国土交通省「建設工事費デフレーター」（statsDataId={d["statsDataId"]}）{base}。取得日 {day}。</p>
+    <p class="colophon">出典：国土交通省「建設工事費デフレーター」（statsDataId={d["statsDataId"]}）{base}。取得日 {day}。「中央値との差」は、{first}比の上昇率から31区分の中央値 {_med:.1f}% を引いたポイント数です。バーはその差の大きさで、中央が 0 になります。</p>
   </section>
 
   <a class="cta" href="index.html">
@@ -391,12 +401,14 @@ def build(basis: dict) -> int:
                     f'<td class="n">{vv[-1]:.1f}</td>'
                     f'<td class="n">{_sign(_pct(vv[-1], vv[-2]))}</td>'
                     f'<td class="n">{_sign(_pct(vv[-1], vv[-13]))}</td>'
-                    f'<td class="n">{_sign(chg(c))}</td></tr>')
+                    f'<td class="n">{_sign(chg(c))}</td>'
+                    + bar_cell(f'{chg(c) - _med:+.1f}', chg(c) - _med,
+                               -_dev, _dev, "var(--shu)", zero=True) + '</tr>')
     idx.append(f'''  <section>
     <h2><span class="idx">Rank</span>建築系{len(target)}区分</h2>
     <p class="lede">{first}からの上昇が大きい順です。工事種別名をクリックすると、その区分の月次推移と各年の値が出ます。</p>
     <div class="tablebox"><table>
-      <thead><tr><th>順</th><th>工事種別</th><th>{last}</th><th>前月比</th><th>前年同月比</th><th>{first}比</th></tr></thead>
+      <thead><tr><th>順</th><th>工事種別</th><th>{last}</th><th>前月比</th><th>前年同月比</th><th>{first}比</th><th>中央値との差</th></tr></thead>
       <tbody>{"".join(rows)}</tbody>
     </table></div>
     <p class="colophon">単位：指数（{base}）。出典：国土交通省「建設工事費デフレーター」（statsDataId={d["statsDataId"]}）。取得日 {day}。土木にあたる区分もこの統計表に含まれていますが、このサイトではページにしていません。</p>

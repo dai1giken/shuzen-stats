@@ -28,7 +28,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, CTA_HOUSING, SITE_URL, SLUG, age_of, cite_block,
+from build_pref import (CSS, CTA_HOUSING, SITE_URL, SLUG, age_of, bar_cell, cite_block,
                         head, period_chart, ref_ages)
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
 
@@ -67,10 +67,14 @@ BAND_JS = """  <script>
     function fmt(n){ return n.toLocaleString('ja-JP'); }
     function sum(o, ks){ var t = 0; ks.forEach(function(k){ t += (o && o[k]) || 0; }); return t; }
     function rows(pairs, tot){
+      var mx = 0;
+      pairs.forEach(function(p){ if (p[1] > mx) mx = p[1]; });
       return pairs.map(function(p){
         var pc = tot ? (p[1] / tot * 100).toFixed(1) : '0.0';
-        return '<tr><td>' + p[0] + '</td><td class="n">' + fmt(p[1]) +
-               '</td><td class="n">' + pc + '%</td></tr>';
+        var w = mx ? Math.max(p[1] / mx * 100, 0.8) : 0.8;
+        return '<tr><td>' + p[0] + '</td><td class="b"><span class="n">' + fmt(p[1]) +
+               '</span><span class="t"><i style="left:0;width:' + w.toFixed(1) +
+               '%;background:var(--ai)"></i></span></td><td class="n">' + pc + '%</td></tr>';
       }).join('');
     }
     function apply(){
@@ -331,6 +335,9 @@ def build(basis: dict) -> int:
         if r:
             i = r - 1
             near = leaves[pre][max(0, i - 2): i + 3]
+            # バーの目盛りは**県内1位**。ページごとに変えると、同じ市区町村の
+            # バーがページによって違う長さになって比べられない。
+            _top = coh(leaves[pre][0][1]) if leaves[pre] else 1
             h.append(f'''  <section>
     <h2><span class="idx">Rank</span>{pref_name}内で順位の近い市区町村</h2>
     <div class="tablebox"><table>
@@ -342,7 +349,8 @@ def build(basis: dict) -> int:
                 nm2 = (label(areas, c2) if c2 == code
                        else f'<a href="{c2}.html">{label(areas, c2)}</a>')
                 h.append(f'<tr{cls}><td class="n">{ranks[pre][c2]}</td><td>{nm2}</td>'
-                         f'<td class="n">{v2:,}</td><td class="n">{v2/pref_v*100:.1f}%</td></tr>')
+                         + bar_cell(f'{v2:,}', v2, 0, _top, "var(--ai)")
+                         + f'<td class="n">{v2/pref_v*100:.1f}%</td></tr>')
             h.append('</tbody></table></div>\n    <p class="lede"><a href="index.html">'
                      '一都三県の市区町村一覧を見る →</a></p>\n  </section>\n')
 

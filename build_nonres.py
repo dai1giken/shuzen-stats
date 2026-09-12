@@ -29,8 +29,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, CTA_BUILDING, SITE_URL, cite_block, head,
-                        ref_ages, year_chart)
+from build_pref import (CSS, CTA_BUILDING, SITE_URL, bar_cell, cite_block,
+                        head, ref_ages, year_chart)
 
 HERE = Path(__file__).resolve().parent
 
@@ -174,11 +174,13 @@ def build(basis: dict) -> int:
 ''')
 
         rows = []
+        _pmax = max(_sum(bld[use], [p], old) for p in prefs)
         for p in sorted(prefs, key=lambda p: -_sum(bld[use], [p], old)):
             po, pa = _sum(bld[use], [p], old), _sum(bld[use], [p], years)
             pm = _sum(flo[use], [p], old)
-            rows.append(f'<tr><td>{p}</td><td class="n">{po:,}</td>'
-                        f'<td class="n">{pm:,}</td><td class="n">{pa:,}</td></tr>')
+            rows.append(f'<tr><td>{p}</td>'
+                        + bar_cell(f'{po:,}', po, 0, _pmax, "var(--ai)")
+                        + f'<td class="n">{pm:,}</td><td class="n">{pa:,}</td></tr>')
         h.append(f'''  <section>
     <h2><span class="idx">Area</span>都県別の{use}</h2>
     <p class="lede">築{age_lo}〜{age_hi}年（{min(old)}〜{max(old)}年度着工）が多い順です。</p>
@@ -195,7 +197,8 @@ def build(basis: dict) -> int:
             cls = ' class="me"' if u2 == use else ''
             nm = u2 if u2 == use else f'<a href="{SLUG[u2]}.html">{u2}</a>'
             near.append(f'<tr{cls}><td class="n">{ranked.index(u2)+1}</td><td>{nm}</td>'
-                        f'<td class="n">{totals[u2]:,}</td></tr>')
+                        + bar_cell(f'{totals[u2]:,}', totals[u2], 0,
+                                   max(totals.values()), "var(--ai)") + '</tr>')
         h.append(f'''  <section>
     <h2><span class="idx">Rank</span>用途別の比較（一都三県）</h2>
     <div class="tablebox"><table>

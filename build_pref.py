@@ -178,6 +178,21 @@ thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-trans
   font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
 tbody tr:last-child td{border-bottom:0}
 tr.me td{background:var(--sunk);font-weight:600}
+/* 数字だけの表では状況が伝わらないので、値の横に長さで見えるバーを置く。
+   JS は使わない。幅はビルド時に計算してインラインで書き込む（bar_cell）。 */
+td.b{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.b .n{display:inline-block;text-align:right}
+td.b .t{display:inline-block;width:84px;height:10px;margin-left:10px;background:var(--sunk);
+  border:1px solid var(--rule-soft);position:relative;vertical-align:middle}
+td.b .t i{position:absolute;top:0;bottom:0;display:block}
+td.b .t u{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink3);opacity:.6}
+td.grp{background:var(--sunk);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.11em;color:var(--ink3);text-transform:uppercase}
+.lgd{display:flex;flex-wrap:wrap;gap:8px 22px;margin:16px 0 0;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.lgd span{display:inline-flex;align-items:center;gap:8px}
+.lgd em{width:24px;height:10px;display:inline-block;font-style:normal;border:1px solid var(--rule-soft)}
+@media (max-width:640px){td.b .t{display:none}}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
@@ -213,6 +228,20 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
   font-size:12.5px;line-height:1.8;color:var(--ink2)}
 .colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+/* トップの目次。ページが21,000px あってナビが無く、各ページ群への入口が
+   本文中の1行ずつしか無かった（2026-09-12 に「どこで見られるか分からない」）。 */
+.sitenav{margin:26px 0 0;border:1px solid var(--rule);border-left:5px solid var(--ai);
+  background:var(--surface);padding:16px 20px}
+.sitenav .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.sitenav ul{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px;background:var(--rule-soft)}
+.sitenav li{background:var(--surface)}
+.sitenav a{display:flex;align-items:baseline;gap:9px;padding:10px 12px;text-decoration:none;color:var(--ink)}
+.sitenav a:hover{background:var(--sunk)}
+.sitenav a b{font-weight:600;font-size:14px}
+.sitenav a span{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  font-variant-numeric:tabular-nums;margin-left:auto}
 .prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);margin-top:24px}
 .prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
@@ -402,6 +431,34 @@ def age_of(label: str, ref: int) -> str:
     if len(ys) == 1:
         return f"築{ref - ys[0]}年〜" if "以前" in label else f"築〜{ref - ys[0]}年"
     return f"築{ref - max(ys)}-{ref - min(ys)}年"
+
+
+def bar_cell(text: str, v: float, lo: float, hi: float,
+             color: str = "var(--ai)", zero: bool = False) -> str:
+    """数値と、その大きさを長さで示すバーを1つのセルに入れる。
+
+    `text` は表示する文字列（「1,234」「+10.5%」など）。書式は呼び出し側で決める。
+
+    `zero=True` のときは 0 の位置に目盛りを置いて左右に伸ばす。**負の値を
+    とりうる列では必ず指定すること。**0起点にしないと「少し増えた」と
+    「減った」が同じ見た目になる。
+
+    狭い画面ではバーを隠す（CSS 側）。数値は必ず残るので情報は落ちない。
+    """
+    span = (hi - lo) or 1.0
+    if zero:
+        z = (0 - lo) / span * 100
+        if v >= 0:
+            left, w = z, v / span * 100
+        else:
+            left, w = z + v / span * 100, -v / span * 100
+        tick = f'<u style="left:{z:.1f}%"></u>'
+    else:
+        left, w = 0.0, max(v, 0) / (max(hi, 0.001)) * 100
+        tick = ""
+    return (f'<td class="b"><span class="n">{text}</span>'
+            f'<span class="t"><i style="left:{left:.1f}%;width:{max(w, 0.8):.1f}%;'
+            f'background:{color}"></i>{tick}</span></td>')
 
 
 def cite_block(url: str, day: str) -> str:
@@ -607,6 +664,9 @@ def build(basis: dict) -> int:
     out.mkdir(exist_ok=True)
     written = []
 
+    # バーの目盛り。**全ページ共通で1位の戸数を上限にする。**ページごとに
+    # 変えると、同じ県のバーがページによって違う長さになって比べられない。
+    _top_units = ranked[0][1] if ranked else 1
     for name, val in ranked:
         slug = SLUG[name]
         r = rank[name]
@@ -678,7 +738,8 @@ def build(basis: dict) -> int:
             cls = ' class="me"' if nm == name else ''
             link = nm if nm == name else f'<a href="{SLUG[nm]}.html">{nm}</a>'
             h.append(f'<tr{cls}><td class="n">{rank[nm]}</td><td>{link}</td>'
-                     f'<td class="n">{vv:,}</td><td class="n">{vv/national*100:.1f}%</td></tr>')
+                     + bar_cell(f'{vv:,}', vv, 0, _top_units, "var(--ai)")
+                     + f'<td class="n">{vv/national*100:.1f}%</td></tr>')
         h.append(f'''</tbody></table></div>
     <p class="lede"><a href="index.html">47都道府県の一覧を見る →</a></p>
   </section>
@@ -740,7 +801,12 @@ def build(basis: dict) -> int:
 
   <div class="prefgrid">''')
     for nm, vv in ranked:
-        idx.append(f'<a href="{SLUG[nm]}.html"><span class="nm">{nm}</span>'
+        # 背景に戸数ぶんの帯を敷く。セルの中に <i> を置けないグリッドなので、
+        # linear-gradient で左から塗る。数値は必ず残る。
+        w = vv / _top_units * 100
+        idx.append(f'<a href="{SLUG[nm]}.html" style="background:'
+                   f'linear-gradient(to right,var(--sunk) {w:.1f}%,var(--surface) {w:.1f}%)">'
+                   f'<span class="nm">{nm}</span>'
                    f'<span class="vv">{vv:,}</span></a>')
     idx.append(f'</div>\n  <p class="colophon">単位：戸。多い順。'
                f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'

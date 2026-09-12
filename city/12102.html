@@ -94,6 +94,21 @@ thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-trans
   font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
 tbody tr:last-child td{border-bottom:0}
 tr.me td{background:var(--sunk);font-weight:600}
+/* 数字だけの表では状況が伝わらないので、値の横に長さで見えるバーを置く。
+   JS は使わない。幅はビルド時に計算してインラインで書き込む（bar_cell）。 */
+td.b{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.b .n{display:inline-block;text-align:right}
+td.b .t{display:inline-block;width:84px;height:10px;margin-left:10px;background:var(--sunk);
+  border:1px solid var(--rule-soft);position:relative;vertical-align:middle}
+td.b .t i{position:absolute;top:0;bottom:0;display:block}
+td.b .t u{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink3);opacity:.6}
+td.grp{background:var(--sunk);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.11em;color:var(--ink3);text-transform:uppercase}
+.lgd{display:flex;flex-wrap:wrap;gap:8px 22px;margin:16px 0 0;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.lgd span{display:inline-flex;align-items:center;gap:8px}
+.lgd em{width:24px;height:10px;display:inline-block;font-style:normal;border:1px solid var(--rule-soft)}
+@media (max-width:640px){td.b .t{display:none}}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
 .warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
@@ -129,6 +144,20 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
   font-size:12.5px;line-height:1.8;color:var(--ink2)}
 .colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+/* トップの目次。ページが21,000px あってナビが無く、各ページ群への入口が
+   本文中の1行ずつしか無かった（2026-09-12 に「どこで見られるか分からない」）。 */
+.sitenav{margin:26px 0 0;border:1px solid var(--rule);border-left:5px solid var(--ai);
+  background:var(--surface);padding:16px 20px}
+.sitenav .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.sitenav ul{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px;background:var(--rule-soft)}
+.sitenav li{background:var(--surface)}
+.sitenav a{display:flex;align-items:baseline;gap:9px;padding:10px 12px;text-decoration:none;color:var(--ink)}
+.sitenav a:hover{background:var(--sunk)}
+.sitenav a b{font-weight:600;font-size:14px}
+.sitenav a span{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  font-variant-numeric:tabular-nums;margin-left:auto}
 .prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);margin-top:24px}
 .prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
@@ -273,10 +302,14 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
     function fmt(n){ return n.toLocaleString('ja-JP'); }
     function sum(o, ks){ var t = 0; ks.forEach(function(k){ t += (o && o[k]) || 0; }); return t; }
     function rows(pairs, tot){
+      var mx = 0;
+      pairs.forEach(function(p){ if (p[1] > mx) mx = p[1]; });
       return pairs.map(function(p){
         var pc = tot ? (p[1] / tot * 100).toFixed(1) : '0.0';
-        return '<tr><td>' + p[0] + '</td><td class="n">' + fmt(p[1]) +
-               '</td><td class="n">' + pc + '%</td></tr>';
+        var w = mx ? Math.max(p[1] / mx * 100, 0.8) : 0.8;
+        return '<tr><td>' + p[0] + '</td><td class="b"><span class="n">' + fmt(p[1]) +
+               '</span><span class="t"><i style="left:0;width:' + w.toFixed(1) +
+               '%;background:var(--ai)"></i></span></td><td class="n">' + pc + '%</td></tr>';
       }).join('');
     }
     function apply(){
@@ -319,7 +352,7 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
     <h2><span class="idx">Rank</span>千葉県内で順位の近い市区町村</h2>
     <div class="tablebox"><table>
       <thead><tr><th>順位</th><th>市区町村</th><th>築26〜45年</th><th>県内比</th></tr></thead>
-      <tbody><tr><td class="n">6</td><td><a href="12101.html">千葉市中央区</a></td><td class="n">20,150</td><td class="n">5.4%</td></tr><tr><td class="n">7</td><td><a href="12216.html">習志野市</a></td><td class="n">14,850</td><td class="n">4.0%</td></tr><tr class="me"><td class="n">8</td><td>千葉市花見川区</td><td class="n">14,790</td><td class="n">3.9%</td></tr><tr><td class="n">9</td><td><a href="12103.html">千葉市稲毛区</a></td><td class="n">12,900</td><td class="n">3.4%</td></tr><tr><td class="n">10</td><td><a href="12106.html">千葉市美浜区</a></td><td class="n">12,530</td><td class="n">3.3%</td></tr></tbody></table></div>
+      <tbody><tr><td class="n">6</td><td><a href="12101.html">千葉市中央区</a></td><td class="b"><span class="n">20,150</span><span class="t"><i style="left:0.0%;width:33.9%;background:var(--ai)"></i></span></td><td class="n">5.4%</td></tr><tr><td class="n">7</td><td><a href="12216.html">習志野市</a></td><td class="b"><span class="n">14,850</span><span class="t"><i style="left:0.0%;width:25.0%;background:var(--ai)"></i></span></td><td class="n">4.0%</td></tr><tr class="me"><td class="n">8</td><td>千葉市花見川区</td><td class="b"><span class="n">14,790</span><span class="t"><i style="left:0.0%;width:24.9%;background:var(--ai)"></i></span></td><td class="n">3.9%</td></tr><tr><td class="n">9</td><td><a href="12103.html">千葉市稲毛区</a></td><td class="b"><span class="n">12,900</span><span class="t"><i style="left:0.0%;width:21.7%;background:var(--ai)"></i></span></td><td class="n">3.4%</td></tr><tr><td class="n">10</td><td><a href="12106.html">千葉市美浜区</a></td><td class="b"><span class="n">12,530</span><span class="t"><i style="left:0.0%;width:21.1%;background:var(--ai)"></i></span></td><td class="n">3.3%</td></tr></tbody></table></div>
     <p class="lede"><a href="index.html">一都三県の市区町村一覧を見る →</a></p>
   </section>
   <div class="warn">
