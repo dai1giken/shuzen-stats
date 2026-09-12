@@ -17,8 +17,12 @@ from pathlib import Path
 
 from build_city import build as build_city
 from build_column import build as build_column
+from build_consultation import PUBLISH as CONSULT_PUBLISH
+from build_consultation import build as build_consultation
+from build_cycle import build as build_cycle
 from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
+from build_kijun import build as build_kijun
 from build_rent import SLUG as RENT_SLUG
 from build_rent import build as build_rent
 from build_reform import USES as REFORM_USES
@@ -29,6 +33,10 @@ from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as bu
 from cartogram import cartogram
 from pref_city import MIN_UNITS, cohort_sum, published_leaves
 from costfig import cost_range_chart, cost_tables, cpi_chart
+from shuzen_cycle import CYCLES as _CY, SENYU as _SENYU
+
+# 修繕周期の項目数。ナビの {{N_CYCLE}} に使う。**原典の件数なので直書きしない。**
+CYCLE_ROWS = list(_CY) + [_SENYU]
 
 HERE = Path(__file__).resolve().parent
 
@@ -382,6 +390,8 @@ def main() -> None:
         "{{N_NONRES}}": str(len(basis["nonres"]["uses"])),
         "{{N_RENT}}": str(_n_rent),
         "{{N_REFORM}}": str(len(REFORM_USES)),
+        # 修繕周期は原典（ガイドライン）の項目数。**直書きしないこと。**
+        "{{N_CYCLE}}": str(len([r for r in CYCLE_ROWS if r[5] is not None])),
         "{{DEF_URL}}": d["url"],
         "{{CHART1}}": chart1(total),
         "{{CHART_COST}}": cost_range_chart(sv["per_unit"], factor, dmonths[-1]),
@@ -479,6 +489,7 @@ def main() -> None:
     (HERE / "page.html").write_text(out, encoding="utf-8")
     page_head = HEAD.replace("__SITE__", SITE_URL).replace("__ANALYTICS__", analytics_tags())
     (HERE / "index.html").write_text(page_head + out + "\n</body>\n</html>\n", encoding="utf-8")
+    check_jsonld()
 
     # build_city を先に走らせること。build_pref がサイトマップを作るとき
     # ディスク上の city/*.html を glob するので、逆順だと閾値で消したページが
@@ -486,6 +497,9 @@ def main() -> None:
     n_city = build_city(basis)
     n_nonres = build_nonres(basis)
     n_defl = build_deflator(basis)
+    n_kijun = build_kijun(basis)   # deflator/ の刈り取りより後に置くこと
+    n_cycle = build_cycle(basis)
+    n_consult = build_consultation(basis)
     n_rent = build_rent(basis)
     n_reform = build_reform(basis)
     n_col = build_column(basis)
@@ -494,6 +508,9 @@ def main() -> None:
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
     print(f"deflator/  {n_defl} 工事種別 ＋ 一覧")
+    print(f"deflator/  基準年のページ {n_kijun} 枚")
+    print(f"cycle/     {n_cycle} ページ（修繕周期・ガイドライン転記）")
+    print(f"consultation/ {n_consult} ページ（企業サイト用・案件相談）")
     print(f"rent/      {n_rent} ページ（家賃と修繕費）")
     print(f"reform/    {n_reform} ページ（改修市場）")
     print(f"column/    {n_col} 本 ＋ 一覧（企業サイト用）")
@@ -560,6 +577,8 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - [家賃と修繕費]({SITE_URL}rent/) — 賃貸マンション・ビルの所有者向け。家賃・修繕費・物価の推移
 - [改修市場の規模]({SITE_URL}reform/) — 建物の改修をいくら受注したか。用途別・施工地域別・発注者別
 - [工事種別の一覧]({SITE_URL}deflator/) — 建設工事費デフレーターの建築系31区分
+- [指数の基準年]({SITE_URL}deflator/kijun-nendo.html) — 2011年度・2015年度・2020年度の各基準が同時に公表されています。基準をそろえる換算と、またいで割ったときのずれ
+- [修繕周期の部位別一覧]({SITE_URL}cycle/) — 長期修繕計画作成ガイドライン（令和6年6月改定）様式第3-2号の記載例。周期は幅で示されています
 - [非住宅建築物の一覧]({SITE_URL}nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）
 - [sitemap.xml]({SITE_URL}sitemap.xml) — 全ページの一覧
@@ -572,10 +591,51 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 
 - 市区町村ページの見出しの戸数は**分譲と賃貸を合わせた数**です。所有の関係別の内訳は各ページに別途載せています（その統計表は市区までで、町村はありません）。
 - 住宅・土地統計調査は**標本調査にもとづく推計値**で、全数調査ではありません。公表値は100戸単位に丸めてあるため、内訳の合計は総数と数十〜数百戸ずれることがあります。
-- 大規模修繕の実施周期は12〜15年程度が目安（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。
+- 修繕周期は工事の種類ごとに違い、令和6年6月改定のガイドラインでは**幅**で示されています（例：外壁塗装の塗替は12〜15年、除去・塗装は24〜30年）。単一の年数では示されていないので「12年周期」と要約しないでください。項目ごとの一覧は {SITE_URL}cycle/ にあります。
 - 工事費の換算は指数の比だけで行っており、仕様・規模・立地・劣化状況・工期・足場の条件は反映していません。
 """
     (HERE / "llms.txt").write_text(body, encoding="utf-8")
+
+
+def check_jsonld() -> None:
+    """生成した index.html の JSON-LD を、書き出した直後にパースして確かめる。
+
+    **構造化データは壊れても画面が何も変わらない。**気づけるのは Search Console
+    からメールが来たときで、そこまで数日〜数週間かかる。2026-09-12 に
+    spatialCoverage の型が `Country` になっていて指摘を受けた。schema.org 上は
+    Country も Place の下位型だが、**Google の Dataset 検証はそれを受け付けない**
+    ので、型名を Place に合わせる。
+
+    ここで見るのは「JSON として読めるか」と「落とすと痛いキーがあるか」まで。
+    語彙の正しさ全部はここでは分からないので、**変更したら Google の
+    リッチリザルトテストにも通すこと。**
+    """
+    import re
+
+    src = (HERE / "index.html").read_text(encoding="utf-8")
+    blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', src, re.S)
+    if not blocks:
+        raise SystemExit("index.html に JSON-LD がありません。template.html を確認してください。")
+
+    for i, b in enumerate(blocks, 1):
+        try:
+            doc = json.loads(b)
+        except json.JSONDecodeError as e:
+            raise SystemExit(f"JSON-LD #{i} がパースできません: {e}")
+        for x in ([doc] if isinstance(doc, dict) else doc):
+            if x.get("@type") != "Dataset":
+                continue
+            sc = x.get("spatialCoverage")
+            if not isinstance(sc, dict) or sc.get("@type") != "Place":
+                raise SystemExit(
+                    'Dataset の spatialCoverage は {"@type": "Place"} でなければ'
+                    f"なりません（いまは {sc!r}）。"
+                    "Google の Dataset 検証は Country を受け付けません。")
+            missing = [k for k in ("name", "description", "license", "url", "creator")
+                       if k not in x]
+            if missing:
+                raise SystemExit(f"Dataset に必要なキーがありません: {missing}")
+    print(f"JSON-LD    {len(blocks)} ブロック　Dataset の spatialCoverage=Place を確認")
 
 
 def build_root_sitemap() -> int:
@@ -604,6 +664,10 @@ def build_root_sitemap() -> int:
         urls.append((root + "column/", "0.8"))
         urls += [(f"{root}column/{f.name}", "0.7")
                  for f in sorted(col.glob("*.html")) if f.name != "index.html"]
+    # 案件相談ページ（企業サイト側）。**公開前は載せない。**
+    # build_consultation.PUBLISH を True にしたときだけサイトマップに入る。
+    if CONSULT_PUBLISH and (HERE / "consultation").is_dir():
+        urls.append((root + "consultation/", "0.9"))
     # 統計サイト。既存の sitemap.xml から URL をそのまま拾う。
     # ここで作り直すと、閾値で落としたページを二重管理することになる
     sm = HERE / "sitemap.xml"

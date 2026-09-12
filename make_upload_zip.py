@@ -51,7 +51,12 @@ HERE = Path(__file__).resolve().parent
 # /shuzen-stats/ 直下に置くファイル
 FILES = ["index.html", "ogp.png", "sitemap.xml", "robots.txt", "llms.txt", "basis.json"]
 # /shuzen-stats/ 配下に置くディレクトリ（column は企業サイト側なので入れない）
-DIRS = ["pref", "city", "nonres", "deflator", "rent", "reform"]
+DIRS = ["pref", "city", "nonres", "deflator", "rent", "reform", "cycle"]
+
+# 企業サイト側（htdocs/ 直下）。**shuzen-stats/ の中ではない。**
+# ここに入れ忘れて DIRS に足すと、/shuzen-stats/consultation/ という
+# 誤った場所に公開されて、リンクも canonical も食い違う。
+CORP_DIRS = ["column", "consultation"]
 
 
 def stage(dest: Path) -> None:
@@ -73,8 +78,12 @@ def stage(dest: Path) -> None:
             raise SystemExit(f"{d}/ がありません。build.py を先に流してください。")
         shutil.copytree(src, site / d)
 
-    # 企業サイト側（htdocs/column/）。shuzen-stats/ の外
-    shutil.copytree(HERE / "column", dest / "column")
+    # 企業サイト側（htdocs/column/ と htdocs/consultation/）。shuzen-stats/ の外
+    for d in CORP_DIRS:
+        src = HERE / d
+        if not src.is_dir():
+            raise SystemExit(f"{d}/ がありません。build.py を先に流してください。")
+        shutil.copytree(src, dest / d)
 
     # ホスト直下（htdocs/ 直下）。/shuzen-stats/ 配下のものとは別物
     for f in ("robots.txt", "sitemap.xml"):
@@ -124,7 +133,7 @@ def changed_since(ref: str) -> list[str]:
     pub, deleted = [], []
     for path in untracked:
         top = path.split("/")[0]
-        if path in FILES or top in DIRS:
+        if path in FILES or top in DIRS or top in CORP_DIRS:
             pub.append(path)
     if pub:
         print(f"  未コミットの新規ファイルを {len(pub)}件 含めました")
@@ -134,7 +143,7 @@ def changed_since(ref: str) -> list[str]:
         st, _, path = line.partition("\t")
         path = path.strip().split("\t")[-1]
         top = path.split("/")[0]
-        if not (path in FILES or top in DIRS):
+        if not (path in FILES or top in DIRS or top in CORP_DIRS):
             continue          # ソース・README・ワークフローは公開しない
         (deleted if st.startswith("D") else pub).append(path)
 
@@ -203,7 +212,8 @@ def main() -> None:
         if not a.since:
             # 全部入りのときだけ。差分には変わったものしか入らない。
             must += ["shuzen-stats/.htaccess", "shuzen-stats/index.html",
-                     "shuzen-stats/deflator/index.html", "column/index.html"]
+                     "shuzen-stats/deflator/index.html", "column/index.html",
+                     "consultation/index.html"]
         for m in must:
             assert m in names, f"ZIP に {m} が入っていません"
         assert not any(n.endswith(".nojekyll") for n in names), \

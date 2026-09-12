@@ -13,3 +13,4 @@ cartogram.py         # 47都道府県のタイル配置表。手で組んだの�
 make_ogp.py          # OGP画像の生成
 run_update.ps1       # 月次再生成のラッパー（ASCII only）
 README.md            # 踏んだ罠と判断の記録。コードより復元が難しい
+shuzen_cycle.py      # ガイドラインPDFから手で書き写した修繕周期81項目。失うと再転記になる

@@ -42,6 +42,10 @@ from build_pref import (CSS, SITE_URL, bar_cell, cite_block,  # noqa: F401
 
 HERE = Path(__file__).resolve().parent
 
+# 基準年のページ（build_kijun.py）も deflator/ に置いてある。**区分ではないので
+# 下の刈り取りで消える。**スラッグは向こうを唯一の定義として読む。
+from build_kijun import SLUG as SLUG_KIJUN  # noqa: E402
+
 # (e-Stat の @cat01 コード, スラッグ, 見出し名, 定義の言い換え)
 #
 # 見出し名は e-Stat の区分名を読みやすくしただけ。定義は変えていない。
@@ -235,7 +239,13 @@ def build(basis: dict) -> int:
     out.mkdir(exist_ok=True)
     # 刈り取り。SERIES から外した区分のファイルが残ると、サイトマップの glob が
     # 載せ続け、一覧から消えたページだけが公開され続ける。
-    keep = {f"{s}.html" for s in slug_of.values()} | {"index.html"}
+    #
+    # **区分ではないページも deflator/ に置いてある。**基準年のページ
+    # （build_kijun.py）がそれで、keep に入れ忘れるとここで黙って消える。
+    # build.py は build_deflator → build_kijun の順で呼ぶので実害は出ないが、
+    # 順番を入れ替えた瞬間にページが1枚消えるので、名前でも守っておく。
+    keep = ({f"{s}.html" for s in slug_of.values()}
+            | {"index.html", f"{SLUG_KIJUN}.html"})
     for f in out.glob("*.html"):
         if f.name not in keep:
             f.unlink()
@@ -404,7 +414,14 @@ def build(basis: dict) -> int:
                     f'<td class="n">{_sign(chg(c))}</td>'
                     + bar_cell(f'{chg(c) - _med:+.1f}', chg(c) - _med,
                                -_dev, _dev, "var(--shu)", zero=True) + '</tr>')
-    idx.append(f'''  <section>
+    idx.append(f'''  <a class="cta" href="{SLUG_KIJUN}.html">
+    <span class="k">Tool ／ 基準年をそろえる</span>
+    <span class="n">建設工事費デフレーターの基準年</span>
+    <span class="d">この指数は基準年の違う系列が同時に公表されています。手元の資料の値がどの基準か分からないまま割り算すると、答えが静かにずれます</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <section>
     <h2><span class="idx">Rank</span>建築系{len(target)}区分</h2>
     <p class="lede">{first}からの上昇が大きい順です。工事種別名をクリックすると、その区分の月次推移と各年の値が出ます。</p>
     <div class="tablebox"><table>

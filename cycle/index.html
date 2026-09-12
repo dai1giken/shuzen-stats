@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マンションの修繕周期 部位別一覧｜令和6年6月改定ガイドラインの81項目（最多は12〜15年）</title>
+<meta name="description" content="国土交通省「長期修繕計画作成ガイドライン」（令和6年6月改定）様式第3-2号の記載例から、推定修繕工事項目ごとの修繕周期 81項目を部位別に並べ直しました。周期は20種類あり、最も多いのは12〜15年で24項目（29.6%）。全体では5年から42年まで幅があります。原典の転記です。">
+<meta property="og:title" content="マンションの修繕周期 部位別一覧｜令和6年6月改定ガイドラインの81項目（最多は12〜15年）">
+<meta property="og:description" content="国土交通省「長期修繕計画作成ガイドライン」（令和6年6月改定）様式第3-2号の記載例から、推定修繕工事項目ごとの修繕周期 81項目を部位別に並べ直しました。周期は20種類あり、最も多いのは12〜15年で24項目（29.6%）。全体では5年から42年まで幅があります。原典の転記です。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dai1giken.co.jp/shuzen-stats/cycle/">
+<meta property="og:image" content="https://dai1giken.co.jp/shuzen-stats/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dai1giken.co.jp/shuzen-stats/cycle/">
+<meta name="google-site-verification" content="JlYgLf9EFV1wkzDSkqkpfB-sqjNbemJtMv0qBqcQf90">
+<meta name="google-site-verification" content="NNcvOHUzGvoLjKQDOX0icqYiyXyQqaLWxEzbQ9OIZQw">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SZ37494LGY"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-SZ37494LGY');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEE9; --surface:#F8F9F5; --sunk:#E4E6DF; --raise:#FFFFFF;
+  --ink:#191D16; --ink2:#4C5348; --ink3:#7D8578;
+  --rule:#D2D6CB; --rule-soft:#E2E5DC; --shu:#BE3A22; --ai:#2C5468;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}}
+:root[data-theme="dark"]{
+  --ground:#151813; --surface:#1D211B; --sunk:#101310; --raise:#262B23;
+  --ink:#E9EBE4; --ink2:#A8B0A3; --ink3:#767E71;
+  --rule:#2F342C; --rule-soft:#242920; --shu:#E4664A; --ai:#7FB2CD;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--jp);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 56px),
+                   repeating-linear-gradient(to bottom,var(--rule-soft) 0 1px,transparent 1px 56px)}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 96px}
+a{color:var(--ai);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--ink);padding:26px 0 10px}
+a.by{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink3);text-decoration:none}
+a.by b{color:var(--ink);font-weight:600;font-family:var(--jp);font-size:14px;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+a.by:hover b{color:var(--shu);text-decoration-color:var(--shu)}
+.masthead .spacer{flex:1 1 100px}
+.crumb{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.srcband{margin-top:18px;border:1px solid var(--ai);border-left-width:4px;background:var(--surface);
+  padding:12px 18px;font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.srcband b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ai);display:block;margin-bottom:4px}
+.srcband strong{color:var(--ink)}
+.toplabel{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ai);
+  margin:28px 0 10px;display:block;font-weight:500}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1;margin:0;text-wrap:balance}
+h1 .sub{display:block;font-family:var(--jp);font-weight:500;font-size:15px;line-height:1.7;color:var(--ink2);margin-top:14px;max-width:60ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:30px}
+.kpi{background:var(--surface);padding:18px 20px}
+.kpi .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;margin:6px 0 4px}
+.kpi .v small{font-size:14px;font-weight:500;color:var(--ink2);margin-left:3px}
+.kpi.hi .v{color:var(--shu)}
+.kpi p{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+section{margin-top:56px}
+h2{font-family:var(--cond);font-weight:600;font-size:23px;margin:0;padding-bottom:9px;border-bottom:1px solid var(--ink);
+  display:flex;align-items:baseline;gap:12px;text-wrap:balance}
+h2 .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--shu);font-weight:500;white-space:nowrap}
+.lede{max-width:64ch;color:var(--ink2);margin:16px 0 0}
+.chartbox{margin-top:20px;background:var(--surface);border:1px solid var(--rule);padding:18px 12px 10px;overflow-x:auto}
+.chartbox{position:relative}
+.chartbox svg{display:block;min-width:600px;width:100%;height:auto}
+.bar{transition:opacity .12s}
+.chartbox svg.hot .bar{opacity:.32}
+.chartbox svg .bar.on{opacity:1}
+.barhit{cursor:crosshair}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--raise);border:1px solid var(--rule);border-radius:3px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink);white-space:nowrap;
+  opacity:0;transition:opacity .1s;z-index:5;font-variant-numeric:tabular-nums;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.tip.on{opacity:1}
+.tip b{display:block;color:var(--ink3);font-weight:500;font-size:11px;margin-bottom:3px}
+.chart-foot{font-family:var(--mono);font-size:11.5px;color:var(--ink3);padding:8px 8px 4px;
+  border-top:1px solid var(--rule-soft);margin-top:6px;line-height:1.7}
+.tablebox{margin-top:20px;overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:420px;background:var(--surface);font-size:13.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft)}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  font-weight:500;background:var(--sunk);border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+tr.me td{background:var(--sunk);font-weight:600}
+/* 数字だけの表では状況が伝わらないので、値の横に長さで見えるバーを置く。
+   JS は使わない。幅はビルド時に計算してインラインで書き込む（bar_cell）。 */
+td.b{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.b .n{display:inline-block;text-align:right}
+td.b .t{display:inline-block;width:84px;height:10px;margin-left:10px;background:var(--sunk);
+  border:1px solid var(--rule-soft);position:relative;vertical-align:middle}
+td.b .t i{position:absolute;top:0;bottom:0;display:block}
+td.b .t u{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink3);opacity:.6}
+td.grp{background:var(--sunk);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.11em;color:var(--ink3);text-transform:uppercase}
+.lgd{display:flex;flex-wrap:wrap;gap:8px 22px;margin:16px 0 0;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.lgd span{display:inline-flex;align-items:center;gap:8px}
+.lgd em{width:24px;height:10px;display:inline-block;font-style:normal;border:1px solid var(--rule-soft)}
+@media (max-width:640px){td.b .t{display:none}}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.warn{margin-top:20px;border:1px solid var(--shu);border-left-width:5px;background:var(--sunk);padding:16px 20px}
+.warn h4{margin:0 0 9px;font-family:var(--cond);font-weight:700;font-size:16px;color:var(--shu)}
+.warn ul{margin:0;padding-left:1.15em;font-size:13px;line-height:1.9;color:var(--ink2)}
+.warn strong{color:var(--ink)}
+.cite .citebox{margin:0;padding:14px 16px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-family:var(--mono);font-size:12.5px;line-height:1.95;color:var(--ink2);word-break:break-all}
+.bandpick{margin:26px 0 0;padding:14px 18px;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+.bandpick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.bandpick select{width:100%;box-sizing:border-box;padding:9px 11px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.bandpick select:focus{outline:2px solid var(--ai);outline-offset:1px}
+.finder{margin:22px 0 6px;padding:16px 18px;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+.finder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.finder input{width:100%;box-sizing:border-box;padding:10px 12px;font-family:var(--jp);font-size:16px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:3px}
+.finder input:focus{outline:2px solid var(--ai);outline-offset:1px;border-color:var(--ai)}
+.qnote{margin:8px 0 0;min-height:1.2em;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+a.cta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:28px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--ai);background:var(--surface)}
+a.cta:hover{background:var(--sunk);border-color:var(--ai)}
+a.cta .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.cta .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.cta:hover .n{color:var(--ai)}
+a.cta .d{font-size:12.5px;color:var(--ink2)}
+a.cta .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--ai)}
+a.sitelink{display:flex;flex-wrap:wrap;align-items:center;gap:3px 18px;margin-top:20px;padding:20px 24px;
+  text-decoration:none;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface)}
+a.sitelink:hover{background:var(--sunk);border-color:var(--shu)}
+a.sitelink .k{width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+a.sitelink .n{font-family:var(--cond);font-weight:700;font-size:22px;color:var(--ink)}
+a.sitelink:hover .n{color:var(--shu)}
+a.sitelink .d{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--shu)}
+.credit{margin-top:22px;padding:14px 18px;background:var(--sunk);border-left:3px solid var(--ai);
+  font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.colophon{margin-top:24px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.9}
+/* トップの目次。ページが21,000px あってナビが無く、各ページ群への入口が
+   本文中の1行ずつしか無かった（2026-09-12 に「どこで見られるか分からない」）。 */
+.sitenav{margin:26px 0 0;border:1px solid var(--rule);border-left:5px solid var(--ai);
+  background:var(--surface);padding:16px 20px}
+.sitenav .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.sitenav ul{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px;background:var(--rule-soft)}
+.sitenav li{background:var(--surface)}
+.sitenav a{display:flex;align-items:baseline;gap:9px;padding:10px 12px;text-decoration:none;color:var(--ink)}
+.sitenav a:hover{background:var(--sunk)}
+.sitenav a b{font-weight:600;font-size:14px}
+.sitenav a span{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  font-variant-numeric:tabular-nums;margin-left:auto}
+.prefgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:24px}
+.prefgrid a{background:var(--surface);padding:12px 14px;text-decoration:none;display:flex;justify-content:space-between;
+  align-items:baseline;gap:8px;color:var(--ink)}
+.prefgrid a:hover{background:var(--sunk)}
+.prefgrid .nm{font-size:14px}
+.prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style>
+<style>
+.rng{position:relative;height:16px;min-width:180px;background:var(--sunk);border-radius:2px}
+.rng i{position:absolute;top:3px;height:10px;background:var(--shu);border-radius:1px;display:block}
+.rng b{position:absolute;top:0;bottom:0;width:1px;background:var(--rule)}
+.rngax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:3px}
+.grp td{background:var(--sunk);font-family:var(--cond);font-weight:700;font-size:14px;color:var(--ink)}
+.sub2{font-size:12px;color:var(--ink3);display:block;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="by" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">制作・提供　<b>株式会社第一技研</b>↗</a>
+    <span class="spacer"></span>
+    <span class="crumb"><a href="https://dai1giken.co.jp/shuzen-stats/">大規模修繕統計ビューア</a> ／ 修繕周期</span>
+  </header>
+  <div class="srcband">
+    <b>SOURCE ／ 出典</b>
+    <strong>このページの内容は、すべて国土交通省「長期修繕計画作成ガイドライン」（令和6年6月改定）の記載例の転記です。</strong>
+    原典の表を部位別に並べ直し、<strong>項目を数え上げるところまで</strong>を行っています。
+    当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
+  </div>
+
+  <span class="toplabel">公表資料 ／ 修繕周期</span>
+  <h1>マンションの修繕周期 部位別一覧
+    <span class="sub">令和6年6月改定の長期修繕計画作成ガイドラインでは、修繕周期は<strong>幅で示されています</strong>（例：12〜15年）。様式第3-2号の記載例にある81項目を並べると、周期は20種類あり、最も多いのは12〜15年で 24項目（29.6%）。全体では5年から42年まで開きがあります。</span>
+  </h1>
+
+  <div class="kpis">
+    <div class="kpi hi">
+      <span class="k">最も多い周期</span>
+      <div class="v">12〜15年</div>
+      <p>81項目中 24項目（29.6%）。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">周期の種類</span>
+      <div class="v">20<small>種</small></div>
+      <p>ひとつの周期に集中してはいません。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">周期の範囲</span>
+      <div class="v">5<small>〜42年</small></div>
+      <p>鉄部塗装から避雷針設備まで。</p>
+    </div>
+    <div class="kpi">
+      <span class="k">掲載項目</span>
+      <div class="v">82<small>項目</small></div>
+      <p>5区分。うち周期の記載があるもの 81項目。</p>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="idx">Note</span>「12年周期」と書かれていないこと</h2>
+    <p class="lede">原典の様式第3-2号は、工事区分ごとに <strong>12〜15年</strong> のように<strong>幅</strong>で周期を示しています。単一の年数は書かれていません。数えると12〜15年が最多ですが、それでも81項目中24項目で、全体の29.6%です。残りは5年から42年まで散らばっています。</p>
+    <div class="warn">
+      <h4>この表が何であって、何でないか</h4>
+      <ul>
+        <li>原典は各欄に<strong>「（参考）」</strong>と明記しています。守るべき基準ではなく、計画を作るときの<strong>記載例</strong>です。</li>
+        <li>原典は「マンションの仕様、立地条件等を考慮して設定します」とし、既存マンションでは<strong>調査・診断の結果に基づいて設定する</strong>としています。この表の年数がそのまま個別の建物に当てはまるものではありません。</li>
+        <li><strong>当社はこの表に基づく推奨をしていません。</strong>実施時期は、建物ごとの劣化状況によって決まります。</li>
+        <li>周期は<strong>工事区分ごとに違います</strong>。同じ部位でも「塗替」と「除去・塗装」では別の周期が示されています。</li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <h2><span class="idx">Table</span>推定修繕工事項目ごとの修繕周期</h2>
+    <p class="lede">原典の様式第3-2号「推定修繕工事項目、修繕周期等の設定内容」の記載例を、そのまま並べたものです。帯は周期の幅で、目盛の縦線は左から12年・24年・36年です。「工事区分」「修繕周期」「想定している修繕方法等」は原典で<strong>いずれも「（参考）」</strong>と付記されている欄です。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>推定修繕工事項目／対象部位等</th><th>工事区分</th><th>修繕周期</th><th>0 〜 42年</th><th>想定している修繕方法等</th></tr></thead>
+      <tbody><tr class="grp"><td colspan="5">Ⅰ 仮設</td></tr><tr class="grp"><td colspan="5">　1 仮設工事</td></tr><tr><td>①共通仮設</td><td>仮設</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>仮設事務所、資材置き場等</td></tr><tr><td>②直接仮設</td><td>仮設</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>枠組足場、養生シート等</td></tr><tr class="grp"><td colspan="5">Ⅱ 建物</td></tr><tr class="grp"><td colspan="5">　2 屋根防水</td></tr><tr><td>①屋上防水（保護）<span class="sub2">屋上、塔屋、ルーフバルコニー</span></td><td>補修・修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>伸縮目地の打替え、保護コンクリート部分補修</td></tr><tr><td>①屋上防水（保護）<span class="sub2">屋上、塔屋、ルーフバルコニー</span></td><td>撤去・新設</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>下地処理、ウレタン塗膜防水通気緩衝工法</td></tr><tr><td>②屋上防水（露出）<span class="sub2">屋上、塔屋</span></td><td>補修・修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>下地処理、保護塗装（トップコート塗り）</td></tr><tr><td>②屋上防水（露出）<span class="sub2">屋上、塔屋</span></td><td>撤去・新設</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>下地処理、改質アスファルト防水（撤去・新規防水）</td></tr><tr><td>③傾斜屋根<span class="sub2">屋根</span></td><td>補修・修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>塗装・部分補修</td></tr><tr><td>③傾斜屋根<span class="sub2">屋根</span></td><td>撤去・葺替</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>既存屋根材を全面撤去の上、下地補修、葺替え（ガルバリウム鋼板等）</td></tr><tr><td>④庇・笠木等防水<span class="sub2">庇天端、笠木天端、パラペット天端・アゴ、架台天端等</span></td><td>修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地処理、ウレタン塗膜防水</td></tr><tr class="grp"><td colspan="5">　3 床防水</td></tr><tr><td>①バルコニー床防水<span class="sub2">バルコニーの床（側溝、幅木を含む）</span></td><td>修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地調整、ウレタン塗膜防水</td></tr><tr><td>②開放廊下・階段等床防水<span class="sub2">開放廊下・階段の床（側溝、幅木を含む）</span></td><td>修繕</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地調整、ウレタン塗膜防水</td></tr><tr class="grp"><td colspan="5">　4 外壁塗装等</td></tr><tr><td>①躯体コンクリート補修<span class="sub2">外壁、屋根、床、手すり壁、軒天（上げ裏）、庇等（コンクリート、モルタル部分）</span></td><td>補修</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>ひび割れ･欠損・爆裂補修</td></tr><tr><td>②外壁塗装（雨掛かり部分）<span class="sub2">外壁、手すり壁等</span></td><td>塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地処理、アクリルシリコン樹脂塗材</td></tr><tr><td>②外壁塗装（雨掛かり部分）<span class="sub2">外壁、手すり壁等</span></td><td>除去・塗装</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>既存塗膜除去、アクリルシリコン樹脂塗材（撤去・新規防水）</td></tr><tr><td>③外壁塗装（非雨掛かり部分）<span class="sub2">外壁、手すり壁等</span></td><td>塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地処理、アクリルシリコン樹脂塗材</td></tr><tr><td>③外壁塗装（非雨掛かり部分）<span class="sub2">外壁、手すり壁等</span></td><td>除去・塗装</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>既塗膜除去、アクリルシリコン樹脂塗材（撤去・新規防水）</td></tr><tr><td>④軒天塗装<span class="sub2">開放廊下・階段、バルコニー等の軒天（上げ裏）部分</span></td><td>塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>高圧水洗の上、下地処理、アクリルシリコン樹脂塗材</td></tr><tr><td>④軒天塗装<span class="sub2">開放廊下・階段、バルコニー等の軒天（上げ裏）部分</span></td><td>除去・塗装</td><td class="n">24〜30年</td><td><div class="rng" title="24〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:14.3%"></i></div></td><td>既塗膜除去、アクリルシリコン樹脂塗材（撤去・新規防水）</td></tr><tr><td>⑤タイル張補修<span class="sub2">外壁・手すり壁等</span></td><td>補修</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>欠損・亀裂・浮部分補修、タイル面洗浄、磁器質タイル貼替え</td></tr><tr><td>⑥シーリング<span class="sub2">外壁目地、建具周り、スリーブ周り、部材接合部等</span></td><td>打替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>コンクリートの打継ぎ目地、サッシ回り、タイル伸縮目地のコーキング打替え</td></tr><tr class="grp"><td colspan="5">　5 鉄部塗装等</td></tr><tr><td>①鉄部塗装（雨掛かり部分）<span class="sub2">（鋼製）開放廊下・階段、バルコニーの手すり</span></td><td>塗替</td><td class="n">5〜7年</td><td><div class="rng" title="5〜7年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:4.8%"></i></div></td><td>ケレン･錆止め･塗替</td></tr><tr><td>①鉄部塗装（雨掛かり部分）<span class="sub2">（鋼製）屋上フェンス、設備機器、立て樋・支持金物、架台、避難ハッチ、マンホール蓋、隔て板枠、物干金物等</span></td><td>塗替</td><td class="n">5〜7年</td><td><div class="rng" title="5〜7年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:4.8%"></i></div></td><td>ケレン･錆止め･塗替</td></tr><tr><td>①鉄部塗装（雨掛かり部分）<span class="sub2">屋外鉄骨階段、自転車置場、遊具、フェンス</span></td><td>塗替</td><td class="n">5〜7年</td><td><div class="rng" title="5〜7年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:4.8%"></i></div></td><td>ケレン･錆止め･塗替</td></tr><tr><td>②鉄部塗装（非雨掛かり部分）<span class="sub2">（鋼製）住戸玄関ドア</span></td><td>塗替</td><td class="n">5〜7年</td><td><div class="rng" title="5〜7年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:4.8%"></i></div></td><td>ケレン･錆止め･塗替</td></tr><tr><td>②鉄部塗装（非雨掛かり部分）<span class="sub2">（鋼製）共用部分ドア、メーターボックス扉、手すり、照明器具、設備機器、配電盤類、屋内消火栓箱等</span></td><td>塗替</td><td class="n">5〜7年</td><td><div class="rng" title="5〜7年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:4.8%"></i></div></td><td>ケレン･錆止め･塗替</td></tr><tr><td>③非鉄部塗装（アルミ製・ステンレス製等）<span class="sub2">サッシ、面格子、ドア、手すり、避難ハッチ、換気口等</span></td><td>清掃</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>清掃・養生</td></tr><tr><td>③非鉄部塗装（ボード、樹脂、木製等）<span class="sub2">隔て板・エアコンスリーブ・雨樋等</span></td><td>塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>下地処理、塩化ビニル樹脂塗料塗装</td></tr><tr class="grp"><td colspan="5">　6 建具・金物等</td></tr><tr><td>①建具関係<span class="sub2">住戸玄関ドア、共用部分ドア、自動ドア</span></td><td>点検・調整</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>点検、補修</td></tr><tr><td>①建具関係<span class="sub2">住戸玄関ドア、共用部分ドア、自動ドア</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>建具取替、スチール枠被せ</td></tr><tr><td>①建具関係<span class="sub2">窓サッシ、面格子、網戸、シャッター</span></td><td>点検・調整</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>点検、補修</td></tr><tr><td>①建具関係<span class="sub2">窓サッシ、面格子、網戸、シャッター</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>建具（掃出しアルミサッシ、面格子）取替、アルミ枠被せ</td></tr><tr><td>②手すり<span class="sub2">開放廊下・階段、バルコニーの手すり、防風スクリーン</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>防風スクリーンの取替</td></tr><tr><td>③屋外鉄骨階段<span class="sub2">屋外鉄骨階段</span></td><td>補修</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>点検、補修</td></tr><tr><td>③屋外鉄骨階段<span class="sub2">屋外鉄骨階段</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>アルミ製トップレール取替</td></tr><tr><td>④金物類（集合郵便受等）<span class="sub2">集合郵便受、掲示板、宅配ロッカー等</span></td><td>取替</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>ステンレス製集合郵便受取替</td></tr><tr><td>④金物類（集合郵便受等）<span class="sub2">笠木、架台、マンホール蓋、階段ノンスリップ、避難ハッチ、タラップ、排水金物、室名札、立て樋・支持金物、隔て板、物干金物、スリーブキャップ等</span></td><td>取替</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>竪樋、ステンレス製避難ハッチ、隔て板、ポーチ門扉取替</td></tr><tr><td>④金物類（集合郵便受等）<span class="sub2">屋上フェンス等</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>⑤金物類（メーターボックス扉等）<span class="sub2">メーターボックスの扉、パイプスペースの扉等</span></td><td>取替</td><td class="n">34〜38年</td><td><div class="rng" title="34〜38年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:81.0%;width:9.5%"></i></div></td><td>スチール製扉取替</td></tr><tr class="grp"><td colspan="5">　7 共用内部</td></tr><tr><td>①共用内部<span class="sub2">管理事務室、集会室、内部廊下、内部階段等の壁、床、天井</span></td><td>張替・塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>補修及び仕上材貼替等</td></tr><tr><td>①共用内部<span class="sub2">エントランスホール、エレベーターホールの壁、床、天井</span></td><td>張替・塗替</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>（壁）下地処理 砂壁状仕上塗材（床）大理石貼欠損・亀裂部分補修　（天井）下地処理、塗替</td></tr><tr class="grp"><td colspan="5">Ⅲ 設備</td></tr><tr class="grp"><td colspan="5">　8 給水設備</td></tr><tr><td>①給水管<span class="sub2">屋内共用給水管</span></td><td>更生</td><td class="n">19〜23年</td><td><div class="rng" title="19〜23年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:45.2%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>①給水管<span class="sub2">屋内共用給水管、屋外共用給水管</span></td><td>取替</td><td class="n">30〜40年</td><td><div class="rng" title="30〜40年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:71.4%;width:23.8%"></i></div></td><td>—</td></tr><tr><td>②貯水槽<span class="sub2">受水槽</span></td><td>補修・取替</td><td class="n">12〜16年</td><td><div class="rng" title="12〜16年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:9.5%"></i></div></td><td>26～30年目に取替(同等品)</td></tr><tr><td>②貯水槽<span class="sub2">高置水槽</span></td><td>補修・取替</td><td class="n">12〜16年</td><td><div class="rng" title="12〜16年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:9.5%"></i></div></td><td>26～30年目に取替(同等品)</td></tr><tr><td>③給水ポンプ<span class="sub2">揚水ポンプ、加圧給水ポンプ、直結増圧ポンプ、弁類等</span></td><td>補修</td><td class="n">5〜8年</td><td><div class="rng" title="5〜8年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:7.1%"></i></div></td><td>分解整備</td></tr><tr><td>③給水ポンプ<span class="sub2">揚水ポンプ、加圧給水ポンプ、直結増圧ポンプ、弁類等</span></td><td>取替</td><td class="n">14〜18年</td><td><div class="rng" title="14〜18年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:33.3%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr class="grp"><td colspan="5">　9 排水設備</td></tr><tr><td>①排水管<span class="sub2">屋内共用雑排水管</span></td><td>更生</td><td class="n">19〜23年</td><td><div class="rng" title="19〜23年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:45.2%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>①排水管<span class="sub2">屋内共用雑排水管、汚水管、雨水管</span></td><td>取替</td><td class="n">30〜40年</td><td><div class="rng" title="30〜40年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:71.4%;width:23.8%"></i></div></td><td>—</td></tr><tr><td>②排水ポンプ<span class="sub2">排水ポンプ、弁類等</span></td><td>補修</td><td class="n">5〜8年</td><td><div class="rng" title="5〜8年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:7.1%"></i></div></td><td>—</td></tr><tr><td>②排水ポンプ<span class="sub2">排水ポンプ、弁類等</span></td><td>取替</td><td class="n">14〜18年</td><td><div class="rng" title="14〜18年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:33.3%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr class="grp"><td colspan="5">　10 ガス設備</td></tr><tr><td>①ガス管<span class="sub2">屋外埋設部ガス管、屋内共用ガス管</span></td><td>取替（更新）</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>—</td></tr><tr class="grp"><td colspan="5">　11 空調・換気設備</td></tr><tr><td>①空調設備<span class="sub2">管理事務室、集会室等のエアコン</span></td><td>取替</td><td class="n">13〜17年</td><td><div class="rng" title="13〜17年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:31.0%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>②換気設備<span class="sub2">管理事務室、集会室、機械室、電気室等の換気扇、ダクト類、換気口、換気ガラリ</span></td><td>取替</td><td class="n">13〜17年</td><td><div class="rng" title="13〜17年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:31.0%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr class="grp"><td colspan="5">　12 電灯設備等</td></tr><tr><td>①電灯設備<span class="sub2">共用廊下・エントランスホール等の照明器具、配線器具、非常照明、避難口・通路誘導灯、外灯等</span></td><td>取替</td><td class="n">18〜22年</td><td><div class="rng" title="18〜22年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:42.9%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>②配電盤類<span class="sub2">配電盤・プルボックス等</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>③幹線設備<span class="sub2">引込開閉器、幹線（電灯、動力）等</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>幹線ケーブル引替</td></tr><tr><td>④避雷針設備<span class="sub2">避雷突針・ポール・支持金物・導線・接地極等</span></td><td>取替</td><td class="n">38〜42年</td><td><div class="rng" title="38〜42年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:90.5%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>⑤自家発電設備<span class="sub2">発電設備</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>—</td></tr><tr class="grp"><td colspan="5">　13 情報・通信設備</td></tr><tr><td>①電話設備<span class="sub2">電話配線盤（MDF）、中間端子盤（IDF）等</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>②テレビ共聴設備<span class="sub2">アンテナ、増幅器、分配器等　※同軸ケーブルを除く</span></td><td>取替</td><td class="n">15〜20年</td><td><div class="rng" title="15〜20年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:35.7%;width:11.9%"></i></div></td><td>取替(同等品)</td></tr><tr><td>③インターネット設備<span class="sub2">住棟内ネットワーク</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>設備交換</td></tr><tr><td>④インターホン設備等<span class="sub2">インターホン設備、オートロック設備、住宅情報盤、防犯設備、配線等</span></td><td>取替</td><td class="n">15〜20年</td><td><div class="rng" title="15〜20年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:35.7%;width:11.9%"></i></div></td><td>取替(同等品)</td></tr><tr class="grp"><td colspan="5">　14 消防用設備</td></tr><tr><td>①屋内消火栓設備<span class="sub2">消火栓ポンプ、消火管、ホース類、屋内消火栓箱等</span></td><td>取替</td><td class="n">23〜27年</td><td><div class="rng" title="23〜27年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:54.8%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>②自動火災報知設備<span class="sub2">感知器、発信器、表示灯、音響装置、中継器、受信器等</span></td><td>取替</td><td class="n">18〜22年</td><td><div class="rng" title="18〜22年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:42.9%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr><td>③連結送水管設備<span class="sub2">送水口、放水口、消火管、消火隊専用栓箱等</span></td><td>取替</td><td class="n">23〜27年</td><td><div class="rng" title="23〜27年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:54.8%;width:9.5%"></i></div></td><td>取替(同等品)</td></tr><tr class="grp"><td colspan="5">　15 昇降機設備</td></tr><tr><td>①昇降機<span class="sub2">カゴ内装、扉、三方枠等</span></td><td>補修</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>（かご内装・枠・扉）下地処理　化粧樹脂ﾌｨﾙﾑ貼り</td></tr><tr><td>①昇降機<span class="sub2">全構成機器</span></td><td>取替</td><td class="n">26〜30年</td><td><div class="rng" title="26〜30年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:61.9%;width:9.5%"></i></div></td><td>制御リニューアル(モーター､制御盤他取替)</td></tr><tr class="grp"><td colspan="5">　16 立体駐車場設備</td></tr><tr><td>①自走式駐車場<span class="sub2">プレハブ造（鉄骨造＋ＡＬＣ）</span></td><td>補修</td><td class="n">8〜12年</td><td><div class="rng" title="8〜12年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:19.0%;width:9.5%"></i></div></td><td>床面補修、鉄部塗装</td></tr><tr><td>①自走式駐車場<span class="sub2">プレハブ造（鉄骨造＋ＡＬＣ）</span></td><td>建替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>②機械式駐車場<span class="sub2">二段方式、多段方式（昇降式、横行昇降式、ピット式）垂直循環方式等</span></td><td>補修</td><td class="n">5年</td><td><div class="rng" title="5年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:1.2%"></i></div></td><td>補修(部品取替)</td></tr><tr><td>②機械式駐車場<span class="sub2">二段方式、多段方式（昇降式、横行昇降式、ピット式）垂直循環方式等</span></td><td>取替</td><td class="n">18〜22年</td><td><div class="rng" title="18〜22年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:42.9%;width:9.5%"></i></div></td><td>装置入替リニューアル</td></tr><tr class="grp"><td colspan="5">Ⅳ 外構・その他</td></tr><tr class="grp"><td colspan="5">　17 外構・附属施設</td></tr><tr><td>①外構<span class="sub2">平面駐車場、車路・歩道等の舗装、側溝、排水溝、擁壁等</span></td><td>補修</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>インターロッキング、アスファルト舗装</td></tr><tr><td>①外構<span class="sub2">囲障（塀、フェンス等）、サイン（案内板）、遊具、ベンチ等</span></td><td>取替</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>塗装補修 及び 取替（同等品）</td></tr><tr><td>①外構<span class="sub2">埋設排水管、排水桝等 ※埋設給水管を除く</span></td><td>取替</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>②附属施設<span class="sub2">自転車置場、ゴミ集積所</span></td><td>取替</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>—</td></tr><tr><td>②附属施設<span class="sub2">植樹</span></td><td>整備</td><td class="n">24〜28年</td><td><div class="rng" title="24〜28年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:57.1%;width:9.5%"></i></div></td><td>—</td></tr><tr class="grp"><td colspan="5">　18 調査・診断、設計、工事監理等費用</td></tr><tr><td>①点検・調査・診断<span class="sub2">大規模修繕工事の実施前に行う点検・調査・診断</span></td><td>—</td><td class="n">10〜12年</td><td><div class="rng" title="10〜12年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:23.8%;width:4.8%"></i></div></td><td>—</td></tr><tr><td>②設計、コンサルタント<span class="sub2">計画修繕工事の設計（基本設計・実施設計）・コンサルタント</span></td><td>—</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>—</td></tr><tr><td>③工事監理<span class="sub2">計画修繕工事の工事監理</span></td><td>—</td><td class="n">12〜15年</td><td><div class="rng" title="12〜15年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:28.6%;width:7.1%"></i></div></td><td>—</td></tr><tr><td>④臨時点検（被災時）<span class="sub2">建物、設備、外構</span></td><td>—</td><td class="n">－</td><td></td><td>—</td></tr><tr class="grp"><td colspan="5">　19 長期修繕計画作成費用</td></tr><tr><td>①見直し<span class="sub2">長期修繕計画の見直しのための点検・調査・診断／長期修繕計画の見直し</span></td><td>—</td><td class="n">5年</td><td><div class="rng" title="5年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:11.9%;width:1.2%"></i></div></td><td>—</td></tr><tr class="grp"><td colspan="5">Ⅵ 専有部分工事項目</td></tr><tr class="grp"><td colspan="5">　専有部分配管</td></tr><tr><td>①専有部分配管<span class="sub2">専有部分給水管、専有部分雑排水管、専有部分汚水管</span></td><td>取替</td><td class="n">28〜32年</td><td><div class="rng" title="28〜32年"><b style="left:28.6%"></b><b style="left:57.1%"></b><b style="left:85.7%"></b><i style="left:66.7%;width:9.5%"></i></div></td><td>共用給排水管の取替と同時に実施</td></tr></tbody>
+    </table></div>
+    <p class="colophon">出典：国土交通省「長期修繕計画作成ガイドライン」様式第3-2号 記載例（令和6年6月改定）。PDF p122〜p125（紙面 -111- 〜 -114-）。<a href="https://www.mlit.go.jp/jutakukentiku/house/content/001747006.pdf" target="_blank" rel="noopener">原典PDF</a>。取得日 2026-09-12。「－」は原典に記載のない欄です。Ⅴ性能向上工事項目・Ⅶ諸経費等は原典で周期が空欄のため載せていません。対象部位等の「／」は、原典でセルが複数行に分かれている箇所の区切りで、原典の文字ではありません。</p>
+  </section>
+  <section>
+    <h2><span class="idx">Count</span>周期ごとの項目数</h2>
+    <p class="lede">上の表を周期の表記ごとに数えたものです。20種類に分かれています。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>修繕周期</th><th>項目数</th><th>割合</th><th></th></tr></thead>
+      <tbody><tr><td class="n">12〜15年</td><td class="n">24</td><td class="n">29.6%</td><td><div class="rng"><i style="left:0;width:100.0%"></i></div></td></tr><tr><td class="n">28〜32年</td><td class="n">8</td><td class="n">9.9%</td><td><div class="rng"><i style="left:0;width:33.3%"></i></div></td></tr><tr><td class="n">24〜28年</td><td class="n">7</td><td class="n">8.6%</td><td><div class="rng"><i style="left:0;width:29.2%"></i></div></td></tr><tr><td class="n">24〜30年</td><td class="n">6</td><td class="n">7.4%</td><td><div class="rng"><i style="left:0;width:25.0%"></i></div></td></tr><tr><td class="n">34〜38年</td><td class="n">6</td><td class="n">7.4%</td><td><div class="rng"><i style="left:0;width:25.0%"></i></div></td></tr><tr><td class="n">5〜7年</td><td class="n">5</td><td class="n">6.2%</td><td><div class="rng"><i style="left:0;width:20.8%"></i></div></td></tr><tr><td class="n">18〜22年</td><td class="n">3</td><td class="n">3.7%</td><td><div class="rng"><i style="left:0;width:12.5%"></i></div></td></tr><tr><td class="n">12〜16年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">13〜17年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">14〜18年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">15〜20年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">19〜23年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">23〜27年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">30〜40年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">5〜8年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">5年</td><td class="n">2</td><td class="n">2.5%</td><td><div class="rng"><i style="left:0;width:8.3%"></i></div></td></tr><tr><td class="n">10〜12年</td><td class="n">1</td><td class="n">1.2%</td><td><div class="rng"><i style="left:0;width:4.2%"></i></div></td></tr><tr><td class="n">26〜30年</td><td class="n">1</td><td class="n">1.2%</td><td><div class="rng"><i style="left:0;width:4.2%"></i></div></td></tr><tr><td class="n">38〜42年</td><td class="n">1</td><td class="n">1.2%</td><td><div class="rng"><i style="left:0;width:4.2%"></i></div></td></tr><tr><td class="n">8〜12年</td><td class="n">1</td><td class="n">1.2%</td><td><div class="rng"><i style="left:0;width:4.2%"></i></div></td></tr></tbody>
+    </table></div>
+    <p class="colophon">母数は周期の記載がある 81項目です。割合は小数第1位まで。出典は上の表と同じ。</p>
+  </section>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/deflator/kijun-nendo.html">
+    <span class="k">Tool ／ 工事費の指数</span>
+    <span class="n">建設工事費デフレーターの基準年</span>
+    <span class="d">長期修繕計画の金額を今の水準に直すときは、指数の基準年をそろえる必要があります</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/">
+    <span class="k">大規模修繕統計ビューア</span>
+    <span class="n">トップへ</span>
+    <span class="d">工事費指数・戸あたり工事金額・修繕積立金の公表値</span>
+    <span class="arrow">→</span>
+  </a>
+  <section class="cite">
+    <h2><span class="idx">Cite</span>このページを引用する</h2>
+    <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>
+    <p class="citebox">出典：大規模修繕統計ビューア（株式会社第一技研）https://dai1giken.co.jp/shuzen-stats/cycle/ 2026-09-12取得。原データは総務省・国土交通省の公表統計（e-Stat）。</p>
+    <p class="colophon">機械可読な全数値は <a href="https://dai1giken.co.jp/shuzen-stats/basis.json">basis.json</a>、サイト全体の案内は <a href="https://dai1giken.co.jp/shuzen-stats/llms.txt">llms.txt</a> にあります。</p>
+  </section>
+<script>
+(function(){
+  document.querySelectorAll('.chartbox').forEach(function(box){
+    var svg=box.querySelector('svg'), tip=box.querySelector('.tip');
+    if(!svg||!tip) return;
+    var bars=[].slice.call(svg.querySelectorAll('.bar'));
+    var hits=[].slice.call(svg.querySelectorAll('.barhit'));
+    if(!hits.length) return;
+    function show(ev,i){
+      svg.classList.add('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.toggle('on', k===i);
+      tip.className='tip on';
+      tip.innerHTML='<b>'+hits[i].getAttribute('data-y')+'</b>'+hits[i].getAttribute('data-v')+' 戸';
+      var r=box.getBoundingClientRect();
+      var left=(ev.clientX-r.left)+box.scrollLeft+14;
+      if(left+tip.offsetWidth > r.width+box.scrollLeft-8) left=left-tip.offsetWidth-28;
+      tip.style.left=Math.max(4+box.scrollLeft,left)+'px';
+      tip.style.top=Math.max(4,(ev.clientY-r.top)-tip.offsetHeight-12)+'px';
+    }
+    function hide(){
+      svg.classList.remove('hot');
+      for(var k=0;k<bars.length;k++) bars[k].classList.remove('on');
+      tip.className='tip';
+    }
+    hits.forEach(function(h,i){
+      h.addEventListener('mousemove',function(ev){ show(ev,i); });
+      h.addEventListener('touchstart',function(ev){ if(ev.touches[0]) show(ev.touches[0],i); },{passive:true});
+    });
+    svg.addEventListener('mouseleave',hide);
+    svg.addEventListener('touchend',hide);
+  });
+})();
+</script>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/#calc">
+    <span class="k">Tool ／ 自分のマンションで試す</span>
+    <span class="n">修繕積立金と工事費を並べる</span>
+    <span class="d">戸数と積立の条件を入れると、入力した積立額と、実態調査の分布に戸数を掛けた額とを並べて表示します。見積でも、必要額の算定でも、助言でもありません</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="cta" href="https://dai1giken.co.jp/shuzen-stats/">
+    <span class="k">全国の統計へ</span>
+    <span class="n">大規模修繕統計ビューア</span>
+    <span class="d">工事費指数・戸あたり工事金額・修繕周期・積立金は全国共通です</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="sitelink" href="https://dai1giken.co.jp/" target="_blank" rel="noopener">
+    <span class="k">制作・提供</span>
+    <span class="n">株式会社第一技研</span>
+    <span class="d">マンション・ビルの外装大規模修繕　dai1giken.co.jp</span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="credit">この統計データは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、内容は国によって保証されたものではありません。<br>
+  本ページの図表・数値は、出典の明記だけで自由に転載できます（CC BY 4.0）。</p>
+</div>
+</body>
+</html>

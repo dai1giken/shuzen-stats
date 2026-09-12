@@ -252,7 +252,15 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 """
 
 
-def head(title: str, desc: str, canonical: str, crumb: str = "都道府県別") -> str:
+def head(title: str, desc: str, canonical: str, crumb: str = "都道府県別",
+         extra_css: str = "") -> str:
+    """ページの <head> とヘッダ。
+
+    extra_css は**そのページだけで使う CSS**を足すための口。既定は空文字で、
+    渡さなければ出力は1バイトも変わらない。CSS 本体（`CSS`）に足すと
+    349ページ全部のバイト列が動くので、1ページでしか使わない指定は
+    こちらに置くこと。
+    """
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -270,7 +278,7 @@ def head(title: str, desc: str, canonical: str, crumb: str = "都道府県別") 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
-<style>{CSS}</style>
+<style>{CSS}</style>{extra_css}
 </head>
 <body>
 <div class="wrap">
@@ -869,6 +877,10 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}reform/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.6</priority></url>')
+    # 修繕周期（build_cycle が先に生成している前提。無ければ黙って飛ばす）
+    cy_dir = HERE / "cycle"
+    if cy_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}cycle/</loc><lastmod>{day}</lastmod><priority>0.8</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

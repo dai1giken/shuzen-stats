@@ -235,6 +235,103 @@ def fetch_deflator() -> dict:
     }
 
 
+# 旧基準の建設工事費デフレーター。**2020年度基準と同時に公表され続けている。**
+# 同じ月・同じ工事種別に複数の公式値が並ぶ原因がこれで、読者が最も混乱する点。
+#   2015年度基準 0003447801 … 2011年4月〜2026年3月（建築補修は2015年4月から）
+#   2011年度基準 0003447798 … 2005年4月〜2021年3月（建築補修は**無い**。2015年度基準で新設）
+DEFLATOR_BASES: list[tuple[str, str, str]] = [
+    ("2015", "0003447801", "2015年度＝100"),
+    ("2011", "0003447798", "2011年度＝100"),
+]
+
+
+def fetch_deflator_bases(months20: list[str], all20: dict) -> dict:
+    """旧基準の系列を、工事種別ページと同じ31区分ぶん取得する。
+
+    区分は **build_deflator.SERIES を唯一の定義**として読む。ここで別に
+    書き並べると、ページを増やしたときに片方だけ古くなる（SITE_URL で
+    同じ事故を起こしている）。
+
+    --- 接続係数の出し方 -------------------------------------------------
+    旧基準の系列は「旧年度＝100」なので、そのままでは2020年度基準と比べられない。
+    2020年度（2020年4月〜2021年3月）の**旧基準側の平均**で割れば 2020年度＝100 に
+    そろう。これが改基準係数で、**公表値の割り算だけで出る**。
+
+    ただし基準改定ではウエイトも入れ替わるので、割り戻した値と実際の
+    2020年度基準は**完全には一致しない**。その残差もここで測って持たせる。
+    画面に誤差の向きを出すために要る。**隠すと企画の意味がなくなる。**
+    """
+    from build_deflator import SERIES  # 区分の定義はページ側が持つ
+
+    def mkey(m: str) -> tuple[int, int]:
+        y, mm = m.split("年")
+        return int(y), int(mm.rstrip("月"))
+
+    out: dict[str, dict] = {}
+    for tag, sid, base in DEFLATOR_BASES:
+        meta = _call("getMetaInfo", statsDataId=sid)["GET_META_INFO"]["METADATA_INF"]
+        objs = {c["@id"]: c for c in meta["CLASS_INF"]["CLASS_OBJ"]}
+        tname = {i["@code"]: i["@name"] for i in _as_list(objs["time"]["CLASS"])}
+        cname = {i["@code"]: i["@name"] for i in _as_list(objs["cat01"]["CLASS"])}
+
+        d = _call("getStatsData", statsDataId=sid, cdTab=DEFLATOR_TAB, limit=100000)
+        sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+        values = _as_list(sd["DATA_INF"]["VALUE"])
+        total = int(sd["RESULT_INF"].get("TOTAL_NUMBER", len(values)))
+        if total != len(values):
+            sys.exit(f"{tag}年度基準: {total}値のうち{len(values)}値しか返っていません。")
+
+        raw: dict[str, dict[str, float]] = {}
+        for v in values:
+            try:
+                raw.setdefault(v["@cat01"], {})[tname[v["@time"]]] = float(v["$"])
+            except (ValueError, TypeError, KeyError):
+                continue
+
+        # 2020年度の12ヶ月。旧基準側にこれが揃っていない区分は接続できない。
+        fy2020 = [f"{y}年{m}月" for y, m in
+                  [(2020, m) for m in range(4, 13)] + [(2021, m) for m in range(1, 4)]]
+
+        series: dict[str, dict] = {}
+        skipped: list[str] = []
+        for code, slug, nm, _note in SERIES:
+            s = raw.get(code)
+            if not s or not all(m in s for m in fy2020) or code not in all20:
+                skipped.append(f"{code} {nm}")
+                continue
+            months = sorted(s, key=mkey)
+            factor = sum(s[m] for m in fy2020) / 12.0
+
+            # 割り戻した値と実際の2020年度基準の差（実際 − 換算）。
+            v20 = dict(zip(months20, all20[code]["values"]))
+            res = [round(v20[m] - s[m] / factor * 100, 3) for m in months if m in v20]
+            series[code] = {
+                "name": cname.get(code, code),
+                "slug": slug,
+                "months": months,
+                "values": [s[m] for m in months],
+                "factor": round(factor, 4),
+                "overlap": len(res),
+                "res_min": min(res) if res else None,
+                "res_max": max(res) if res else None,
+                "res_mean": round(sum(res) / len(res), 3) if res else None,
+            }
+
+        if not series:
+            sys.exit(f"{tag}年度基準: 接続できる区分が1つもありません。")
+        print(f"  {tag}年度基準 {len(series)}区分 / {len(values):,}値"
+              + (f"　接続不可 {len(skipped)}件（{skipped[0]} ほか）" if skipped else ""))
+
+        out[tag] = {
+            "base": base,
+            "statsDataId": sid,
+            "url": f"https://www.e-stat.go.jp/dbview?sid={sid}",
+            "series": series,
+            "skipped": skipped,
+        }
+    return out
+
+
 def fetch_cpi(months: list[str]) -> dict:
     """消費者物価指数（総合・全国）を、デフレーターと同じ月軸に揃えて返す。"""
     meta = _call("getMetaInfo", statsDataId=CPI_ID)["GET_META_INFO"]["METADATA_INF"]
@@ -839,6 +936,10 @@ def main() -> None:
 
     print("\n建設工事費デフレーター:")
     basis["deflator"] = fetch_deflator()
+
+    print("旧基準の建設工事費デフレーター（同時に公表され続けている）:")
+    basis["deflator_bases"] = fetch_deflator_bases(
+        basis["deflator"]["months"], basis["deflator"]["all"])
 
     print("\n消費者物価指数:")
     basis["cpi"] = fetch_cpi(basis["deflator"]["months"])

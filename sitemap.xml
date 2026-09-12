@@ -251,6 +251,7 @@
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/jutaku-src.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/kenchiku-hoshu.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/kenchiku-sogo.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
+<url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/kijun-nendo.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/mokuzo-hijutaku.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/mokuzo-jimusho.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/deflator/mokuzo-jutaku.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
@@ -349,4 +350,5 @@
 <url><loc>https://dai1giken.co.jp/shuzen-stats/reform/shop.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/reform/warehouse.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
 <url><loc>https://dai1giken.co.jp/shuzen-stats/reform/welfare.html</loc><lastmod>2026-09-12</lastmod><priority>0.6</priority></url>
+<url><loc>https://dai1giken.co.jp/shuzen-stats/cycle/</loc><lastmod>2026-09-12</lastmod><priority>0.8</priority></url>
 </urlset>
