@@ -297,12 +297,20 @@ TIP_JS = '''<script>
 #
 # **「直接ご相談ください」「中間マージン」とは書かない。**第一技研は元請ゼネコンの
 # 協力会社で、そう読める文言は元請の顧客を取りに行く姿勢に映る。事実だけ置く。
+#
+# 2026-09-12、CTA_HOUSING の呼びかけ先を変えた。
+# 旧「この地域の**大規模修繕**をご検討中の方へ」は、分譲マンションの管理組合＝
+# **元請ゼネコンの主戦場の客**に、下請が直接声をかける形になっていた。
+# 新しい文言は **元請業者そのもの**と**賃貸・テナントビルのオーナー**に向けている。
+# 市場規模は落ちない（非居住オーナー3,121億＋住宅民間企業等6,092億＝9,213億円で、
+# 管理組合9,530億円とほぼ同じ。リフォーム・リニューアル調査 表2-2・2025年度）。
+# **「大規模修繕をご検討中の方へ」に戻さないこと。**
 CONTACT_URL = "https://dai1giken.co.jp/#contact"
 
 CTA_HOUSING = f"""
   <a class="cta" href="{CONTACT_URL}">
-    <span class="k">この地域の大規模修繕をご検討中の方へ</span>
-    <span class="n">建物調査・お見積は一件から</span>
+    <span class="k">大規模修繕の元請業者様、賃貸マンション・テナントビルのオーナー様へ</span>
+    <span class="n">建物調査・お見積は一棟から</span>
     <span class="d">足場・下地補修・シーリング・塗装・防水を自社管理で一貫対応しています。株式会社第一技研</span>
     <span class="arrow">→</span>
   </a>
@@ -768,9 +776,15 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}deflator/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.6</priority></url>')
-    # 建物オーナー向け（build_rent が先に生成している前提）
-    if (HERE / "rent" / "index.html").is_file():
+    # 建物オーナー向け（build_rent が先に生成している前提。無ければ黙って飛ばす）
+    rt_dir = HERE / "rent"
+    if rt_dir.is_dir():
         sm.append(f'<url><loc>{SITE_URL}rent/</loc><lastmod>{day}</lastmod><priority>0.8</priority></url>')
+        for f in sorted(rt_dir.glob("*.html")):
+            if f.name == "index.html":
+                continue
+            sm.append(f'<url><loc>{SITE_URL}rent/{f.name}</loc><lastmod>{day}</lastmod>'
+                      f'<priority>0.6</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 
