@@ -19,6 +19,7 @@ from build_city import build as build_city
 from build_column import build as build_column
 from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
+from build_rent import build as build_rent
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
@@ -459,12 +460,14 @@ def main() -> None:
     n_city = build_city(basis)
     n_nonres = build_nonres(basis)
     n_defl = build_deflator(basis)
+    n_rent = build_rent(basis)
     n_col = build_column(basis)
     n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
     print(f"city/      {n_city} 市区町村 ＋ 一覧")
     print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
     print(f"deflator/  {n_defl} 工事種別 ＋ 一覧")
+    print(f"rent/      {n_rent} ページ（家賃と修繕費）")
     print(f"column/    {n_col} 本 ＋ 一覧（企業サイト用）")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
@@ -526,6 +529,7 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - [トップ]({SITE_URL}) — 全国の指標、工事費指数、戸あたり工事金額、修繕積立金
 - [都道府県別の一覧]({SITE_URL}pref/) — 47都道府県
 - [市区町村別の一覧]({SITE_URL}city/) — 一都三県の市区
+- [家賃と修繕費]({SITE_URL}rent/) — 賃貸マンション・ビルの所有者向け。家賃・修繕費・物価の推移
 - [工事種別の一覧]({SITE_URL}deflator/) — 建設工事費デフレーターの建築系31区分
 - [非住宅建築物の一覧]({SITE_URL}nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）

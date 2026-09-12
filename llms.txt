@@ -20,6 +20,7 @@
 - [トップ](https://dai1giken.co.jp/shuzen-stats/) — 全国の指標、工事費指数、戸あたり工事金額、修繕積立金
 - [都道府県別の一覧](https://dai1giken.co.jp/shuzen-stats/pref/) — 47都道府県
 - [市区町村別の一覧](https://dai1giken.co.jp/shuzen-stats/city/) — 一都三県の市区
+- [家賃と修繕費](https://dai1giken.co.jp/shuzen-stats/rent/) — 賃貸マンション・ビルの所有者向け。家賃・修繕費・物価の推移
 - [工事種別の一覧](https://dai1giken.co.jp/shuzen-stats/deflator/) — 建設工事費デフレーターの建築系31区分
 - [非住宅建築物の一覧](https://dai1giken.co.jp/shuzen-stats/nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json](https://dai1giken.co.jp/shuzen-stats/basis.json) — 全ページの数値と系列（機械可読）

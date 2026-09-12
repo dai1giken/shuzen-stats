@@ -271,6 +271,114 @@ def fetch_cpi(months: list[str]) -> dict:
     }
 
 
+# 建物オーナーの損益に効く CPI の品目。**いま呼んでいる CPI と同じ統計表の中にある。**
+# 新しいデータ源は1つも増えない（2026-09-12 確認）。
+RENT_ITEMS = [
+    ("0047", "民営家賃"),
+    ("0051", "設備修繕・維持"),
+    ("0045", "住居"),
+    ("0050", "持家の帰属家賃"),
+    ("0001", "総合"),
+]
+# 地域別。**品目レベルの「民営家賃」(0047) は全国と東京都区部にしか無い**
+# （メタには67地域あるが、表が持っていない。2026-09-12 実測）。
+# 中分類の「家賃」(0046) なら67地域すべてで揃うので、地域別はこちらを使う。
+# 公営・UR・公社の家賃を含む点が民営家賃との違い。ページに明記すること。
+RENT_AREA_ITEMS = [("0046", "家賃"), ("0051", "設備修繕・維持")]
+
+
+def fetch_rent(months: list[str]) -> dict:
+    """CPI から家賃まわりの品目を、デフレーターと同じ月軸に揃えて返す。
+
+    --- 地域を混ぜないこと ------------------------------------------------
+    **工事費デフレーターに地域別は無い。**全国しかない。なので図に重ねるのは
+    全国どうしだけにして、地域別は「民営家賃どうしの比較」に閉じる。
+    v1.0 で「同じページの上と下で東京都が5.3倍ちがう」事故を起こしたのは、
+    出典と定義の違うものを並べたからだった。同じことを繰り返さない。
+
+    --- 基準が違う --------------------------------------------------------
+    CPI は **2020年（暦年）＝100**、建設工事費デフレーターは **2020年度＝100**。
+    どちらも指数だが基準期間が違うので、差は「基準からの離れかたの違い」を
+    見るものであって、水準の差ではない。ページに書くこと。
+    """
+    meta = _call("getMetaInfo", statsDataId=CPI_ID)["GET_META_INFO"]["METADATA_INF"]
+    tname, aname = {}, {}
+    for c in meta["CLASS_INF"]["CLASS_OBJ"]:
+        if c["@id"] == "time":
+            tname = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+        if c["@id"] == "area":
+            aname = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+
+    first = next((k for k, v in tname.items() if v == months[0]), None)
+    if not first:
+        sys.exit(f"CPI に {months[0]} がありません。月軸を揃えられません。")
+
+    # ---- 全国・品目別（1回） ----
+    d = _call("getStatsData", statsDataId=CPI_ID, cdTab="1", cdArea="00000",
+              cdCat01=",".join(c for c, _ in RENT_ITEMS),
+              cdTimeFrom=first, limit=100000)
+    raw: dict[str, dict[str, float]] = {}
+    for v in _as_list(d["GET_STATS_DATA"]["STATISTICAL_DATA"]["DATA_INF"]["VALUE"]):
+        label = tname.get(v["@time"], "")
+        if not label.endswith("月"):
+            continue
+        try:
+            raw.setdefault(v["@cat01"], {})[label] = float(v["$"])
+        except (ValueError, TypeError):
+            continue
+
+    national = {}
+    for code, name in RENT_ITEMS:
+        got = raw.get(code, {})
+        miss = [m for m in months if m not in got]
+        if miss:
+            sys.exit(f"CPI「{name}」に無い月が {len(miss)} 件あります（例 {miss[:2]}）。")
+        national[name] = [got[m] for m in months]
+
+    # ---- 地域別（1回。家賃と設備修繕・維持をまとめて） ----
+    d2 = _call("getStatsData", statsDataId=CPI_ID, cdTab="1",
+               cdCat01=",".join(c for c, _ in RENT_AREA_ITEMS),
+               cdTimeFrom=first, limit=100000)
+    byarea: dict[str, dict[str, dict[str, float]]] = {}
+    for v in _as_list(d2["GET_STATS_DATA"]["STATISTICAL_DATA"]["DATA_INF"]["VALUE"]):
+        label = tname.get(v["@time"], "")
+        if not label.endswith("月"):
+            continue
+        try:
+            byarea.setdefault(v["@area"], {}).setdefault(v["@cat01"], {})[label] = float(v["$"])
+        except (ValueError, TypeError):
+            continue
+
+    areas = {}
+    for acode, per_item in byarea.items():
+        # 両方の品目が全月そろっている地域だけ。欠けたまま順位を作ると
+        # 読者が表で確かめられない。
+        if not all(code in per_item and all(m in per_item[code] for m in months)
+                   for code, _ in RENT_AREA_ITEMS):
+            continue
+        # e-Stat の地域名は「13100 東京都区部」のようにコードが前に付く
+        nm = aname.get(acode, acode).split()[-1]
+        areas[nm] = {name: [per_item[code][m] for m in months]
+                     for code, name in RENT_AREA_ITEMS}
+
+    a, z = months[0], months[-1]
+    chg = lambda v: (v[-1] / v[0] - 1) * 100
+    print(f"  全国 {len(national)} 品目 / 地域別 {len(areas)} 地域　（{a}〜{z}）")
+    for name in ("民営家賃", "設備修繕・維持", "総合"):
+        v = national[name]
+        print(f"    {name:<12} {v[0]:6.1f} → {v[-1]:6.1f}  {chg(v):+6.1f}%")
+    return {
+        "statsDataId": CPI_ID,
+        "name": "消費者物価指数（2020年基準）",
+        "base": "2020年＝100",
+        "url": f"https://www.e-stat.go.jp/dbview?sid={CPI_ID}",
+        "items": [n for _, n in RENT_ITEMS],
+        "national": national,
+        "area_items": [n for _, n in RENT_AREA_ITEMS],
+        "areas": areas,
+    }
+
+
 def fetch_nonres() -> dict:
     """非住宅建築物を、用途別・都道府県別・年度別に取る。
 
@@ -660,6 +768,9 @@ def main() -> None:
 
     print("\n消費者物価指数:")
     basis["cpi"] = fetch_cpi(basis["deflator"]["months"])
+    print()
+    print("家賃まわり（同じCPI表から）:")
+    basis["rent"] = fetch_rent(basis["deflator"]["months"])
 
     print("\n都道府県別 分譲マンション着工戸数（%d〜%d年度）:" % COHORT)
     basis["prefecture"] = fetch_prefecture()

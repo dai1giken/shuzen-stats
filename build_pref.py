@@ -768,6 +768,9 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}deflator/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.6</priority></url>')
+    # 建物オーナー向け（build_rent が先に生成している前提）
+    if (HERE / "rent" / "index.html").is_file():
+        sm.append(f'<url><loc>{SITE_URL}rent/</loc><lastmod>{day}</lastmod><priority>0.8</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

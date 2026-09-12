@@ -51,7 +51,7 @@ HERE = Path(__file__).resolve().parent
 # /shuzen-stats/ 直下に置くファイル
 FILES = ["index.html", "ogp.png", "sitemap.xml", "robots.txt", "llms.txt", "basis.json"]
 # /shuzen-stats/ 配下に置くディレクトリ（column は企業サイト側なので入れない）
-DIRS = ["pref", "city", "nonres", "deflator"]
+DIRS = ["pref", "city", "nonres", "deflator", "rent"]
 
 
 def stage(dest: Path) -> None:
@@ -114,7 +114,20 @@ def changed_since(ref: str) -> list[str]:
     if r.returncode != 0:
         raise SystemExit(f"git diff が失敗しました（ref={ref}）:\n{r.stderr.strip()}")
 
+    # **未追跡のファイルは git diff に出ない。**新しいディレクトリを足した直後に
+    # --since を使うと、そのディレクトリまるごとが ZIP から黙って抜ける。
+    # 2026-09-12 に rent/ で踏みかけた。コミット前でも拾えるようにする。
+    u = subprocess.run(["git", "ls-files", "--others", "--exclude-standard"],
+                       cwd=HERE, capture_output=True, text=True, encoding="utf-8")
+    untracked = [ln.strip() for ln in u.stdout.splitlines() if ln.strip()]
+
     pub, deleted = [], []
+    for path in untracked:
+        top = path.split("/")[0]
+        if path in FILES or top in DIRS:
+            pub.append(path)
+    if pub:
+        print(f"  未コミットの新規ファイルを {len(pub)}件 含めました")
     for line in r.stdout.splitlines():
         if not line.strip():
             continue
