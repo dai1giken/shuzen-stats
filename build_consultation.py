@@ -49,7 +49,7 @@ HERE = Path(__file__).resolve().parent
 #   True  … noindex を外し、サイトマップに載せる
 # **GitHub Pages のテスト版が検索に載ると、本番と重複したまま先に拾われる。**
 # v1.1 で github.io の重複が実際に問題になったので、出すまでは noindex。
-PUBLISH = False
+PUBLISH = True
 
 CANONICAL = "https://dai1giken.co.jp/consultation/"
 
