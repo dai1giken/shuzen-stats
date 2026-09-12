@@ -318,17 +318,17 @@ CONTACT_URL = "https://dai1giken.co.jp/#contact"
 
 CTA_HOUSING = f"""
   <a class="cta" href="{CONTACT_URL}">
-    <span class="k">大規模修繕の元請業者様、管理会社様、等へ</span>
+    <span class="k">大規模修繕の元請業者様、管理会社様 等へ</span>
     <span class="n">建物調査・お見積は一棟から</span>
-    <span class="d">賃貸マンション・テナントビル・アパート・戸建て賃貸などの外装改修を、足場・下地補修・シーリング・塗装・防水まで自社管理で一貫対応しています。株式会社第一技研</span>
+    <span class="d">賃貸マンション・テナントビル・アパートなどの外装改修を、足場・下地補修・シーリング・塗装・防水まで自社管理で一貫対応しています。株式会社第一技研</span>
     <span class="arrow">→</span>
   </a>
 """
 
 CTA_BUILDING = f"""
   <a class="cta" href="{CONTACT_URL}">
-    <span class="k">建物の外装改修をご検討中の方へ</span>
-    <span class="n">建物調査・お見積は一件から</span>
+    <span class="k">お見積りをご希望の場合は</span>
+    <span class="n">建物調査・お見積は一棟から</span>
     <span class="d">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。株式会社第一技研</span>
     <span class="arrow">→</span>
   </a>

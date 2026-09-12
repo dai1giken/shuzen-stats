@@ -171,10 +171,13 @@ FOOTER = """  </div>
 <footer class="site-footer">
   <div class="container footer-stats">
     <!-- 問い合わせ導線。ここは企業サイト側なので .cta ではなく
-         企業サイトの .footer-stats-link を使う（統計サイトとCSSが違う）。 -->
+         企業サイトの .footer-stats-link を使う（統計サイトとCSSが違う）。
+         **文言は build_pref.CTA_BUILDING と同じものを手で複製している。**
+         CSSクラスが違うので共有できない。片方だけ直すと食い違うので、
+         どちらかを変えたら必ずもう片方も直すこと（2026-09-12 に実際にずれた）。 -->
     <a class="footer-stats-link" href="../#contact">
-      <span class="footer-stats-label">建物の外装改修をご検討中の方へ</span>
-      <span class="footer-stats-title">建物調査・お見積は一件から</span>
+      <span class="footer-stats-label">お見積りをご希望の場合は</span>
+      <span class="footer-stats-title">建物調査・お見積は一棟から</span>
       <span class="footer-stats-desc">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。</span>
       <span class="footer-stats-arrow" aria-hidden="true">→</span>
     </a>
