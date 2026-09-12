@@ -362,14 +362,28 @@ CTA_HOUSING = f"""
   </a>
 """
 
-CTA_BUILDING = f"""
-  <a class="cta" href="{CONTACT_URL}">
-    <span class="k">お見積りをご希望の場合は</span>
+def cta_building(href: str = CONTACT_URL, label: str = "お見積りをご希望の場合は") -> str:
+    """非住宅向けのCTA。**行き先を差し替えられる。**
+
+    案件相談ページ（/consultation/）ができたので、用途別のページからは
+    そちらへ送れるようにした。**行き先をここで import して決めない。**
+    build_consultation が build_pref を import しているので、逆向きに
+    import すると循環する。URLは呼ぶ側が渡すこと。
+
+    文面は変えていない。`CTA_BUILDING` は行き先が問い合わせのままの既定形で、
+    まだ差し替えていない箇所が使っている。
+    """
+    return f"""
+  <a class="cta" href="{href}">
+    <span class="k">{label}</span>
     <span class="n">建物調査・お見積は一棟から</span>
     <span class="d">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。株式会社第一技研</span>
     <span class="arrow">→</span>
   </a>
 """
+
+
+CTA_BUILDING = cta_building()
 
 KANTO = ("東京都", "神奈川県", "埼玉県", "千葉県")
 

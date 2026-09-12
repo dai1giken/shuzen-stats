@@ -29,7 +29,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, CTA_BUILDING, SITE_URL, bar_cell, cite_block,
+from build_consultation import link as consult_link
+from build_pref import (CSS, SITE_URL, bar_cell, cite_block, cta_building,
                         head, ref_ages, year_chart)
 
 HERE = Path(__file__).resolve().parent
@@ -48,7 +49,11 @@ NOTE = {
     "病院・診療所": "病院、診療所、介護・福祉の施設を含みます。",
 }
 
-FOOT = CTA_BUILDING + """
+# CTA の行き先は用途ごとに変わるので、本体から切り離してある。
+# **用途別ページは案件相談ページへ送る。**その用途を選んだ状態で着地するので、
+# 読み終えた人が最初の1問を選び直さずに済む。
+# 組み立ては foot()。FOOT を直に使わないこと。
+FOOT_TAIL = """
   <a class="cta" href="index.html">
     <span class="k">用途別の一覧へ</span>
     <span class="n">首都圏の非住宅建築物</span>
@@ -93,6 +98,12 @@ def _sum(d: dict, prefs: list[str], years: list[int]) -> int:
         for y in years:
             t += s.get(str(y), 0)
     return t
+
+
+def foot(slug: str | None) -> str:
+    """ページ末尾。用途のスラッグを渡すと、相談ページに用途を付けて送る。"""
+    return cta_building(consult_link(slug),
+                        "この用途でご相談の場合は") + FOOT_TAIL.format(site=SITE_URL)
 
 
 def build(basis: dict) -> int:
@@ -220,7 +231,7 @@ def build(basis: dict) -> int:
   </div>
 ''')
         h.append(cite_block(canonical, day))
-        h.append(FOOT.format(site=SITE_URL))
+        h.append(foot(slug))
         (out / f"{slug}.html").write_text("".join(h), encoding="utf-8")
         written.append(slug)
 
@@ -259,7 +270,7 @@ def build(basis: dict) -> int:
   </div>
 ''')
     idx.append(cite_block(canonical, day))
-    idx.append(FOOT.format(site=SITE_URL))
+    idx.append(foot(None))
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
 
     # 用途が減ったときに古いページを残さない

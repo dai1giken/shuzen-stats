@@ -226,7 +226,7 @@
 </div>
 </main>
 
-<script id="cs-data" type="application/json">{"base": ["建物の規模（階数・戸数・延床面積のいずれか）", "図面・過去の修繕履歴・調査報告書の有無", "居住や営業を続けながらの工事かどうか"], "byTenure": {"分譲マンション": ["総会・理事会の予定時期（決議のタイミング）", "長期修繕計画の有無と、直近の見直し時期", "管理会社・設計コンサルタントの関与の有無"], "賃貸・社宅（ワンオーナー）": ["入居・稼働の状況（空室の有無、工事ができる時間帯）", "発注までの決裁の流れと、決まる時期の見込み"]}, "byTrade": {"防水": ["漏水の有無と場所、既存防水の仕様がわかる資料"], "足場・ゴンドラ仮設": ["建物周囲のスペース、搬入経路、接道の状況"], "下地・タイル補修": ["浮き・ひび割れの状況、打診調査の記録があれば"], "塗装": ["前回の塗り替え時期と、使用した塗料がわかる資料"]}, "action": "/contact.php"}</script>
+<script id="cs-data" type="application/json">{"base": ["建物の規模（階数・戸数・延床面積のいずれか）", "図面・過去の修繕履歴・調査報告書の有無", "居住や営業を続けながらの工事かどうか"], "byTenure": {"分譲マンション": ["総会・理事会の予定時期（決議のタイミング）", "長期修繕計画の有無と、直近の見直し時期", "管理会社・設計コンサルタントの関与の有無"], "賃貸・社宅（ワンオーナー）": ["入居・稼働の状況（空室の有無、工事ができる時間帯）", "発注までの決裁の流れと、決まる時期の見込み"]}, "byTrade": {"防水": ["漏水の有無と場所、既存防水の仕様がわかる資料"], "足場・ゴンドラ仮設": ["建物周囲のスペース、搬入経路、接道の状況"], "下地・タイル補修": ["浮き・ひび割れの状況、打診調査の記録があれば"], "塗装": ["前回の塗り替え時期と、使用した塗料がわかる資料"]}, "action": "/contact.php", "useBySlug": {"housing": "集合住宅", "building": "オフィス・商業ビル", "factory": "工場・倉庫", "school": "学校・研究施設", "medical": "医療・介護施設", "other": "その他・未定"}}</script>
 <script>
 (function () {
   'use strict';
@@ -334,6 +334,19 @@
       pre.scrollIntoView({ block: 'center' });
     });
   }
+  // --- 用途別ページからの着地 --------------------------------------------
+  // /consultation/?use=factory のように来たら、最初の1問を選んだ状態にする。
+  // **URLの値を画面に出さない。**照合表に無ければ何もしない。
+  (function preset() {
+    var want = new URLSearchParams(location.search).get('use');
+    if (!want) return;
+    var label = D.useBySlug[want];
+    if (!label) return;
+    var hit = [].slice.call(document.querySelectorAll('[data-group="use"]'))
+                .filter(function (i) { return i.value === label; })[0];
+    if (hit) hit.checked = true;
+  })();
+
   refresh();
 })();
 </script>

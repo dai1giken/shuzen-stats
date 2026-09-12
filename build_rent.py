@@ -38,7 +38,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import (CSS, CTA_BUILDING, SITE_URL, bar_cell,  # noqa: F401
+from build_consultation import link as consult_link
+from build_pref import (CSS, SITE_URL, bar_cell, cta_building,  # noqa: F401
                         cite_block, foot, head)
 
 HERE = Path(__file__).resolve().parent
@@ -408,7 +409,7 @@ def build(basis: dict) -> int:
   </section>
 
 ''')
-    h.append(CTA_BUILDING)
+    h.append(cta_building(consult_link()))
     h.append(f'''  <a class="cta" href="{SITE_URL}deflator/">
     <span class="k">工事種別ごとに見る</span>
     <span class="n">建設工事費デフレーター</span>
@@ -516,7 +517,7 @@ def build(basis: dict) -> int:
   </section>
 
 ''')
-        g.append(CTA_BUILDING)
+        g.append(cta_building(consult_link()))
         g.append(f'''  <a class="cta" href="index.html">
     <span class="k">全国の状況へ</span>
     <span class="n">家賃と修繕費</span>

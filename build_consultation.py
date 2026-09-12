@@ -64,16 +64,50 @@ CANONICAL = "https://dai1giken.co.jp/consultation/"
 # 毎月のZIPで本番のCSSを上書きする事故につながる（README_内部.md の警告）。
 BASE = "../" if PUBLISH else "https://dai1giken.co.jp/"
 
+# このページへのリンク先。**他のビルドはここを import して使う。**
+# 各所に URL を書くと、公開・非公開を切り替えたときに片方だけ古くなる。
+#
+#   PUBLISH=True  … 本番。統計ページは /shuzen-stats/ 配下にあるので絶対URLが要る
+#   PUBLISH=False … GitHub Pages のテスト。consultation は /shuzen-stats/consultation/
+#                    に出るので、1階層下のページからは "../consultation/" で届く
+#                    （column/ は本番でも ../ が同じ場所を指すので、どちらでも通る）
+CONSULT_URL = "https://dai1giken.co.jp/consultation/" if PUBLISH else "../consultation/"
+
 # 建物の用途。企業サイトの実績フィルタは「商用・公共施設／集合・個人住宅」の
 # 2区分だが、相談では担当者が知りたい粒度が違うのでこちらは細かくする。
+#
+# 3つめはURLにのせるスラッグ。用途別のページから ?use=factory のように
+# 渡して、最初の1問を選んだ状態で着地させる。**日本語をURLに入れない。**
 USES = [
-    ("集合住宅", "マンション・アパート・社宅・寮"),
-    ("オフィス・商業ビル", "事務所・店舗・複合ビル"),
-    ("工場・倉庫", "生産施設・物流施設"),
-    ("学校・研究施設", "校舎・体育館・研究棟"),
-    ("医療・介護施設", "病院・診療所・介護施設"),
-    ("その他・未定", "上記以外、または決まっていない"),
+    ("集合住宅", "マンション・アパート・社宅・寮", "housing"),
+    ("オフィス・商業ビル", "事務所・店舗・複合ビル", "building"),
+    ("工場・倉庫", "生産施設・物流施設", "factory"),
+    ("学校・研究施設", "校舎・体育館・研究棟", "school"),
+    ("医療・介護施設", "病院・診療所・介護施設", "medical"),
+    ("その他・未定", "上記以外、または決まっていない", "other"),
 ]
+
+# 用途別ページのスラッグ →（相談ページの用途スラッグ）。
+# column/ nonres/ reform/ が使う。**対応が無いものは preset を付けない。**
+# 近いだけの区分を無理に当てると、着地した人が選び直すことになって逆効果。
+USE_FROM_SLUG = {
+    "office": "building", "shop": "building", "restaurant": "building",
+    "hotel": "building",
+    "factory": "factory", "warehouse": "factory",
+    "school": "school",
+    "hospital": "medical", "medical": "medical", "welfare": "medical",
+    "kyodo": "housing", "kyoyo": "housing",
+}
+
+
+def link(use_slug: str | None = None) -> str:
+    """相談ページへのURL。用途のスラッグを渡すと ?use= を付ける。
+
+    渡すのは **呼び出し側のページのスラッグ**（office / factory …）で、
+    ここで相談ページの用途へ読み替える。対応が無ければクエリ無しで返す。
+    """
+    u = USE_FROM_SLUG.get(use_slug or "")
+    return f"{CONSULT_URL}?use={u}" if u else CONSULT_URL
 
 # 集合住宅のときだけ聞く。所有形態で工事の段取りが変わるため。
 #
@@ -398,6 +432,19 @@ JS = r"""
       pre.scrollIntoView({ block: 'center' });
     });
   }
+  // --- 用途別ページからの着地 --------------------------------------------
+  // /consultation/?use=factory のように来たら、最初の1問を選んだ状態にする。
+  // **URLの値を画面に出さない。**照合表に無ければ何もしない。
+  (function preset() {
+    var want = new URLSearchParams(location.search).get('use');
+    if (!want) return;
+    var label = D.useBySlug[want];
+    if (!label) return;
+    var hit = [].slice.call(document.querySelectorAll('[data-group="use"]'))
+                .filter(function (i) { return i.value === label; })[0];
+    if (hit) hit.checked = true;
+  })();
+
   refresh();
 })();
 """
@@ -417,6 +464,10 @@ def build(basis: dict | None = None) -> int:
         "byTenure": CHECK_BY_TENURE,
         "byTrade": CHECK_BY_TRADE,
         "action": "/contact.php",
+        # ?use= で最初の1問を選んだ状態にするための対応表。
+        # **スラッグ→表示名の照合表を持たせ、URLの値をそのまま使わない。**
+        # ここに無い値は無視する（URLから任意の文字列が画面に入らない）。
+        "useBySlug": {s: v for v, _n, s in USES},
     }
 
     h = [_head(title, desc)]
@@ -441,7 +492,7 @@ def build(basis: dict | None = None) -> int:
 
       <div class="cs-field">
         <span class="cs-label">建物の用途<span class="cs-opt">任意</span></span>
-        <div class="cs-grid">{_choices(USES, "radio", "use")}</div>
+        <div class="cs-grid">{_choices([(v, n) for v, n, _s in USES], "radio", "use")}</div>
       </div>
 
       <div class="cs-sub" id="cs-tenure" hidden>

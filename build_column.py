@@ -34,6 +34,7 @@ from pathlib import Path
 
 # 解析タグは統計サイト側と同じものを使う。ここを独自に持つと、
 # 測定IDを変えたときにコラムだけ古いままになる。
+from build_consultation import link as consult_link
 from build_pref import analytics_tags
 
 HERE = Path(__file__).resolve().parent
@@ -175,7 +176,7 @@ FOOTER = """  </div>
          **文言は build_pref.CTA_BUILDING と同じものを手で複製している。**
          CSSクラスが違うので共有できない。片方だけ直すと食い違うので、
          どちらかを変えたら必ずもう片方も直すこと（2026-09-12 に実際にずれた）。 -->
-    <a class="footer-stats-link" href="../#contact">
+    <a class="footer-stats-link" href="{CTA_HREF}">
       <span class="footer-stats-label">お見積りをご希望の場合は</span>
       <span class="footer-stats-title">建物調査・お見積は一棟から</span>
       <span class="footer-stats-desc">事務所・店舗・倉庫・工場などの外装改修を、足場から防水まで自社管理で一貫対応しています。</span>
@@ -218,6 +219,17 @@ FOOTER = """  </div>
 </body>
 </html>
 """
+
+
+def footer(href: str = "../#contact") -> str:
+    """ページ末尾。CTAの行き先を差し替えられる。
+
+    用途別ページは案件相談ページへ送る。**その用途を選んだ状態で着地する**ので、
+    読み終えた人が最初の1問を選び直さずに済む。FOOTER は JS を含むので
+    f-string にできない。置換は1箇所だけなので replace で足りる。
+    """
+    return FOOTER.replace("{CTA_HREF}", href)
+
 
 
 def build(basis: dict) -> int:
@@ -296,7 +308,7 @@ def build(basis: dict) -> int:
     <div class="col-foot">
       <p>工事の内容・工程は建物の構造、規模、劣化の状況によって異なります。個別の建物についてのご相談は、<a href="../#contact">お問い合わせ</a>よりご連絡ください。</p>
     </div>
-''' + FOOTER, encoding="utf-8")
+''' + footer(consult_link()), encoding="utf-8")
     written.append("koushu")
 
     # ---- 用途別 ----
@@ -370,9 +382,9 @@ def build(basis: dict) -> int:
     </section>
 
     <div class="col-foot">
-      <p>本記事の統計数値は、国土交通省「建築着工統計調査」（政府統計総合窓口 e-Stat）の公表値です。工事の内容・工程は建物の構造、規模、劣化の状況によって異なります。個別の建物についてのご相談は、<a href="../#contact">お問い合わせ</a>よりご連絡ください。</p>
+      <p>本記事の統計数値は、国土交通省「建築着工統計調査」（政府統計総合窓口 e-Stat）の公表値です。工事の内容・工程は建物の構造、規模、劣化の状況によって異なります。個別の建物についてのご相談は、<a href="{consult_link(slug)}">建物の条件から相談する</a>よりご連絡ください。</p>
     </div>
-''' + FOOTER, encoding="utf-8")
+''' + footer(consult_link(slug)), encoding="utf-8")
         written.append(slug)
 
     # ---- 一覧 ----
@@ -411,7 +423,7 @@ def build(basis: dict) -> int:
     <div class="col-foot">
       <p>統計数値は国土交通省「建築着工統計調査」（政府統計総合窓口 e-Stat）の公表値です。より詳しい集計は <a href="/shuzen-stats/nonres/">首都圏の非住宅建築物</a> でご覧いただけます。</p>
     </div>
-''' + FOOTER, encoding="utf-8")
+''' + footer(consult_link()), encoding="utf-8")
 
     keep = {f"{s_}.html" for s_ in written} | {"index.html"}
     for f in sorted(out.glob("*.html")):
