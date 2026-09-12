@@ -21,6 +21,8 @@ from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
 from build_rent import SLUG as RENT_SLUG
 from build_rent import build as build_rent
+from build_reform import USES as REFORM_USES
+from build_reform import build as build_reform
 from build_nonres import build as build_nonres
 from build_pref import (FLOW_COHORT, SITE_URL, SLUG, analytics_tags, build as build_pref,
                         flow_by_pref, stock_by_pref)
@@ -379,6 +381,7 @@ def main() -> None:
         "{{N_CITY}}": str(_n_city),
         "{{N_NONRES}}": str(len(basis["nonres"]["uses"])),
         "{{N_RENT}}": str(_n_rent),
+        "{{N_REFORM}}": str(len(REFORM_USES)),
         "{{DEF_URL}}": d["url"],
         "{{CHART1}}": chart1(total),
         "{{CHART_COST}}": cost_range_chart(sv["per_unit"], factor, dmonths[-1]),
@@ -484,6 +487,7 @@ def main() -> None:
     n_nonres = build_nonres(basis)
     n_defl = build_deflator(basis)
     n_rent = build_rent(basis)
+    n_reform = build_reform(basis)
     n_col = build_column(basis)
     n_pref = build_pref(basis)
     print(f"pref/      {n_pref} 県 ＋ 一覧")
@@ -491,6 +495,7 @@ def main() -> None:
     print(f"nonres/    {n_nonres} 用途 ＋ 一覧")
     print(f"deflator/  {n_defl} 工事種別 ＋ 一覧")
     print(f"rent/      {n_rent} ページ（家賃と修繕費）")
+    print(f"reform/    {n_reform} ページ（改修市場）")
     print(f"column/    {n_col} 本 ＋ 一覧（企業サイト用）")
     print(f"page.html  {(HERE/'page.html').stat().st_size:,} bytes")
     print(f"index.html {(HERE/'index.html').stat().st_size:,} bytes")
@@ -553,6 +558,7 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - [都道府県別の一覧]({SITE_URL}pref/) — 47都道府県
 - [市区町村別の一覧]({SITE_URL}city/) — 一都三県の市区
 - [家賃と修繕費]({SITE_URL}rent/) — 賃貸マンション・ビルの所有者向け。家賃・修繕費・物価の推移
+- [改修市場の規模]({SITE_URL}reform/) — 建物の改修をいくら受注したか。用途別・施工地域別・発注者別
 - [工事種別の一覧]({SITE_URL}deflator/) — 建設工事費デフレーターの建築系31区分
 - [非住宅建築物の一覧]({SITE_URL}nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）

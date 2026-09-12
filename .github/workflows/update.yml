@@ -78,7 +78,7 @@ jobs:
             MSG="chore: 月次更新（$BEFORE → $AFTER）"
             echo "::notice::元データが $BEFORE から $AFTER へ伸びました。"
           fi
-          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres deflator rent
+          git add basis.json page.html index.html ogp.png sitemap.xml robots.txt llms.txt pref city nonres deflator rent reform
           if git diff --cached --quiet; then
             echo "差分なし。コミットしません。"
           else
@@ -96,7 +96,7 @@ jobs:
           cp htaccess.txt _site/.htaccess
           # 構造化データの distribution が指す実体。中身は政府統計の公表値のみ
           cp basis.json _site/
-          cp -r pref city nonres deflator rent column _site/
+          cp -r pref city nonres deflator rent reform column _site/
           touch _site/.nojekyll
           echo "公開ファイル数: $(find _site -type f | wc -l)"
           # 手でアップロードする用。トップに shuzen-stats/ を作っておくと、

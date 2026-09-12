@@ -860,6 +860,15 @@ def build(basis: dict) -> int:
                 continue
             sm.append(f'<url><loc>{SITE_URL}rent/{f.name}</loc><lastmod>{day}</lastmod>'
                       f'<priority>0.6</priority></url>')
+    # 改修市場（build_reform が先に生成している前提。無ければ黙って飛ばす）
+    rf_dir = HERE / "reform"
+    if rf_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}reform/</loc><lastmod>{day}</lastmod><priority>0.8</priority></url>')
+        for f in sorted(rf_dir.glob("*.html")):
+            if f.name == "index.html":
+                continue
+            sm.append(f'<url><loc>{SITE_URL}reform/{f.name}</loc><lastmod>{day}</lastmod>'
+                      f'<priority>0.6</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

@@ -51,7 +51,7 @@ HERE = Path(__file__).resolve().parent
 # /shuzen-stats/ 直下に置くファイル
 FILES = ["index.html", "ogp.png", "sitemap.xml", "robots.txt", "llms.txt", "basis.json"]
 # /shuzen-stats/ 配下に置くディレクトリ（column は企業サイト側なので入れない）
-DIRS = ["pref", "city", "nonres", "deflator", "rent"]
+DIRS = ["pref", "city", "nonres", "deflator", "rent", "reform"]
 
 
 def stage(dest: Path) -> None:

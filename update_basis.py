@@ -379,6 +379,80 @@ def fetch_rent(months: list[str]) -> dict:
     }
 
 
+# 建築物リフォーム・リニューアル調査（国土交通省）。**改修市場そのもの。**
+# 着工統計（nonres/ が使っている）は「何棟建ったか」で、こちらは「いくら受注したか」。
+# **同じ用途名が両方に出るので、ページで必ず区別を書くこと。**
+# 年度次は毎年6月公表。着工統計が2023年度で止まっているのに対し2025年度まである。
+REFORM = {
+    "area":   "0003360983",   # 参考表2  施工地域別 受注高
+    "use":    "0003360960",   # 表2-1-2  用途、構造別 受注高
+    "client": "0003360961",   # 表2-2    発注者、工事種類別 受注高
+}
+REFORM_TAB = "150"            # 表章項目「受注高」（対前年同期比ではない方）
+
+
+def _reform_one(sid: str, axes: tuple[str, ...]) -> tuple[list[str], dict]:
+    """1つの統計表を {軸1: {軸2: [年度順の値]}} の形で返す。
+
+    軸の名前は e-Stat のものをそのまま使う。読みやすくするのはページ側の仕事で、
+    ここで言い換えると原典と突き合わせられなくなる。
+    """
+    meta = _call("getMetaInfo", statsDataId=sid)["GET_META_INFO"]["METADATA_INF"]
+    nm: dict[str, dict[str, str]] = {}
+    for c in meta["CLASS_INF"]["CLASS_OBJ"]:
+        nm[c["@id"]] = {i["@code"]: i["@name"] for i in _as_list(c["CLASS"])}
+
+    d = _call("getStatsData", statsDataId=sid, cdTab=REFORM_TAB, limit=100000)
+    sd = d["GET_STATS_DATA"]["STATISTICAL_DATA"]
+    values = _as_list(sd["DATA_INF"]["VALUE"])
+    total = int(sd["RESULT_INF"].get("TOTAL_NUMBER", len(values)))
+    if total != len(values):
+        sys.exit(f"{sid}: {total}値のうち{len(values)}値しか返っていません。")
+
+    years = sorted(nm["time"], key=lambda c: nm["time"][c])     # 古い順
+    ylab = [nm["time"][c] for c in years]
+    idx = {c: i for i, c in enumerate(years)}
+
+    out: dict[str, dict[str, list]] = {}
+    for v in values:
+        try:
+            a = nm[axes[0]][v["@" + axes[0]]]
+            b = nm[axes[1]][v["@" + axes[1]]]
+            out.setdefault(a, {}).setdefault(b, [None] * len(years))[idx[v["@time"]]] = float(v["$"])
+        except (ValueError, TypeError, KeyError):
+            continue
+    return ylab, out
+
+
+def fetch_reform() -> dict:
+    """改修市場（受注高）を3つの切り口で取る。
+
+    **単位は億円。**e-Stat の @unit がそうなっている。円に直さないこと。
+    """
+    ylab, area = _reform_one(REFORM["area"], ("area", "cat01"))
+    _, use = _reform_one(REFORM["use"], ("cat02", "cat01"))
+    _, client = _reform_one(REFORM["client"], ("cat02", "cat01"))
+
+    nat = area.get("全国", {})
+    hi = nat.get("非住宅建築物", [])
+    ju = nat.get("住宅", [])
+    print(f"  年度 {ylab[0]}〜{ylab[-1]}　施工地域 {len(area)} / 用途 {len(use)} / 発注者 {len(client)}")
+    if hi and hi[-1] and hi[0]:
+        print(f"    非住宅 全国 {hi[-1]:,.0f}億円（{ylab[-1]}）　{ylab[0]}比 {(hi[-1]/hi[0]-1)*100:+.0f}%")
+    if ju and ju[-1] and ju[0]:
+        print(f"    住宅   全国 {ju[-1]:,.0f}億円（{ylab[-1]}）　{ylab[0]}比 {(ju[-1]/ju[0]-1)*100:+.0f}%")
+    return {
+        "name": "建築物リフォーム・リニューアル調査",
+        "unit": "億円",
+        "years": ylab,
+        "statsDataId": REFORM,
+        "url": {k: f"https://www.e-stat.go.jp/dbview?sid={v}" for k, v in REFORM.items()},
+        "area": area,
+        "use": use,
+        "client": client,
+    }
+
+
 def fetch_nonres() -> dict:
     """非住宅建築物を、用途別・都道府県別・年度別に取る。
 
@@ -771,6 +845,10 @@ def main() -> None:
     print()
     print("家賃まわり（同じCPI表から）:")
     basis["rent"] = fetch_rent(basis["deflator"]["months"])
+
+    print()
+    print("改修市場（建築物リフォーム・リニューアル調査）:")
+    basis["reform"] = fetch_reform()
 
     print("\n都道府県別 分譲マンション着工戸数（%d〜%d年度）:" % COHORT)
     basis["prefecture"] = fetch_prefecture()
