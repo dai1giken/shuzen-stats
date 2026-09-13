@@ -190,17 +190,19 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 
   <a class="costban" href="https://dai1giken.co.jp/shuzen-stats/cost/" id="costban">
     <span class="cbk">TOOL ／ 戸数から工事金額の分布を見る</span>
-    <span class="cbmain">
-      <span class="cbu"><b id="cbu">40</b> 戸</span>
-      <span class="cbeq">なら、工事金額の中央値は</span>
-      <span class="cbv" id="cbv">—</span>
-      <span class="cbgo">くわしく見る →</span>
+    <span class="cbbody">
+      <span class="cbmain">
+        <span class="cbu"><b id="cbu">40</b><small>戸</small></span>
+        <span class="cbeq">なら、工事金額の中央値は</span>
+        <span class="cbv" id="cbv">—</span>
+        <span class="cbgo">くわしく見る →</span>
+      </span>
+      <input type="range" id="cbr" min="6" max="300" step="1"
+        value="40" aria-label="総戸数（例示）">
+      <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
+        <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
+        戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
     </span>
-    <input type="range" id="cbr" min="6" max="300" step="1"
-      value="40" aria-label="総戸数（例示）">
-    <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
-      <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
-      戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
   </a>
   <script>(function(){
     var C={"perUnit": 134.95919999999998, "min": 6, "max": 300, "demo": [24, 38, 56, 80, 120], "url": "https://dai1giken.co.jp/shuzen-stats/cost/"};

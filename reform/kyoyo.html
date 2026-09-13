@@ -167,19 +167,33 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
 </style>
 <style>
-.costban{display:block;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface);
-  margin-top:26px;padding:15px 18px;text-decoration:none;color:var(--ink)}
-.costban:hover{background:var(--sunk)}
-.costban .cbk{font-family:var(--cond);font-weight:600;font-size:11.5px;letter-spacing:.05em;color:var(--shu)}
-.costban .cbmain{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-top:6px}
-.costban .cbu{font-family:var(--mono);font-size:19px;font-variant-numeric:tabular-nums}
-.costban .cbeq{color:var(--ink3);font-size:13px}
-.costban .cbv{font-family:var(--mono);font-size:23px;font-variant-numeric:tabular-nums;color:var(--ink);
+/* 警告（.warn）と出典（.srcband）はどちらも「枠線だけ」で、朱は警告の色。
+   同じ形にすると警告の列に埋もれるので、**このサイトで唯一の塗りつぶし**にして
+   識別色を藍（--ai）にしてある。朱に戻すと .warn と見分けが付かなくなる。 */
+.costban{display:block;border:1px solid var(--ai);background:var(--raise);
+  margin-top:26px;text-decoration:none;color:var(--ink);overflow:hidden}
+/* 見出しは藍のベタ塗り。文字色に --ground を使うのは、--ai と --ground が
+   明暗どちらのテーマでも必ず反転するため（明: 濃藍地に淡文字／暗: 淡藍地に濃文字）。
+   白と決め打ちすると、暗いテーマで淡い藍地に白文字になって読めない。 */
+.costban .cbk{display:block;background:var(--ai);color:var(--ground);
+  font-family:var(--cond);font-weight:700;font-size:12.5px;letter-spacing:.09em;
+  padding:8px 18px}
+.costban .cbbody{display:block;padding:18px 20px 16px}
+.costban:hover .cbbody{background:var(--sunk)}
+.costban .cbmain{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.costban .cbu{font-family:var(--cond);font-weight:700;color:var(--ink);
+  font-size:clamp(26px,4vw,38px);line-height:1;font-variant-numeric:tabular-nums}
+.costban .cbu small{font-size:.45em;font-weight:600;margin-left:3px;color:var(--ink2)}
+.costban .cbeq{color:var(--ink2);font-size:13.5px}
+.costban .cbv{font-family:var(--cond);font-weight:700;color:var(--ai);
+  font-size:clamp(34px,5.6vw,52px);line-height:1;font-variant-numeric:tabular-nums;
   transition:opacity .18s}
-.costban .cbv.fade{opacity:.25}
-.costban .cbgo{margin-left:auto;font-family:var(--cond);font-size:12.5px;color:var(--shu)}
-.costban input[type=range]{width:100%;margin-top:10px;accent-color:var(--shu)}
-.costban .cbn{display:block;margin-top:8px;font-size:11.5px;line-height:1.8;color:var(--ink3)}
+.costban .cbv.fade{opacity:.3}
+.costban .cbgo{margin-left:auto;align-self:center;font-family:var(--cond);font-weight:700;
+  font-size:13px;color:var(--ai);white-space:nowrap}
+.costban input[type=range]{width:100%;margin-top:14px;accent-color:var(--ai);height:20px}
+.costban .cbn{display:block;margin-top:10px;font-size:11.5px;line-height:1.8;color:var(--ink3)}
+@media (max-width:560px){.costban .cbgo{margin-left:0;width:100%;margin-top:6px}}
 @media print{.costban{display:none}}
 </style>
 </head>
@@ -297,17 +311,19 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 
   <a class="costban" href="https://dai1giken.co.jp/shuzen-stats/cost/" id="costban">
     <span class="cbk">TOOL ／ 戸数から工事金額の分布を見る</span>
-    <span class="cbmain">
-      <span class="cbu"><b id="cbu">40</b> 戸</span>
-      <span class="cbeq">なら、工事金額の中央値は</span>
-      <span class="cbv" id="cbv">—</span>
-      <span class="cbgo">くわしく見る →</span>
+    <span class="cbbody">
+      <span class="cbmain">
+        <span class="cbu"><b id="cbu">40</b><small>戸</small></span>
+        <span class="cbeq">なら、工事金額の中央値は</span>
+        <span class="cbv" id="cbv">—</span>
+        <span class="cbgo">くわしく見る →</span>
+      </span>
+      <input type="range" id="cbr" min="6" max="300" step="1"
+        value="40" aria-label="総戸数（例示）">
+      <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
+        <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
+        戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
     </span>
-    <input type="range" id="cbr" min="6" max="300" step="1"
-      value="40" aria-label="総戸数（例示）">
-    <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
-      <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
-      戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
   </a>
   <script>(function(){
     var C={"perUnit": 134.95919999999998, "min": 6, "max": 300, "demo": [24, 38, 56, 80, 120], "url": "https://dai1giken.co.jp/shuzen-stats/cost/"};
