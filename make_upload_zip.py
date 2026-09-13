@@ -51,7 +51,7 @@ HERE = Path(__file__).resolve().parent
 # /shuzen-stats/ 直下に置くファイル
 FILES = ["index.html", "ogp.png", "sitemap.xml", "robots.txt", "llms.txt", "basis.json"]
 # /shuzen-stats/ 配下に置くディレクトリ（column は企業サイト側なので入れない）
-DIRS = ["pref", "city", "nonres", "deflator", "rent", "reform", "cycle"]
+DIRS = ["pref", "city", "nonres", "deflator", "rent", "reform", "cycle", "cost"]
 
 # 企業サイト側（htdocs/ 直下）。**shuzen-stats/ の中ではない。**
 # ここに入れ忘れて DIRS に足すと、/shuzen-stats/consultation/ という
@@ -212,8 +212,8 @@ def main() -> None:
         if not a.since:
             # 全部入りのときだけ。差分には変わったものしか入らない。
             must += ["shuzen-stats/.htaccess", "shuzen-stats/index.html",
-                     "shuzen-stats/deflator/index.html", "column/index.html",
-                     "consultation/index.html"]
+                     "shuzen-stats/deflator/index.html", "shuzen-stats/cost/index.html",
+                     "column/index.html", "consultation/index.html"]
         for m in must:
             assert m in names, f"ZIP に {m} が入っていません"
         assert not any(n.endswith(".nojekyll") for n in names), \

@@ -39,6 +39,7 @@ import json
 from pathlib import Path
 
 from build_consultation import link as consult_link
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
 from build_pref import (CSS, SITE_URL, bar_cell, cta_building,  # noqa: F401
                         cite_block, foot, head)
 
@@ -298,7 +299,7 @@ def build(basis: dict) -> int:
             f"同じ期間の消費者物価は {_sign(sogo)}。"
             f"賃貸マンション・ビルの所有者向けに、政府統計の公表値を{len(pairs)}地域ぶん並べています。")
 
-    h = [head(title, desc, canonical, crumb="家賃と修繕費")]
+    h = [head(title, desc, canonical, crumb="家賃と修繕費", extra_css=COST_CSS)]
     h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省・国土交通省の公表値です。</strong>
@@ -417,6 +418,7 @@ def build(basis: dict) -> int:
     <span class="arrow">→</span>
   </a>
 ''')
+    h.append(cost_banner(basis))
     h.append(cite_block(canonical, day))
     h.append(foot())
     (out / "index.html").write_text("".join(h), encoding="utf-8")
@@ -433,7 +435,7 @@ def build(basis: dict) -> int:
         desc = (f"{nm}の消費者物価指数は、{first}から{last}までで家賃 {_sign(ry)}、"
                 f"設備修繕・維持 {_sign(rs)}。差は {rs - ry:.1f} ポイント。"
                 f"掲載{len(pairs)}地域中、家賃の上昇は {rank[nm]} 位です。")
-        g = [head(title, desc, canonical, crumb="家賃と修繕費")]
+        g = [head(title, desc, canonical, crumb="家賃と修繕費", extra_css=COST_CSS)]
         g.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「消費者物価指数」の公表値です。</strong>
@@ -525,6 +527,7 @@ def build(basis: dict) -> int:
     <span class="arrow">→</span>
   </a>
 ''')
+        g.append(cost_banner(basis))
         g.append(cite_block(canonical, day))
         g.append(foot())
         (out / f"{slug}.html").write_text("".join(g), encoding="utf-8")

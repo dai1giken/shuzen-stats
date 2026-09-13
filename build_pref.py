@@ -35,6 +35,7 @@ import re
 import sys
 from pathlib import Path
 
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
 from pref_city import city_section
 
 HERE = Path(__file__).resolve().parent
@@ -710,7 +711,7 @@ def build(basis: dict) -> int:
         i = r - 1
         near = ranked[max(0, i - 2): i + 3]
 
-        h = [head(title, desc, canonical)]
+        h = [head(title, desc, canonical, extra_css=COST_CSS)]
         h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
@@ -799,6 +800,7 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
+        h.append(cost_banner(basis))
         h.append(cite_block(canonical, day))
         h.append(foot(name))
         (out / f"{slug}.html").write_text("".join(h), encoding="utf-8")
@@ -833,6 +835,7 @@ def build(basis: dict) -> int:
     idx.append(f'</div>\n  <p class="colophon">単位：戸。多い順。'
                f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'
                f'差 {nat_stock - sum47:,}戸 があります（標本調査のため）。</p>\n')
+    idx.append(cost_banner(basis))
     idx.append(cite_block(canonical, day))
     idx.append(foot())
     (out / "index.html").write_text("".join(idx), encoding="utf-8")
@@ -895,6 +898,10 @@ def build(basis: dict) -> int:
     cy_dir = HERE / "cycle"
     if cy_dir.is_dir():
         sm.append(f'<url><loc>{SITE_URL}cycle/</loc><lastmod>{day}</lastmod><priority>0.8</priority></url>')
+    # 工事金額の分布（build_cost が先に生成している前提。無ければ黙って飛ばす）
+    co_dir = HERE / "cost"
+    if co_dir.is_dir():
+        sm.append(f'<url><loc>{SITE_URL}cost/</loc><lastmod>{day}</lastmod><priority>0.9</priority></url>')
     sm.append('</urlset>')
     (HERE / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
 

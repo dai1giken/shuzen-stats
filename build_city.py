@@ -28,6 +28,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
 from build_pref import (CSS, CTA_HOUSING, SITE_URL, SLUG, age_of, bar_cell, cite_block,
                         head, period_chart, ref_ages)
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
@@ -204,7 +205,7 @@ def build(basis: dict) -> int:
                 f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
                 f"総務省「令和5年住宅・土地統計調査」の公表値。")
 
-        h = [head(title, desc, canonical, crumb="市区町村別")]
+        h = [head(title, desc, canonical, crumb="市区町村別", extra_css=COST_CSS)]
         rank_html = (f'<div class="v">{r}<small>位 / {len(leaves[pre])}</small></div>'
                      f'<p>{pref_name}の市区町村のうち。{u}全体 {pref_v:,}戸 の {pshare:.1f}%。</p>'
                      if r else
@@ -363,6 +364,7 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
+        h.append(cost_banner(basis))
         h.append(cite_block(canonical, day))
         h.append(FOOT_T.format(back=f"../pref/{SLUG[pref_name]}.html", pref=pref_name,
                                whole=f"{u}全体", site=SITE_URL))
@@ -453,6 +455,7 @@ def build(basis: dict) -> int:
   })();
   </script>
 ''')
+    idx.append(cost_banner(basis))
     idx.append(cite_block(canonical, day))
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))

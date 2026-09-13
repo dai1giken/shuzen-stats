@@ -28,6 +28,7 @@ import json
 from pathlib import Path
 
 from build_consultation import link as consult_link
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
 from build_pref import (CSS, SITE_URL, bar_cell, cta_building,  # noqa: F401
                         cite_block, foot, head)
 
@@ -50,6 +51,11 @@ USES: list[tuple[str, str, str]] = [
     ("住宅_共同住宅", "kyodo", "共同住宅"),
 ]
 assert len({s for _, s, _ in USES}) == len(USES), "スラッグが重複しています"
+
+# 工事金額の分布への入口を置く用途。**共同住宅だけ。**
+# 非住宅は分譲マンションの実態調査の対象外なので、あの統計を当てる先ではない。
+COST_SLUGS = {"kyodo", "kyoyo"}
+assert COST_SLUGS <= {s for _, s, _ in USES}, "COST_SLUGS に未知のスラッグがあります"
 
 METRO = ["東京都", "神奈川県", "千葉県", "埼玉県"]
 STRUCT = ["木造", "コンクリート系構造（RC、SRC、など）",
@@ -366,7 +372,8 @@ def build(basis: dict) -> int:
         desc = (f"{label}の改修工事の受注高は{y1}で {v:,.0f}億円。"
                 f"{y5}比 {_sign(ch5)}、{y0}比 {_sign(ch10)}。"
                 f"掲載{len(rows)}区分中 {rank[key]} 位。国土交通省の公表値。")
-        g = [head(title, desc, canonical, crumb="改修市場"), src]
+        g = [head(title, desc, canonical, crumb="改修市場",
+                  extra_css=COST_CSS if slug in COST_SLUGS else ""), src]
         st = []
         for k in STRUCT:
             sv = _y(d.get(k, []))
@@ -443,6 +450,9 @@ def build(basis: dict) -> int:
     <span class="arrow">→</span>
   </a>
 ''')
+        # 集合住宅に関係するページにだけ入口を置く。非住宅の10枚には置かない。
+        if slug in COST_SLUGS:
+            g.append(cost_banner(basis))
         g.append(cite_block(canonical, day))
         g.append(foot())
         (out / f"{slug}.html").write_text("".join(g), encoding="utf-8")

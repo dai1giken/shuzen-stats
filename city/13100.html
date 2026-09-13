@@ -166,6 +166,22 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .prefgrid .nm{font-size:14px}
 .prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
 </style>
+<style>
+.costban{display:block;border:1px solid var(--rule);border-left:5px solid var(--shu);background:var(--surface);
+  margin-top:26px;padding:15px 18px;text-decoration:none;color:var(--ink)}
+.costban:hover{background:var(--sunk)}
+.costban .cbk{font-family:var(--cond);font-weight:600;font-size:11.5px;letter-spacing:.05em;color:var(--shu)}
+.costban .cbmain{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-top:6px}
+.costban .cbu{font-family:var(--mono);font-size:19px;font-variant-numeric:tabular-nums}
+.costban .cbeq{color:var(--ink3);font-size:13px}
+.costban .cbv{font-family:var(--mono);font-size:23px;font-variant-numeric:tabular-nums;color:var(--ink);
+  transition:opacity .18s}
+.costban .cbv.fade{opacity:.25}
+.costban .cbgo{margin-left:auto;font-family:var(--cond);font-size:12.5px;color:var(--shu)}
+.costban input[type=range]{width:100%;margin-top:10px;accent-color:var(--shu)}
+.costban .cbn{display:block;margin-top:8px;font-size:11.5px;line-height:1.8;color:var(--ink3)}
+@media print{.costban{display:none}}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -356,6 +372,62 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
     </ul>
   </div>
+
+  <a class="costban" href="https://dai1giken.co.jp/shuzen-stats/cost/" id="costban">
+    <span class="cbk">TOOL ／ 戸数から工事金額の分布を見る</span>
+    <span class="cbmain">
+      <span class="cbu"><b id="cbu">40</b> 戸</span>
+      <span class="cbeq">なら、工事金額の中央値は</span>
+      <span class="cbv" id="cbv">—</span>
+      <span class="cbgo">くわしく見る →</span>
+    </span>
+    <input type="range" id="cbr" min="6" max="300" step="1"
+      value="40" aria-label="総戸数（例示）">
+    <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
+      <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
+      戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
+  </a>
+  <script>(function(){
+    var C={"perUnit": 134.95919999999998, "min": 6, "max": 300, "demo": [24, 38, 56, 80, 120], "url": "https://dai1giken.co.jp/shuzen-stats/cost/"};
+    var r=document.getElementById('cbr'),u=document.getElementById('cbu'),
+        v=document.getElementById('cbv'),a=document.getElementById('costban');
+    if(!r) return;
+    var nf=new Intl.NumberFormat('ja-JP');
+    function draw(){
+      var n=+r.value||C.min;
+      u.textContent=nf.format(n);
+      v.textContent=nf.format(Math.round(C.perUnit*n/10)*10)+'万円';
+      a.href=C.url+'?units='+n;
+    }
+    // 切り替えは「薄くする → 180ms 後に値を差し替える」の2段になっている。
+    // **止めるときは予約済みの差し替えも消すこと。**interval だけ止めると、
+    // つまみを掴んだ直後の 180ms に予約分が発火して、利用者の値を上書きする。
+    var timer=null, pending=null;
+    function stop(){
+      if(timer){clearInterval(timer);timer=null;}
+      if(pending){clearTimeout(pending);pending=null;}
+      v.classList.remove('fade');
+    }
+    ['pointerdown','keydown','focus'].forEach(function(e){ r.addEventListener(e,stop); });
+    // **input では stop() だけでなく draw() も呼ぶこと。**stop() だけだと、
+    // つまみを動かしても金額が動かない。自動デモが裏で描画しているあいだは
+    // 動いているように見えるので、デモを止めた後でしか気づけない。
+    r.addEventListener('input',function(){ stop(); draw(); });
+    // つまみの操作でリンクをたどってしまわないように既定動作を止める。
+    r.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); });
+    draw();
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduce){
+      var i=0;
+      timer=setInterval(function(){
+        i=(i+1)%C.demo.length;
+        v.classList.add('fade');
+        pending=setTimeout(function(){
+          pending=null; r.value=C.demo[i]; draw(); v.classList.remove('fade');
+        },180);
+      },2600);
+    }
+  })();</script>
   <section class="cite">
     <h2><span class="idx">Cite</span>このページを引用する</h2>
     <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>

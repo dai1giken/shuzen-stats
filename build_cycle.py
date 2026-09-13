@@ -31,6 +31,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
 from build_pref import SITE_URL, cite_block, foot, head
 from shuzen_cycle import (CYCLES, SENYU, SOURCE_NAME, SOURCE_PAGES, SOURCE_REVISION,
                           SOURCE_URL, period_text, verify)
@@ -92,7 +93,7 @@ def build(basis: dict) -> int:
             f"周期は{kinds}種類あり、最も多いのは{top_label}で{top_n}項目（{top_n/len(have)*100:.1f}%）。"
             f"全体では{ymin}年から{ymax}年まで幅があります。原典の転記です。")
 
-    h = [head(title, desc, canonical, crumb="修繕周期", extra_css=EXTRA_CSS)]
+    h = [head(title, desc, canonical, crumb="修繕周期", extra_css=EXTRA_CSS + COST_CSS)]
     h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの内容は、すべて国土交通省「長期修繕計画作成ガイドライン」（{SOURCE_REVISION}）の記載例の転記です。</strong>
@@ -203,6 +204,7 @@ def build(basis: dict) -> int:
     <span class="arrow">→</span>
   </a>
 ''')
+    h.append(cost_banner(basis))
     h.append(cite_block(canonical, day))
     h.append(foot())
     (out / "index.html").write_text("".join(h), encoding="utf-8")

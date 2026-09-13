@@ -20,6 +20,9 @@ from build_column import build as build_column
 from build_consultation import PUBLISH as CONSULT_PUBLISH
 from build_consultation import build as build_consultation
 from build_cycle import build as build_cycle
+from build_cost import build as build_cost
+from cost_banner import CSS as COST_BANNER_CSS
+from cost_banner import banner as cost_banner
 from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
 from build_kijun import build as build_kijun
@@ -474,6 +477,10 @@ def main() -> None:
         "{{RC_M2}}": _fmt(rc + src),
         "{{RESIDUAL}}": _fmt(residual),
         "{{GENERATED}}": basis["generated"].split()[0],
+        # 工事金額の分布ツールへの入口。**積立金ツール（#calc）とは別物。**
+        # 賃貸・社宅には積立金が無いので、積立金を使わない側の入口も要る。
+        "{{COST_BANNER}}": cost_banner(basis),
+        "{{COST_BANNER_CSS}}": COST_BANNER_CSS,
     }
 
     out = tmpl
@@ -499,6 +506,7 @@ def main() -> None:
     n_defl = build_deflator(basis)
     n_kijun = build_kijun(basis)   # deflator/ の刈り取りより後に置くこと
     n_cycle = build_cycle(basis)
+    n_cost = build_cost(basis)
     n_consult = build_consultation(basis)
     n_rent = build_rent(basis)
     n_reform = build_reform(basis)
@@ -510,6 +518,7 @@ def main() -> None:
     print(f"deflator/  {n_defl} 工事種別 ＋ 一覧")
     print(f"deflator/  基準年のページ {n_kijun} 枚")
     print(f"cycle/     {n_cycle} ページ（修繕周期・ガイドライン転記）")
+    print(f"cost/      {n_cost} ページ（工事金額の分布・戸数から）")
     print(f"consultation/ {n_consult} ページ（企業サイト用・案件相談）")
     print(f"rent/      {n_rent} ページ（家賃と修繕費）")
     print(f"reform/    {n_reform} ページ（改修市場）")
@@ -578,6 +587,7 @@ def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
 - [改修市場の規模]({SITE_URL}reform/) — 建物の改修をいくら受注したか。用途別・施工地域別・発注者別
 - [工事種別の一覧]({SITE_URL}deflator/) — 建設工事費デフレーターの建築系31区分
 - [指数の基準年]({SITE_URL}deflator/kijun-nendo.html) — 2011年度・2015年度・2020年度の各基準が同時に公表されています。基準をそろえる換算と、またいで割ったときのずれ
+- [戸数から工事金額の分布を見る]({SITE_URL}cost/) — 実態調査の戸あたり工事金額を今の物価水準に換算し、戸数を掛けた分布と工種別の内訳。**共通仮設費と消費税を含みません**
 - [修繕周期の部位別一覧]({SITE_URL}cycle/) — 長期修繕計画作成ガイドライン（令和6年6月改定）様式第3-2号の記載例。周期は幅で示されています
 - [非住宅建築物の一覧]({SITE_URL}nonres/) — 事務所・店舗・工場・倉庫・学校・病院
 - [basis.json]({SITE_URL}basis.json) — 全ページの数値と系列（機械可読）

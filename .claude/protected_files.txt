@@ -14,3 +14,6 @@ make_ogp.py          # OGP画像の生成
 run_update.ps1       # 月次再生成のラッパー（ASCII only）
 README.md            # 踏んだ罠と判断の記録。コードより復元が難しい
 shuzen_cycle.py      # ガイドラインPDFから手で書き写した修繕周期81項目。失うと再転記になる
+shuzen_survey.py     # 実態調査PDFから手で書き写した工事金額の内訳・仮設割合。失うと再転記になる
+build_cost.py        # 工事金額の分布ツール（計算と注記）
+cost_banner.py       # 他ページに置く入口バナー
