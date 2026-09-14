@@ -283,8 +283,11 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .compo .k{font-family:var(--cond);font-weight:600;color:var(--ink)}
 .compo .v{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums}
 .compo .betsu{color:var(--shu);font-family:var(--cond);font-weight:700}
-.formula{margin-top:16px;font-size:12px;line-height:1.95;color:var(--ink2)}
-.formula li{margin-bottom:2px}
+/* **`.formula` という名前は使えない。**トップページ（template.html）が
+   別の用途で先に定義しており、ツールのCSSをトップへ流し込むと、あとから来る
+   こちらが勝ってトップの算式ブロックが黙って別の見た目になる（2026-09-15）。 */
+.calcline{margin-top:16px;font-size:12px;line-height:1.95;color:var(--ink2)}
+.calcline li{margin-bottom:2px}
 .gloss{margin-top:16px;border-top:1px solid var(--rule)}
 .gloss dt{font-family:var(--cond);font-weight:700;font-size:13.5px;color:var(--ink);margin-top:12px}
 .gloss dd{margin:3px 0 0;font-size:12.5px;line-height:1.85;color:var(--ink2)}
@@ -412,7 +415,7 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
             <p class="qnote">出典 国土交通省「令和3年度 マンション大規模修繕工事に関する実態調査」PDF p.13（紙面 12）（総工事金額に対する割合。建築系工事の内訳は同ページの建築系合計に対する割合を按分）。PDF p.50（紙面 49） の「総工事金額に占める割合」と一致することを確認しています。<strong>共通仮設費と消費税は、この100%のどこにも含まれていません。</strong>内訳の母数は n=726 で、戸あたり金額（n=818）とは異なります（建築系工事を実施していないサンプルを除外した集計のため）。</p>
 
             <h3 style="margin:26px 0 0;font-family:var(--cond);font-size:15px">計算の内訳</h3>
-            <ol class="formula" id="oFormula"></ol>
+            <ol class="calcline" id="oFormula"></ol>
           </div>
         </div>
 

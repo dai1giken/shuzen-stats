@@ -245,13 +245,18 @@ JS = r"""
 
   /* ツールの操作（つまみ・表のセル・階数・範囲）はどれも input/change/click で
      起きる。個別に繋ぐとツールを直したときに片方だけ古くなるので、文書ごと拾う。
-     **capture で拾うこと。**ツール側が再描画でボタンを作り直すため、
-     個々の要素に後から付けたリスナーは消える。 */
+
+     **capture（第3引数 true）で拾ってはいけない。**capture はツール自身の
+     ハンドラより先に走るので、まだ再計算されていない古い oSel を読んでしまい、
+     **まとめ欄と本文が操作1つぶん遅れる**（2026-09-15 実測。つまみを90戸にした
+     直後のまとめ欄が40戸のままだった）。bubble なら、ツールが再描画で
+     ボタンを作り直しても、イベントの経路は発火時に決まっているので document まで
+     届く。 */
   ['input', 'change', 'click'].forEach(function(ev){
     document.addEventListener(ev, function(e){
       if(e.target === msg) return;
       refresh();
-    }, true);
+    });
   });
   msg.addEventListener('input', function(){ touched = true; $('cfRb').hidden = false; });
   $('cfRb').addEventListener('click', function(){

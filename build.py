@@ -21,8 +21,8 @@ from build_consultation import PUBLISH as CONSULT_PUBLISH
 from build_consultation import build as build_consultation
 from build_cycle import build as build_cycle
 from build_cost import build as build_cost
-from cost_banner import CSS as COST_BANNER_CSS
-from cost_banner import banner as cost_banner
+import consult_form
+import cost_tool
 from build_deflator import SERIES as DEFLATOR_SERIES
 from build_deflator import build as build_deflator
 from build_kijun import build as build_kijun
@@ -479,8 +479,13 @@ def main() -> None:
         "{{GENERATED}}": basis["generated"].split()[0],
         # 工事金額の分布ツールへの入口。**積立金ツール（#calc）とは別物。**
         # 賃貸・社宅には積立金が無いので、積立金を使わない側の入口も要る。
-        "{{COST_BANNER}}": cost_banner(basis),
-        "{{COST_BANNER_CSS}}": COST_BANNER_CSS,
+        "{{COST_BANNER}}": (cost_tool.section(basis, cost_url=SITE_URL + "cost/")
+                            + consult_form.form(page_url=SITE_URL,
+                                                page_title="大規模修繕統計ビューア")),
+        # **タグ無しの CSS を渡すこと。**template.html は自前の <style> の中へ
+        # これを流し込むので、<style> 付きを入れると入れ子になってトップの
+        # CSS がまるごと効かなくなる。
+        "{{COST_BANNER_CSS}}": cost_tool.CSS + consult_form.CSS,
     }
 
     out = tmpl

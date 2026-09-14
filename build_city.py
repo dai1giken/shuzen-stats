@@ -392,10 +392,14 @@ def build(basis: dict) -> int:
 
     # ---- 一覧 ----
     canonical = f"{SITE_URL}city/"
-    idx = [head("一都三県の市区町村別 大規模修繕統計",
+    idx_title = "一都三県の市区町村別 大規模修繕統計｜費用の目安つき"
+    idx = [head(idx_title,
                 f"東京・神奈川・埼玉・千葉の市区町村別に、築{age_lo}〜{age_hi}年の非木造共同住宅の戸数を並べています。"
-                "総務省「令和5年住宅・土地統計調査」の公表値。",
-                canonical, crumb="市区町村別")]
+                f"工事金額は全国の実態調査で1戸あたり中央値{cost_med:,.0f}万円"
+                f"（{cost_month}換算・共通仮設費と消費税を除く）。"
+                "総務省・国土交通省の公表値。",
+                canonical, crumb="市区町村別",
+                extra_css=cost_tool.EXTRA_CSS + consult_form.EXTRA_CSS)]
     idx.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて{city["survey"]}の公表値です。</strong>
@@ -474,7 +478,11 @@ def build(basis: dict) -> int:
   })();
   </script>
 ''')
-    idx.append(cost_banner(basis))
+    # **検索ボックスと一覧の間には挟まない。**入力欄と結果が 1,500px 離れて
+    # 絞り込みが使えなくなる（2026-09-15 実測）。旧バナーと同じ位置に置く。
+    idx.append(tool_html)
+    # この一覧は一都三県だけなので、地域を選ばせずにフォームを出してよい。
+    idx.append(consult_form.form(page_url=canonical, page_title=idx_title))
     idx.append(cite_block(canonical, day))
     idx.append(FOOT_T.format(back="../pref/", pref="都道府県別",
                              whole="都道府県全体", site=SITE_URL))

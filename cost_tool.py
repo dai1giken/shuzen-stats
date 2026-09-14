@@ -52,8 +52,7 @@ VIEWS: list[tuple[str, str, bool]] = [
 ]
 
 
-EXTRA_CSS = """
-<style>
+CSS = """
 .tool{border:1px solid var(--rule);background:var(--surface);margin-top:18px}
 .tool-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px;padding:20px 22px;
   border-bottom:1px solid var(--rule);background:var(--sunk)}
@@ -170,8 +169,11 @@ EXTRA_CSS = """
 .compo .k{font-family:var(--cond);font-weight:600;color:var(--ink)}
 .compo .v{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums}
 .compo .betsu{color:var(--shu);font-family:var(--cond);font-weight:700}
-.formula{margin-top:16px;font-size:12px;line-height:1.95;color:var(--ink2)}
-.formula li{margin-bottom:2px}
+/* **`.formula` という名前は使えない。**トップページ（template.html）が
+   別の用途で先に定義しており、ツールのCSSをトップへ流し込むと、あとから来る
+   こちらが勝ってトップの算式ブロックが黙って別の見た目になる（2026-09-15）。 */
+.calcline{margin-top:16px;font-size:12px;line-height:1.95;color:var(--ink2)}
+.calcline li{margin-bottom:2px}
 .gloss{margin-top:16px;border-top:1px solid var(--rule)}
 .gloss dt{font-family:var(--cond);font-weight:700;font-size:13.5px;color:var(--ink);margin-top:12px}
 .gloss dd{margin:3px 0 0;font-size:12.5px;line-height:1.85;color:var(--ink2)}
@@ -196,7 +198,13 @@ EXTRA_CSS = """
   a[href]:after{content:""}
   @page{margin:14mm}
 }
-</style>"""
+"""
+
+# `<style>` タグ付き。head に足すときはこちら。
+# **トップページ（template.html）は自前の <style> の中へ流し込む**ので、
+# あちらには CSS（タグ無し）を渡すこと。タグ付きを入れると <style> が
+# 入れ子になって、そのページのCSSがまるごと効かなくなる。
+EXTRA_CSS = "\n<style>" + CSS + "</style>"
 
 
 def data(basis: dict) -> dict:
@@ -286,7 +294,7 @@ def tool(basis: dict) -> str:
             <p class="qnote">出典 {S.SOURCE_PUBLISHER}「{S.SOURCE_NAME}」{S.PAGE_BREAKDOWN}（総工事金額に対する割合。建築系工事の内訳は同ページの建築系合計に対する割合を按分）。{S.PAGE_SHARE} の「総工事金額に占める割合」と一致することを確認しています。<strong>共通仮設費と消費税は、この100%のどこにも含まれていません。</strong>内訳の母数は n={S.BREAKDOWN_N} で、戸あたり金額（n={S.SOURCE_N}）とは異なります（建築系工事を実施していないサンプルを除外した集計のため）。</p>
 
             <h3 style="margin:26px 0 0;font-family:var(--cond);font-size:15px">計算の内訳</h3>
-            <ol class="formula" id="oFormula"></ol>
+            <ol class="calcline" id="oFormula"></ol>
           </div>
         </div>
 

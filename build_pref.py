@@ -852,10 +852,13 @@ def build(basis: dict) -> int:
 
     # ---- 一覧 ----
     canonical = f"{SITE_URL}pref/"
-    idx = [head("都道府県別の大規模修繕統計｜全47都道府県",
+    idx_title = "都道府県別の大規模修繕統計 費用の目安｜全47都道府県"
+    idx = [head(idx_title,
                 f"築{age_lo}〜{age_hi}年（{basis['city']['stock_window'][0]}〜{basis['city']['stock_window'][1]}年建築）の非木造共同住宅の戸数を都道府県別に。全国{national:,}戸。"
-                f"分譲と賃貸を合わせた数です。総務省「令和5年住宅・土地統計調査」の公表値。",
-                canonical)]
+                f"工事金額は全国の実態調査で1戸あたり中央値{cost_med:,.0f}万円"
+                f"（{cost_month}換算・共通仮設費と消費税を除く）。総務省・国土交通省の公表値。",
+                canonical,
+                extra_css=cost_tool.EXTRA_CSS + consult_form.EXTRA_CSS)]
     idx.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
@@ -879,7 +882,10 @@ def build(basis: dict) -> int:
     idx.append(f'</div>\n  <p class="colophon">単位：戸。多い順。'
                f'全国 {nat_stock:,}戸 に対し47都道府県の合計は {sum47:,}戸 で、'
                f'差 {nat_stock - sum47:,}戸 があります（標本調査のため）。</p>\n')
-    idx.append(cost_banner(basis))
+    idx.append(tool_html)
+    # 全国の一覧なので、**特定の県のページではない。**対応エリアはフォーム本文に
+    # 書いてあるので、ここは出してよい（大阪府など個別の県ページには出さない）。
+    idx.append(consult_form.form(page_url=canonical, page_title=idx_title))
     idx.append(cite_block(canonical, day))
     idx.append(foot())
     (out / "index.html").write_text("".join(idx), encoding="utf-8")

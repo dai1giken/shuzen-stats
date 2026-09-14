@@ -149,7 +149,7 @@ def build(basis: dict) -> int:
   <section>
     <h2><span class="idx">Method</span>算式と出典</h2>
     <p class="lede">独自の加重や補正は置いていません。公表統計をこの式で換算し、戸数を掛けただけの数字です。下の値と取得日があれば、誰でも同じ結果を再現できます。</p>
-    <ul class="formula">
+    <ul class="calcline">
       <li><b>戸あたり工事金額</b>　{S.SOURCE_PUBLISHER}「{S.SOURCE_NAME}」（{S.SOURCE_PUBLISHED} 公表、n={S.SOURCE_N}）{S.PAGE_PER_UNIT}　<a href="{S.SOURCE_URL}" target="_blank" rel="noopener">原典PDF</a></li>
       <li><b>工事金額の定義</b>　{S.PAGE_DEFINITION}「上記工事の直接工事費（共通仮設費は含まない。）及び諸経費①、諸経費②」「消費税相当額は含まない」</li>
       <li><b>内訳・仮設工事の割合</b>　{S.PAGE_BREAKDOWN} ／ {S.PAGE_SHARE}</li>
