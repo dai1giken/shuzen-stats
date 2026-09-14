@@ -313,6 +313,30 @@ def verify() -> list[str]:
     return bad
 
 
+def verify_per_unit(per_unit: list[dict]) -> list[str]:
+    """戸あたり工事金額（basis.json の手入力分）を原典と突合する。
+
+    この4つの数値は `update_basis.py` に手で書かれていて、e-Stat から来ない。
+    **どこにも突合が無かった。**原典の表は1行に「下位25% 中央値 上位25% 平均」が
+    並んでいるので、その並びが原典テキストに実在するかを見る。
+
+    なお **1回目は平均が上位25%を上回る**（151.6 > 134.0）。原典どおりで、
+    右に長い分布ではこうなる。**順序を仮定した検証を書かないこと。**
+    """
+    bad: list[str] = []
+    ref = _ref_text()
+    if not ref:
+        return [f"原典の抽出テキストが無い: {REF}"]
+    flat = " ".join(ref.split())
+    for r in per_unit:
+        seq = f'{r["q1"]} {r["median"]} {r["q3"]} {r["mean"]}'
+        if seq not in flat:
+            bad.append(f'{r["label"]}　「{seq}」が原典に見当たらない')
+        if f'n={r["n"]}' not in flat:
+            bad.append(f'{r["label"]}　n={r["n"]} が原典に見当たらない')
+    return bad
+
+
 def main() -> None:
     bad = verify()
     rows = breakdown()

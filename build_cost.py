@@ -69,12 +69,19 @@ FLOOR_OPTIONS: list[tuple[str, str]] = [
     ("20", "20階以上（超高層）"),
 ]
 
-# 表に出す「見方」。原典 p.15 の表がこの4つを持っている。
-VIEWS: list[tuple[str, str]] = [
-    ("q1", "下位25%"),
-    ("median", "中央値"),
-    ("q3", "上位25%"),
-    ("mean", "平均"),
+# 表に出す「見方」。原典の表がこの4つを持っている。
+#
+# **平均だけは分位ではない。**4行を並べると順位のはしごに見えるが、平均は
+# 少数の大きな案件に引っ張られるので、右に伸びた分布では上位25%を上回る。
+# 原典では1回目がこれにあたり、平均 151.6 が上位25%値 134.0 を超えている
+# （2回目 112.4 < 129.8、3回目以上 106.1 < 125.7 は超えていない）。
+# **原典どおりの値なので直さない。**代わりに、順位として読まれないよう
+# 表で行を分け、理由を注記する。
+VIEWS: list[tuple[str, str, bool]] = [
+    ("q1", "下位25%", False),
+    ("median", "中央値", False),
+    ("q3", "上位25%", False),
+    ("mean", "平均", True),      # True ＝ 分位ではない
 ]
 
 EXTRA_CSS = """
@@ -105,9 +112,18 @@ EXTRA_CSS = """
 .viewtab th{font-family:var(--cond);font-size:12px;color:var(--ink3);letter-spacing:.03em;border-bottom:1px solid var(--rule)}
 .viewtab td.nm,.viewtab th.nm{text-align:left;font-family:var(--cond);font-weight:600;color:var(--ink)}
 .viewtab td.mo{font-family:var(--mono);font-size:13px}
-.viewtab tr.pick td{background:var(--sunk)}
-.viewtab tr.pick td.nm{box-shadow:inset 3px 0 0 var(--shu)}
-.viewtab .sub{color:var(--ink3);font-size:11.5px}
+.viewtab .sub{color:var(--ink3);font-size:11.5px;display:block;font-weight:400}
+.viewtab td.c{padding:0}
+/* 平均は分位ではないので、左の3列（四分位）と罫線で切り離す。 */
+.viewtab th.avgc,.viewtab td.avgc{border-left:1px solid var(--rule)}
+.viewtab .cell{display:block;width:100%;background:none;border:0;padding:8px 10px;
+  font:inherit;color:inherit;text-align:right;cursor:pointer}
+.viewtab .cell:hover{background:var(--sunk)}
+.viewtab .cell .a{display:block;font-family:var(--mono);font-size:13.5px;color:var(--ink)}
+.viewtab .cell .p{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:2px}
+.viewtab .cell.on{background:var(--sunk);box-shadow:inset 0 0 0 2px var(--ai)}
+.viewtab .cell.on .a{font-weight:700}
+.viewtab td.nm .n{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);font-weight:400}
 .brk{margin-top:8px}
 .brk-row{display:grid;grid-template-columns:9.6em 4.2em 1fr 9em;gap:9px;align-items:center;padding:3px 0;font-size:12.5px}
 .brk-row .lb{font-family:var(--cond)}
@@ -159,7 +175,7 @@ def _data(basis: dict) -> dict:
         "index": latest_value,
         "month": latest_month,
         "base": d["base"],
-        "views": [{"key": k, "label": lb} for k, lb in VIEWS],
+        "views": [{"key": k, "label": lb, "avg": av} for k, lb, av in VIEWS],
         "breakdown": S.breakdown(),
         "kasetsu": S.KASETSU_SHARE,
         "tallFloors": S.KASETSU_TALL_FLOORS,
@@ -173,9 +189,9 @@ def _data(basis: dict) -> dict:
 
 
 def build(basis: dict) -> int:
-    bad = S.verify()
+    bad = S.verify() + S.verify_per_unit(basis["survey"]["per_unit"])
     if bad:
-        raise SystemExit("shuzen_survey の突合が通らない:\n  " + "\n  ".join(bad))
+        raise SystemExit("原典との突合が通らない:\n  " + "\n  ".join(bad))
 
     out = HERE / "cost"
     out.mkdir(exist_ok=True)
@@ -233,10 +249,6 @@ def build(basis: dict) -> int:
           <select id="iFloors">{"".join(f'<option value="{v}">{lb}</option>' for v, lb in FLOOR_OPTIONS)}</select>
           <span class="unitax"><span>仮設工事の割合だけが変わります</span></span>
         </label>
-        <label><span class="cap">大規模修繕の実施回数</span>
-          <select id="iRepeat"><option value="">わからない（3区分をまたぐ幅で出す）</option>{"".join(f'<option value="{r["label"]}">{r["label"]}（n={r["n"]}）</option>' for r in data["per_unit"])}</select>
-          <span class="unitax"><span>選ぶと幅が1つの区分に絞られます</span></span>
-        </label>
         <label><span class="cap">工事の範囲</span>
           <select id="iScope"><option value="full">大規模修繕（一式）</option><option value="partial">部分改修（工種を選ぶ）</option></select>
           <span class="unitax"><span>部分改修は下で工種を選びます</span></span>
@@ -249,23 +261,23 @@ def build(basis: dict) -> int:
       </div>
 
       <div class="tool-out">
+        <p class="lede" style="margin:0 0 10px">原典（{S.PAGE_PER_UNIT}）は<strong>工事回数ごとに四分位を出しています</strong>ので、同じ形で3行とも並べます。回数で金額の水準が違うことも、そのまま見えます。<strong>金額を押すと、その金額で下の内訳を出します。</strong></p>
         <table class="viewtab">
           <thead><tr>
-            <th class="nm">見方</th><th>戸あたり<span class="sub">（万円/戸）</span></th>
-            <th>金額<span class="sub">（税抜）</span></th><th>金額<span class="sub">（税込10%）</span></th>
+            <th class="nm">工事回数</th>
+            <th>下位25%</th><th>中央値</th><th>上位25%</th>
+            <th class="avgc">平均<span class="sub">分位ではありません</span></th>
           </tr></thead>
           <tbody id="oTable"></tbody>
         </table>
         <p class="qnote" id="oNote">—</p>
+        <p class="qnote">上段が税抜の金額、下段が戸あたり（万円/戸）です。税込は10%を足した額で、選んだ金額について下の構成表に出しています。10万円未満は四捨五入しています。</p>
+        <p class="qnote"><strong>「平均」は分位ではありません。</strong>少数の大きな案件に引っ張られるため、分布が右に伸びていると上位25%を上回ることがあります。原典では<strong>1回目がこれにあたり、平均 151.6 万円/戸が上位25%値 134.0 万円/戸を上回っています</strong>（2回目 112.4 &lt; 129.8、3回目以上 106.1 &lt; 125.7 は上回っていません）。左の3列と切り離してあるのはこのためで、平均を含めて順位として読まないでください。</p>
 
         <div class="compo" id="oCompo"></div>
 
         <h3 style="margin:26px 0 0;font-family:var(--cond);font-size:15px">工事金額の内訳（調査全体の平均的な姿）</h3>
         <p class="qnote" id="oBrkNote">—</p>
-        <label style="display:block;margin-top:10px">
-          <span class="cap" style="font-family:var(--cond);font-size:12.5px;color:var(--ink3)">どの見方の金額で内訳を見るか</span>
-          <select id="iView" style="margin-top:6px;font-family:var(--cond);font-size:14px;padding:7px 9px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:2px">{"".join(f'<option value="{k}"{" selected" if k == "median" else ""}>{lb}</option>' for k, lb in VIEWS)}</select>
-        </label>
         <div class="brk" id="oBrk"></div>
         <p class="qnote">出典 {S.SOURCE_PUBLISHER}「{S.SOURCE_NAME}」{S.PAGE_BREAKDOWN}（総工事金額に対する割合。建築系工事の内訳は同ページの建築系合計に対する割合を按分）。{S.PAGE_SHARE} の「総工事金額に占める割合」と一致することを確認しています。<strong>共通仮設費と消費税は、この100%のどこにも含まれていません。</strong>内訳の母数は n={S.BREAKDOWN_N} で、戸あたり金額（n={S.SOURCE_N}）とは異なります（建築系工事を実施していないサンプルを除外した集計のため）。</p>
 
@@ -355,8 +367,12 @@ JS = r"""
   var nf1 = new Intl.NumberFormat('ja-JP', {minimumFractionDigits:1, maximumFractionDigits:1});
   var ROUND = 100000, TAX = 0.10;
 
-  var iUnits=$('iUnits'), iFloors=$('iFloors'), iRepeat=$('iRepeat'),
-      iScope=$('iScope'), iView=$('iView');
+  var iUnits=$('iUnits'), iFloors=$('iFloors'), iScope=$('iScope');
+
+  /* 選んでいるマス（工事回数 × 見方）。表のどの金額を押しても変わる。
+     既定は3区分の真ん中「2回目」の中央値。内訳の基準を決めるのに既定は要るが、
+     **表は常に3行とも出す**ので、当社がひとつの水準を選んで見せる形にはならない。 */
+  var sel = {repeat: (D.per_unit[1] || D.per_unit[0]).label, view: 'median'};
 
   /* 範囲を絞ってもかかる項目は外せない。外すと金額が現実離れして低く出る。 */
   var picked = {};
@@ -364,7 +380,6 @@ JS = r"""
 
   function money(n){ return Math.round(n/ROUND)*ROUND; }
   function man(n){ return nf.format(Math.round(n/10000)) + '万円'; }
-  function manRange(lo, hi){ return lo === hi ? man(lo) : man(lo) + ' 〜 ' + man(hi); }
 
   function kasetsuShare(floors){
     if(!floors) return D.kasetsu.all;
@@ -379,29 +394,30 @@ JS = r"""
   }
 
   function calc(){
-    var units = +iUnits.value || D.unitMin;
-    var rows = iRepeat.value
-      ? D.per_unit.filter(function(r){ return r.label === iRepeat.value; })
-      : D.per_unit;
-    var ratio = D.ratio;
     var sr = scopeRatio();
-    var factor = (iScope.value === 'partial' && sr) ? sr/100 : 1;
+    return {
+      units: +iUnits.value || D.unitMin,
+      factor: (iScope.value === 'partial' && sr) ? sr/100 : 1,
+      scopeRatio: sr,
+      kasetsu: kasetsuShare(+iFloors.value || 0)
+    };
+  }
 
-    /* 幅は「同じ見方の中で、回数の区分をまたいだ最小〜最大」。
-       q1〜q3 をまたぐ幅ではない。回数を選べば lo === hi になって幅が潰れる。 */
-    var views = D.views.map(function(v){
-      var vals = rows.map(function(r){ return r[v.key] * ratio; });
-      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
-      return {
-        key: v.key, label: v.label,
-        perUnit: {lo: lo, hi: hi},
-        full:   {lo: lo*10000*units,        hi: hi*10000*units},
-        amount: {lo: lo*10000*units*factor, hi: hi*10000*units*factor}
-      };
-    });
-    return {units: units, rows: rows, views: views, ratio: ratio,
-            factor: factor, scopeRatio: sr,
-            kasetsu: kasetsuShare(+iFloors.value || 0)};
+  /* 1つのマスの金額。**幅にしない。**
+     原典は工事回数ごとに四分位を出しているので、回数をまたいで最小〜最大に
+     潰すと、原典に無い「幅」を当社が作ることになる。しかも1回目は平均が
+     上位25%を上回るため、潰した幅どうしが上下で食い違って読めなくなる。
+     原典と同じ3行4列のまま出すこと。 */
+  function cell(row, key, c){
+    var pu = row[key] * D.ratio;
+    return {
+      /* 画面に出す戸あたりは**対象割合を掛けたあと**の値。掛ける前の
+         公表値を出すと、同じマスの「金額 ÷ 戸数」と一致しなくなる。
+         公表値そのものは算式の行に出しているので、そちらで辿れる。 */
+      perUnit: pu * c.factor,
+      full:    pu * 10000 * c.units,            /* 一式の額。内訳の按分に使う */
+      amount:  pu * 10000 * c.units * c.factor  /* 範囲を絞った額 */
+    };
   }
 
   function drawScope(){
@@ -430,35 +446,53 @@ JS = r"""
     var c = calc();
     $('oUnits').textContent = nf.format(c.units);
 
-    /* --- 4段階の表 --- */
+    /* --- 原典と同じ「工事回数 × 四分位」の表 --- */
     var tb = $('oTable');
     tb.replaceChildren();
-    c.views.forEach(function(v){
-      var lo = money(v.amount.lo), hi = money(v.amount.hi);
+    D.per_unit.forEach(function(row){
       var tr = document.createElement('tr');
-      if(v.key === iView.value) tr.className = 'pick';
-      function td(cls, text){
-        var e = document.createElement('td'); e.className = cls; e.textContent = text;
-        tr.appendChild(e); return e;
-      }
-      td('nm', v.label);
-      td('mo', v.perUnit.lo === v.perUnit.hi
-        ? nf1.format(v.perUnit.lo)
-        : nf1.format(v.perUnit.lo) + ' 〜 ' + nf1.format(v.perUnit.hi));
-      td('mo', manRange(lo, hi));
-      td('mo', manRange(lo*(1+TAX), hi*(1+TAX)));
+      var nm = document.createElement('td');
+      nm.className = 'nm';
+      nm.textContent = row.label;
+      var nn = document.createElement('span');
+      nn.className = 'n'; nn.textContent = 'n=' + row.n;
+      nm.appendChild(nn);
+      tr.appendChild(nm);
+      D.views.forEach(function(v){
+        var td = document.createElement('td');
+        td.className = 'c' + (v.avg ? ' avgc' : '');
+        var x = cell(row, v.key, c);
+        var amt = money(x.amount);
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cell'
+          + (row.label === sel.repeat && v.key === sel.view ? ' on' : '');
+        b.setAttribute('aria-label', row.label + ' ' + v.label + ' ' + man(amt));
+        var a = document.createElement('span');
+        a.className = 'a'; a.textContent = man(amt);
+        var p = document.createElement('span');
+        p.className = 'p'; p.textContent = nf1.format(x.perUnit);
+        b.appendChild(a); b.appendChild(p);
+        b.addEventListener('click', function(){
+          sel = {repeat: row.label, view: v.key};
+          render();
+        });
+        td.appendChild(b);
+        tr.appendChild(td);
+      });
       tb.appendChild(tr);
     });
 
-    var rn = c.rows.map(function(r){ return r.label + '（n=' + r.n + '）'; }).join('／');
-    $('oNote').textContent = iRepeat.value
-      ? '工事回数は「' + iRepeat.value + '」で計算しています。使った区分は ' + rn + '。'
-      : '工事回数を選んでいないため、統計の3区分（' + rn
-        + '）をまたぐ幅で示しています。どの見方を採るかで金額が変わるので、幅のまま載せています。';
+    var selRow = D.per_unit.filter(function(r){ return r.label === sel.repeat; })[0]
+      || D.per_unit[0];
+    var selView = D.views.filter(function(v){ return v.key === sel.view; })[0] || D.views[1];
+    $('oNote').textContent = '選んでいるのは「' + selRow.label + '（n=' + selRow.n + '）の'
+      + selView.label + '」です。下の構成表と内訳は、この金額で出しています。'
+      + '表のどの金額を押しても切り替わります。';
 
     /* --- 構成（共通仮設費は別途） --- */
-    var pick = c.views.filter(function(v){ return v.key === iView.value; })[0] || c.views[1];
-    var plo = money(pick.amount.lo), phi = money(pick.amount.hi);
+    var pick = cell(selRow, sel.view, c);
+    var pv = money(pick.amount);
     var co = $('oCompo');
     co.replaceChildren();
     function row(k, v, cls){
@@ -467,8 +501,8 @@ JS = r"""
       var b = document.createElement('span'); b.className = 'v ' + (cls||''); b.textContent = v;
       d.appendChild(a); d.appendChild(b); co.appendChild(d);
     }
-    row('① 工事費（仮設工事を含む・税抜）', manRange(plo, phi));
-    row('　　税込10%', manRange(plo*(1+TAX), phi*(1+TAX)));
+    row('① 工事費（仮設工事を含む・税抜）', man(pv));
+    row('　　税込10%', man(pv*(1+TAX)));
     row('② 共通仮設費', '別途', 'betsu');
     row('③ 設計コンサルタント業務の費用（調査・診断／設計／工事監理 等）', '別途', 'betsu');
     row('①＋②＋③', '②③の確定後に算出', 'betsu');
@@ -478,7 +512,7 @@ JS = r"""
     brk.replaceChildren();
     var maxp = Math.max.apply(null, D.breakdown.map(function(r){ return r.percent; }));
     D.breakdown.forEach(function(r){
-      var flo = money(pick.full.lo * r.percent/100), fhi = money(pick.full.hi * r.percent/100);
+      var fv = money(pick.full * r.percent/100);
       var d = document.createElement('div');
       d.className = 'brk-row' + (r.kasetsu ? ' ks' : '');
       var lb = document.createElement('span'); lb.className='lb'; lb.textContent = r.label;
@@ -486,7 +520,7 @@ JS = r"""
       var tk = document.createElement('span'); tk.className='brk-track';
       var i = document.createElement('i'); i.style.width = (r.percent/maxp*100).toFixed(1)+'%';
       tk.appendChild(i);
-      var am = document.createElement('span'); am.className='am'; am.textContent = manRange(flo, fhi);
+      var am = document.createElement('span'); am.className='am'; am.textContent = man(fv);
       d.appendChild(lb); d.appendChild(pc); d.appendChild(tk); d.appendChild(am);
       brk.appendChild(d);
     });
@@ -494,8 +528,9 @@ JS = r"""
     /* 内訳は「一式で行った場合の金額」に掛ける。範囲を絞った額に掛けると、
        絞った割合が二重にかかる。 */
     $('oBrkNote').textContent =
-      '下の割合を、一式で行った場合の金額（' + manRange(money(pick.full.lo), money(pick.full.hi))
-      + '・' + pick.label + '）に掛けています。本物件の実際の割合ではなく、調査全体の平均的な姿です。'
+      '下の割合を、一式で行った場合の金額（' + man(money(pick.full))
+      + '・' + selRow.label + 'の' + selView.label + '）に掛けています。'
+      + '本物件の実際の割合ではなく、調査全体の平均的な姿です。'
       + '上の構成表では、仮設工事に本物件の階数に合わせた ' + c.kasetsu.percent.toFixed(1) + '%（'
       + c.kasetsu.label + '・n=' + c.kasetsu.n + '）が対応します。';
 
@@ -503,11 +538,13 @@ JS = r"""
     var fm = $('oFormula');
     fm.replaceChildren();
     [
-      '使った統計　' + (iRepeat.value ? rn + ' の区分' : '工事回数の3区分すべて（' + rn + '）をまたぐ幅'),
+      '使った統計　' + selRow.label + '（n=' + selRow.n + '）の' + selView.label
+        + '　' + nf1.format(selRow[sel.view]) + ' 万円/戸（調査時点）',
       '工事費指数による換算倍率　' + D.index + ' ÷ 100 ＝ ' + D.ratio.toFixed(3)
         + '（建設総合_建築補修（改装・改修）・' + D.base + '・' + D.month + '）',
-      '換算後の戸あたり金額 × 戸数 ' + nf.format(c.units) + ' 戸'
-        + (c.factor !== 1 ? '　× 対象割合 ' + c.scopeRatio + '%' : '') + '　＝ 上の表の金額',
+      '換算後 ' + nf1.format(selRow[sel.view] * D.ratio) + ' 万円/戸 × 戸数 '
+        + nf.format(c.units) + ' 戸'
+        + (c.factor !== 1 ? '　× 対象割合 ' + c.scopeRatio + '%' : '') + '　＝ ' + man(pv),
       'この工事金額に占める仮設工事の割合は ' + c.kasetsu.percent.toFixed(1) + '%（'
         + c.kasetsu.label + '・n=' + c.kasetsu.n + '）。',
       '金額は10万円未満を四捨五入しています。統計は税抜で、消費税相当額と共通仮設費を含みません。'
@@ -516,7 +553,7 @@ JS = r"""
     });
   }
 
-  [iUnits, iFloors, iRepeat, iScope, iView].forEach(function(e){
+  [iUnits, iFloors, iScope].forEach(function(e){
     e.addEventListener('input', render);
     e.addEventListener('change', render);
   });
