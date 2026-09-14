@@ -88,8 +88,12 @@ USES = [
 ]
 
 # 用途別ページのスラッグ →（相談ページの用途スラッグ）。
-# column/ nonres/ reform/ が使う。**対応が無いものは preset を付けない。**
+# column/ nonres/ reform/ cost/ が使う。**対応が無いものは preset を付けない。**
 # 近いだけの区分を無理に当てると、着地した人が選び直すことになって逆効果。
+#
+# 渡すのは**呼び出し側のページのスラッグ**で、相談ページ側の用途名ではない。
+# 相談ページ側の名前（housing 等）をそのまま渡すと、ここに無いのでクエリが
+# 付かず、**黙って preset なしで着地する**。エラーにならないので気づきにくい。
 USE_FROM_SLUG = {
     "office": "building", "shop": "building", "restaurant": "building",
     "hotel": "building",
@@ -97,6 +101,7 @@ USE_FROM_SLUG = {
     "school": "school",
     "hospital": "medical", "medical": "medical", "welfare": "medical",
     "kyodo": "housing", "kyoyo": "housing",
+    "cost": "housing",   # 工事金額の分布ページ（/shuzen-stats/cost/）
 }
 
 

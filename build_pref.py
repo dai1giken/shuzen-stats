@@ -354,14 +354,30 @@ TIP_JS = '''<script>
 # 元請ゼネコンの主戦場の客に、下請が直接声をかける形になる。
 CONTACT_URL = "https://dai1giken.co.jp/#contact"
 
-CTA_HOUSING = f"""
-  <a class="cta" href="{CONTACT_URL}">
+def cta_housing(href: str = CONTACT_URL) -> str:
+    """住宅向けのCTA。**行き先を差し替えられる。**
+
+    **呼びかける相手と、受ける窓口は別の話。**文言（元請業者様・管理会社様 等へ）は
+    そのままに、送り先だけ簡易フォームか案件相談ページかを選べるようにしてある。
+
+    `cta_building()` と同じく、**行き先をここで import して決めない。**
+    build_consultation が build_pref を import しているので、逆向きに import すると
+    循環する。URLは呼ぶ側が渡すこと。
+    """
+    return f"""
+  <a class="cta" href="{href}">
     <span class="k">大規模修繕の元請業者様、管理会社様 等へ</span>
     <span class="n">建物調査・お見積は一棟から</span>
     <span class="d">賃貸マンション・テナントビル・アパートなどの外装改修を、足場・下地補修・シーリング・塗装・防水まで自社管理で一貫対応しています。株式会社第一技研</span>
     <span class="arrow">→</span>
   </a>
 """
+
+
+# 行き先が #contact のままの既定形。city/ と pref/（一都三県）はこれを使う。
+# **構造化フォームへ送らないのは意図的**で、読者が管理組合の理事である可能性が
+# 高く、送ると下請が管理組合を直接受けにいく形に近づくため。
+CTA_HOUSING = cta_housing()
 
 def cta_building(href: str = CONTACT_URL, label: str = "お見積りをご希望の場合は") -> str:
     """非住宅向けのCTA。**行き先を差し替えられる。**

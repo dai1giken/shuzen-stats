@@ -47,7 +47,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from build_pref import SITE_URL, cite_block, foot, head
+from build_consultation import link as consult_link
+from build_pref import SITE_URL, cite_block, cta_housing, foot, head
 from cost_banner import UNIT_DEFAULT, UNIT_MAX, UNIT_MIN
 import shuzen_survey as S
 
@@ -328,6 +329,11 @@ def build(basis: dict) -> int:
 
     h.append(cite_block(PAGE_URL, day))
 
+    # 呼びかける相手は city/ pref/ と同じ（元請業者様・管理会社様 等へ）。
+    # 送り先だけ案件相談ページにしてある（2026-09-14 本人判断）。条件が整理された
+    # 状態で届くので、こちらから聞き直す往復が減る。
+    h.append(cta_housing(consult_link("cost")))
+
     h.append(f'''
   <a class="cta" href="{SITE_URL}cycle/">
     <span class="k">公表資料 ／ 修繕周期</span>
@@ -340,13 +346,6 @@ def build(basis: dict) -> int:
     <span class="k">Tool ／ 工事費の指数</span>
     <span class="n">建設工事費デフレーターの基準年</span>
     <span class="d">古い見積や長期修繕計画の金額を今の水準に直すときは、指数の基準年をそろえる必要があります</span>
-    <span class="arrow">→</span>
-  </a>
-
-  <a class="cta" href="{SITE_URL}">
-    <span class="k">大規模修繕統計ビューア</span>
-    <span class="n">トップへ</span>
-    <span class="d">工事費指数・戸あたり工事金額・修繕周期・修繕積立金の公表値</span>
     <span class="arrow">→</span>
   </a>
 
