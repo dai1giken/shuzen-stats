@@ -35,11 +35,21 @@ import re
 import sys
 from pathlib import Path
 
-from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
+# ツール本体と相談フォームは、詳細ページに**丸ごと**置く（2026-09-15 本人判断）。
+# 一覧ページ（index）は従来どおり入口バナー。**1ページにツールは1つまで。**
+# バナーと本体を同じページに置くと id が重なって、どちらかが黙って動かなくなる。
+import consult_form
+import cost_tool
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner, per_unit_median
 from pref_city import city_section
 
 HERE = Path(__file__).resolve().parent
 SITE_URL = "https://dai1giken.co.jp/shuzen-stats/"
+
+# 施工の対応エリア。**相談フォームを出してよい都道府県。**
+# 統計そのものは全国どこでも同じ公表値なので、ツールはこの外にも出す。
+# ここを広げるときは、実際に受けられるかを先に確認すること。
+SERVICE_AREA = {"東京都", "神奈川県", "埼玉県", "千葉県"}
 MONO = "IBM Plex Mono, monospace"
 
 # ---- アクセス解析 -------------------------------------------------------
@@ -702,6 +712,10 @@ def build(basis: dict) -> int:
     out = HERE / "pref"
     out.mkdir(exist_ok=True)
     written = []
+    # description に出す戸あたり工事金額。**バナーと同じ関数から読むこと。**
+    cost_med, cost_month = per_unit_median(basis)
+    # ツール本体は全ページ同じ HTML。**ループの中で組み立て直さない**（47回になる）。
+    tool_html = cost_tool.section(basis, cost_url=f"{SITE_URL}cost/")
 
     # バーの目盛り。**全ページ共通で1位の戸数を上限にする。**ページごとに
     # 変えると、同じ県のバーがページによって違う長さになって比べられない。
@@ -716,18 +730,33 @@ def build(basis: dict) -> int:
         flow = units[name]                       # 着工（フロー）。Ref. セクション用
         series = {k: v for k, v in by_year[name].items()}
         canonical = f"{SITE_URL}pref/{slug}.html"
-        # 日本語SERPは約32字で切れる。定義は h1 と description が担う
-        title = f"{name}の大規模修繕統計｜築{age_lo}〜{age_hi}年 {val:,}戸"
-        desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{val:,}戸。"
-                f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
-                f"全国{r}位、全国の{share:.1f}%。分譲と賃貸を合わせた数です。"
-                f"総務省「令和5年住宅・土地統計調査」の公表値。")
+        # 日本語SERPは約32字で切れる。定義は h1 と description が担う。
+        # **「費用」を32字の内側に置く。**検索されているのは「○○区 大規模修繕」に
+        # 費用・相場を足した語で、「統計」しか無いタイトルは表示されても押されて
+        # いなかった（2026-09-15 時点の Search Console）。
+        # **金額そのものはタイトルに入れない。**原典の中央値は全国値なので、
+        # 地名の直後に数字を置くと「その地域の相場」と読まれる。cost_banner.py の
+        # 「そのページの戸数とバナーの金額を繋げない」と同じ理由。金額は
+        # description 側で「全国」と明示したうえで出す。
+        title = f"{name}の大規模修繕 費用の目安｜築{age_lo}〜{age_hi}年 {val:,}戸"
+        desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{val:,}戸"
+                f"（全国{r}位・全国の{share:.1f}%）。{ref}年時点で築{age_lo}〜{age_hi}年、"
+                f"大規模修繕の2〜3回目にあたります。"
+                f"工事金額は全国の実態調査で1戸あたり中央値{cost_med:,.0f}万円"
+                f"（{cost_month}換算・共通仮設費と消費税を除く）。"
+                f"総務省・国土交通省の公表値。")
 
         # 近隣＝順位の前後
         i = r - 1
         near = ranked[max(0, i - 2): i + 3]
 
-        h = [head(title, desc, canonical, extra_css=COST_CSS)]
+        # **相談フォームは一都三県だけ。**施工の対応エリアがそこまでなので、
+        # 他県のページに出すと、応えられない相談を集めることになる。
+        # 統計（ツール）は全国どこでも同じ公表値なので、ページは全県に出す。
+        consult = (consult_form.form(page_url=canonical, page_title=title, region=name)
+                   if name in SERVICE_AREA else "")
+        h = [head(title, desc, canonical,
+                  extra_css=cost_tool.EXTRA_CSS + (consult_form.EXTRA_CSS if consult else ""))]
         h.append(f'''  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて総務省「{city["survey"]}」の公表値です。</strong>
@@ -755,7 +784,7 @@ def build(basis: dict) -> int:
       <p>全国 {national:,}戸 に占める割合は {share:.1f}%。</p>
     </div>
   </div>
-
+{tool_html}{consult}
   <section>
     <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
     <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、{ref}年時点で築{age_lo}〜{age_hi}年にあたります。</p>
@@ -816,7 +845,6 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
-        h.append(cost_banner(basis))
         h.append(cite_block(canonical, day))
         h.append(foot(name))
         (out / f"{slug}.html").write_text("".join(h), encoding="utf-8")

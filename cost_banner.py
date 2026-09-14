@@ -39,7 +39,9 @@ CSS = """
    同じ形にすると警告の列に埋もれるので、**このサイトで唯一の塗りつぶし**にして
    識別色を藍（--ai）にしてある。朱に戻すと .warn と見分けが付かなくなる。 */
 .costban{display:block;border:1px solid var(--ai);background:var(--raise);
-  margin-top:26px;text-decoration:none;color:var(--ink);overflow:hidden}
+  margin:26px 0;text-decoration:none;color:var(--ink);overflow:hidden;
+  transition:transform .15s,box-shadow .15s}
+.costban:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.18)}
 /* 見出しは藍のベタ塗り。文字色に --ground を使うのは、--ai と --ground が
    明暗どちらのテーマでも必ず反転するため（明: 濃藍地に淡文字／暗: 淡藍地に濃文字）。
    白と決め打ちすると、暗いテーマで淡い藍地に白文字になって読めない。 */
@@ -58,44 +60,72 @@ CSS = """
   transition:opacity .18s}
 .costban .cbv.fade{opacity:.3}
 .costban .cbgo{margin-left:auto;align-self:center;font-family:var(--cond);font-weight:700;
-  font-size:13px;color:var(--ai);white-space:nowrap}
-.costban input[type=range]{width:100%;margin-top:14px;accent-color:var(--ai);height:20px}
+  font-size:13px;color:var(--ai);white-space:nowrap;border:1px solid var(--ai);
+  border-radius:999px;padding:7px 16px;transition:background .15s,color .15s}
+.costban:hover .cbgo{background:var(--ai);color:var(--ground)}
+/* つまみは**ブラウザ既定のままだと細く、動かせる物だと気づかれない。**
+   build_cost.py の本体と同じ作りにしてある（色だけ朱→藍）。accent-color は
+   ::-webkit-slider-thumb を書いた時点で効かなくなるので、色は両方に直接置く。 */
+.costban input[type=range]{-webkit-appearance:none;appearance:none;width:100%;
+  margin-top:14px;height:26px;background:transparent;cursor:pointer;display:block}
+.costban input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:999px;
+  background:var(--sunk);border:1px solid var(--ai)}
+.costban input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;
+  margin-top:-9px;border-radius:50%;background:var(--ai);border:3px solid var(--raise);
+  box-shadow:0 0 0 1px var(--ai)}
+.costban input[type=range]::-moz-range-track{height:8px;border-radius:999px;
+  background:var(--sunk);border:1px solid var(--ai)}
+.costban input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
+  background:var(--ai);border:3px solid var(--raise);box-shadow:0 0 0 1px var(--ai)}
+.costban .cbhint{display:block;margin-top:7px;font-family:var(--cond);font-weight:600;
+  font-size:11.5px;letter-spacing:.04em;color:var(--ai)}
 .costban .cbn{display:block;margin-top:10px;font-size:11.5px;line-height:1.8;color:var(--ink3)}
-@media (max-width:560px){.costban .cbgo{margin-left:0;width:100%;margin-top:6px}}
+@media (max-width:560px){.costban .cbgo{margin-left:0;margin-top:10px;text-align:center;
+  width:100%;box-sizing:border-box}}
 @media print{.costban{display:none}}
 """
 
 EXTRA_CSS = f"\n<style>{CSS}</style>"
 
 
-def banner(basis: dict) -> str:
-    """入口バナー1枚ぶんの HTML（CSS は EXTRA_CSS を head に渡すこと）。"""
-    from build_pref import SITE_URL   # 循環 import を避けるため関数内で読む
+def per_unit_median(basis: dict) -> tuple[float, str]:
+    """代表の戸あたり工事金額（万円／戸・直近月へ換算済み）と、その換算月を返す。
 
+    **バナーだけでなく、各ページの <title> と description からもここを読む。**
+    同じ数字を2箇所で計算すると、画面と検索結果で金額が食い違う。
+
+    代表に「2回目」を使う。1回目は平均が中央値を大きく上回る（大規模・高仕様の案件が
+    上に伸びる）ため代表値として高い側に寄り、3回目以上は最も低く出る。真ん中を取る。
+    """
     d = basis["deflator"]
     ratio = d["series"][d["primary"]][-1] / 100.0
     month = d["months"][-1]
     med = {r["label"]: r["median"] * ratio for r in basis["survey"]["per_unit"]}
+    return med.get("2回目", list(med.values())[0]), month
 
-    # 代表に「2回目」を使う。1回目は平均が中央値を大きく上回る（大規模・高仕様の案件が
-    # 上に伸びる）ため代表値として高い側に寄り、3回目以上は最も低く出る。真ん中を取る。
-    per_unit = med.get("2回目", list(med.values())[0])
+
+def banner(basis: dict) -> str:
+    """入口バナー1枚ぶんの HTML（CSS は EXTRA_CSS を head に渡すこと）。"""
+    from build_pref import SITE_URL   # 循環 import を避けるため関数内で読む
+
+    per_unit, month = per_unit_median(basis)
 
     cfg = {"perUnit": per_unit, "min": UNIT_MIN, "max": UNIT_MAX,
            "demo": DEMO_UNITS, "url": SITE_URL + "cost/"}
 
     return f'''
   <a class="costban" href="{SITE_URL}cost/" id="costban">
-    <span class="cbk">TOOL ／ 戸数から工事金額の分布を見る</span>
+    <span class="cbk">TOOL ／ 戸数から工事金額の目安を見る</span>
     <span class="cbbody">
       <span class="cbmain">
         <span class="cbu"><b id="cbu">{UNIT_DEFAULT}</b><small>戸</small></span>
         <span class="cbeq">なら、工事金額の中央値は</span>
         <span class="cbv" id="cbv">—</span>
-        <span class="cbgo">くわしく見る →</span>
+        <span class="cbgo">分布をくわしく見る →</span>
       </span>
       <input type="range" id="cbr" min="{UNIT_MIN}" max="{UNIT_MAX}" step="1"
         value="{UNIT_DEFAULT}" aria-label="総戸数（例示）">
+      <span class="cbhint">◀ つまみを動かすと戸数を変えられます</span>
       <span class="cbn">国土交通省の実態調査（2回目・{month}換算）の中央値に戸数を掛けた額です。
         <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
         戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>

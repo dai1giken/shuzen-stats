@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>横浜市旭区（神奈川県）の大規模修繕統計｜築26〜45年 20,590戸</title>
-<meta name="description" content="横浜市旭区の非木造共同住宅のうち、1981〜2000年に建築されたものは20,590戸。2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。総務省「令和5年住宅・土地統計調査」の公表値。">
-<meta property="og:title" content="横浜市旭区（神奈川県）の大規模修繕統計｜築26〜45年 20,590戸">
-<meta property="og:description" content="横浜市旭区の非木造共同住宅のうち、1981〜2000年に建築されたものは20,590戸。2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。総務省「令和5年住宅・土地統計調査」の公表値。">
+<title>横浜市旭区の大規模修繕 費用の目安｜築26〜45年 20,590戸｜神奈川県</title>
+<meta name="description" content="横浜市旭区の非木造共同住宅のうち、1981〜2000年に建築されたものは20,590戸。2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。工事金額は全国の実態調査で1戸あたり中央値135万円（2026年6月換算・共通仮設費と消費税を除く）。総務省・国土交通省の公表値。">
+<meta property="og:title" content="横浜市旭区の大規模修繕 費用の目安｜築26〜45年 20,590戸｜神奈川県">
+<meta property="og:description" content="横浜市旭区の非木造共同住宅のうち、1981〜2000年に建築されたものは20,590戸。2026年時点で築26〜45年、大規模修繕の2〜3回目にあたります。工事金額は全国の実態調査で1戸あたり中央値135万円（2026年6月換算・共通仮設費と消費税を除く）。総務省・国土交通省の公表値。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dai1giken.co.jp/shuzen-stats/city/14112.html">
 <meta property="og:image" content="https://dai1giken.co.jp/shuzen-stats/ogp.png">
@@ -167,34 +167,199 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
 </style>
 <style>
-/* 警告（.warn）と出典（.srcband）はどちらも「枠線だけ」で、朱は警告の色。
-   同じ形にすると警告の列に埋もれるので、**このサイトで唯一の塗りつぶし**にして
-   識別色を藍（--ai）にしてある。朱に戻すと .warn と見分けが付かなくなる。 */
-.costban{display:block;border:1px solid var(--ai);background:var(--raise);
-  margin-top:26px;text-decoration:none;color:var(--ink);overflow:hidden}
-/* 見出しは藍のベタ塗り。文字色に --ground を使うのは、--ai と --ground が
-   明暗どちらのテーマでも必ず反転するため（明: 濃藍地に淡文字／暗: 淡藍地に濃文字）。
-   白と決め打ちすると、暗いテーマで淡い藍地に白文字になって読めない。 */
-.costban .cbk{display:block;background:var(--ai);color:var(--ground);
-  font-family:var(--cond);font-weight:700;font-size:12.5px;letter-spacing:.09em;
-  padding:8px 18px}
-.costban .cbbody{display:block;padding:18px 20px 16px}
-.costban:hover .cbbody{background:var(--sunk)}
-.costban .cbmain{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
-.costban .cbu{font-family:var(--cond);font-weight:700;color:var(--ink);
-  font-size:clamp(26px,4vw,38px);line-height:1;font-variant-numeric:tabular-nums}
-.costban .cbu small{font-size:.45em;font-weight:600;margin-left:3px;color:var(--ink2)}
-.costban .cbeq{color:var(--ink2);font-size:13.5px}
-.costban .cbv{font-family:var(--cond);font-weight:700;color:var(--ai);
-  font-size:clamp(34px,5.6vw,52px);line-height:1;font-variant-numeric:tabular-nums;
-  transition:opacity .18s}
-.costban .cbv.fade{opacity:.3}
-.costban .cbgo{margin-left:auto;align-self:center;font-family:var(--cond);font-weight:700;
-  font-size:13px;color:var(--ai);white-space:nowrap}
-.costban input[type=range]{width:100%;margin-top:14px;accent-color:var(--ai);height:20px}
-.costban .cbn{display:block;margin-top:10px;font-size:11.5px;line-height:1.8;color:var(--ink3)}
-@media (max-width:560px){.costban .cbgo{margin-left:0;width:100%;margin-top:6px}}
-@media print{.costban{display:none}}
+.tool{border:1px solid var(--rule);background:var(--surface);margin-top:18px}
+.tool-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px;padding:20px 22px;
+  border-bottom:1px solid var(--rule);background:var(--sunk)}
+.tool-in label{display:block}
+.tool-in .cap{display:block;font-family:var(--cond);font-weight:600;font-size:12.5px;color:var(--ink3);
+  letter-spacing:.04em;margin-bottom:7px}
+.tool-in select{width:100%;font-family:var(--cond);font-size:14px;padding:7px 9px;background:var(--surface);
+  color:var(--ink);border:1px solid var(--rule);border-radius:2px}
+/* つまみは**ブラウザ既定のままだと細すぎて、動かせる物だと気づかれない。**
+   レールと玉を自前で描いて大きくする。accent-color は ::-webkit-slider-thumb を
+   書いた時点で効かなくなるので、色は両方に直接置くこと。 */
+/* **色の役割をこのページで揃えてある。藍＝操作できるもの／朱＝警告。**
+   つまみは元は朱だったが、朱は「平均は分位ではない」「共通仮設費は別途」と
+   同じ色で、操作の合図と注意が同じ色だと両方が弱くなる。押せる金額・使い方・
+   連動枠・つまみを藍に統一した。**朱に戻さないこと。** */
+.tool-in input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;
+  background:transparent;cursor:pointer;display:block}
+.tool-in input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:999px;
+  background:var(--sunk);border:1px solid var(--ai)}
+.tool-in input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;
+  margin-top:-9px;border-radius:50%;background:var(--ai);border:3px solid var(--sunk);
+  box-shadow:0 0 0 1px var(--ai)}
+.tool-in input[type=range]::-moz-range-track{height:8px;border-radius:999px;
+  background:var(--sunk);border:1px solid var(--ai)}
+.tool-in input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
+  background:var(--ai);border:3px solid var(--sunk);box-shadow:0 0 0 1px var(--ai)}
+.tool-in input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px var(--ai)}
+.tool-in input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px var(--ai)}
+.tool-in .drag{display:block;margin-top:6px;font-family:var(--cond);font-weight:600;font-size:11.5px;
+  letter-spacing:.03em;color:var(--ai);line-height:1.6}
+.unitv{font-family:var(--mono);font-size:26px;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.1}
+.unitv small{font-size:13px;color:var(--ink3);margin-left:3px}
+.unitax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:2px}
+.scope{padding:16px 22px;border-bottom:1px solid var(--rule)}
+.scope-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:10px}
+.scope-grid label{display:flex;align-items:baseline;gap:7px;background:var(--surface);padding:8px 11px;font-size:13px;cursor:pointer}
+.scope-grid label.on{background:var(--sunk)}
+.scope-grid .pc{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.scope-grid .fix{color:var(--ink3)}
+.tool-out{padding:20px 22px}
+/* **表だけを横スクロールの箱に入れること。**入れないと、狭い画面で
+   ページ全体が横スクロールする（332px 幅で表が 420px 必要・2026-09-15 実測）。
+   共有CSSの .tablebox と同じ作り。 */
+.tabwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.viewtab{width:100%;min-width:376px;border-collapse:collapse;font-size:13.5px}
+.viewtab th,.viewtab td{padding:9px 10px;border-bottom:1px solid var(--rule-soft);text-align:right;
+  font-variant-numeric:tabular-nums}
+.viewtab th{font-family:var(--cond);font-size:12px;color:var(--ink3);letter-spacing:.03em;border-bottom:1px solid var(--rule)}
+.viewtab td.nm,.viewtab th.nm{text-align:left;font-family:var(--cond);font-weight:600;color:var(--ink)}
+.viewtab td.mo{font-family:var(--mono);font-size:13px}
+.viewtab .sub{color:var(--ink3);font-size:11.5px;display:block;font-weight:400}
+.viewtab td.c{padding:0}
+/* 平均は分位ではないので、左の3列（四分位）と罫線で切り離す。 */
+.viewtab th.avgc,.viewtab td.avgc{border-left:1px solid var(--rule)}
+/* **9つの金額が押せることは、知らないと分からない。**「押すと下が変わる」と
+   文章で書いてあっても読まれないので、形で示す：
+     ・未選択＝金額に藍の点線下線（リンクの作法）＋ホバーで藍の枠
+     ・選択中＝藍の枠＋「▼ 下に表示中」
+   点線を消すと、また「ただの表」に戻る。 */
+.viewtab .cell{display:block;width:100%;background:none;border:0;padding:8px 10px;
+  font:inherit;color:inherit;text-align:right;cursor:pointer;transition:background .12s,box-shadow .12s}
+.viewtab .cell:hover{background:var(--sunk);box-shadow:inset 0 0 0 1px var(--ai)}
+.viewtab .cell:focus-visible{outline:2px solid var(--ai);outline-offset:-2px}
+.viewtab .cell .a{display:block;font-family:var(--mono);font-size:13.5px;color:var(--ink);
+  text-decoration:underline dotted var(--ai);text-decoration-thickness:1px;text-underline-offset:4px}
+.viewtab .cell .p{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:2px}
+.viewtab .cell .tag{display:none;font-family:var(--cond);font-weight:700;font-size:10px;
+  letter-spacing:.06em;color:var(--ai);margin-top:4px}
+.viewtab .cell.on{background:var(--sunk);box-shadow:inset 0 0 0 2px var(--ai)}
+.viewtab .cell.on .a{font-weight:700;text-decoration:none}
+.viewtab .cell.on .tag{display:block}
+/* 平均の列だけ見出しを朱にして、下の注意書きと対応させる。
+   朱はこのサイトの警告色で、ここは「順位として読むな」という注意そのもの。 */
+.viewtab th.avgc .sub{color:var(--shu)}
+.avgnote{margin-top:14px;padding:12px 15px;border-left:4px solid var(--shu);background:var(--sunk);
+  font-size:12.5px;line-height:1.9;color:var(--ink2)}
+.avgnote b{color:var(--shu);font-weight:700}
+.viewtab td.nm .n{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);font-weight:400}
+.brk{margin-top:8px}
+.brk-row{display:grid;grid-template-columns:9.6em 4.2em 1fr 9em;gap:9px;align-items:center;padding:3px 0;font-size:12.5px}
+.brk-row .lb{font-family:var(--cond)}
+.brk-row .pc,.brk-row .am{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink2)}
+.brk-track{height:9px;background:var(--sunk);border-radius:1px}
+.brk-track i{display:block;height:100%;background:var(--rule-strong,#b9ae99);border-radius:1px}
+.brk-row.ks .lb{color:var(--shu);font-weight:700}
+.brk-row.ks .brk-track i{background:var(--shu)}
+/* 使い方。表の直前に置く。lede の文章の中に混ぜると読まれない。 */
+.howto{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 12px;
+  padding:9px 13px;border:1px solid var(--ai);background:var(--sunk);font-size:12.5px;color:var(--ink2)}
+.howto b{font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.07em;
+  color:var(--ground);background:var(--ai);padding:2px 8px;white-space:nowrap}
+/* 連動していることが伝わらない、というのが最大の不満だった。
+   **表より下を1つの枠に入れ、見出しに選択中の条件を常時書く。**
+   枠を外すと「たまたま下にも数字がある」ようにしか見えない。 */
+.linked{margin-top:20px;border:1px solid var(--ai)}
+.linkhd{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:8px 14px;
+  background:var(--ai);color:var(--ground);font-family:var(--cond);font-weight:700;
+  font-size:12px;letter-spacing:.06em}
+.linkhd .v{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:0}
+.linkhd .amt{margin-left:auto;font-family:var(--mono);font-size:16px;font-variant-numeric:tabular-nums;letter-spacing:0}
+.linked-in{padding:16px 18px}
+.linked-in .compo{margin-top:0}
+/* 変わったことを一瞬だけ示す。**つまみの input ごとに光らせないこと**
+   （動かしているあいだじゅう点滅して読めなくなる）。押した時と、つまみを
+   離した時だけ呼ぶ。 */
+@keyframes lnkflash{from{background:var(--sunk)}to{background:transparent}}
+.linked-in.flash{animation:lnkflash .6s ease-out}
+@media (prefers-reduced-motion:reduce){.linked-in.flash{animation:none}}
+@media (max-width:560px){.linkhd .amt{margin-left:0}}
+.compo{margin-top:20px;border:1px solid var(--rule)}
+.compo div{display:flex;gap:12px;align-items:baseline;padding:11px 14px;border-bottom:1px solid var(--rule-soft);font-size:13px}
+.compo div:last-child{border-bottom:0}
+.compo .k{font-family:var(--cond);font-weight:600;color:var(--ink)}
+.compo .v{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.compo .betsu{color:var(--shu);font-family:var(--cond);font-weight:700}
+.formula{margin-top:16px;font-size:12px;line-height:1.95;color:var(--ink2)}
+.formula li{margin-bottom:2px}
+.gloss{margin-top:16px;border-top:1px solid var(--rule)}
+.gloss dt{font-family:var(--cond);font-weight:700;font-size:13.5px;color:var(--ink);margin-top:12px}
+.gloss dd{margin:3px 0 0;font-size:12.5px;line-height:1.85;color:var(--ink2)}
+.prbtn{margin-top:16px;font-family:var(--cond);font-size:13px;padding:9px 18px;background:var(--surface);
+  color:var(--ink);border:1px solid var(--ink);border-radius:2px;cursor:pointer}
+.prbtn:hover{background:var(--sunk)}
+@media (max-width:560px){.brk-row{grid-template-columns:8.4em 3.6em 1fr;}.brk-row .am{grid-column:2/4;text-align:left}}
+@media print{
+  /* **.cite（引用のしかた）は消さないこと。**このサイトは「出典を明記すれば
+     引用してよい」という立場なので、紙に配るときこそ出典表記が要る。
+     元は /cost/ を概算シート1枚にする目的で消していたが、同じCSSが
+     地域226ページにも効くようになったため外した（2026-09-15）。 */
+  .masthead,.sitenav,.cta,.sitelink,.prbtn,.finder{display:none!important}
+  .tool,.compo,.warn,.avgnote,.viewtab,.gloss,.linked{break-inside:avoid}
+  .howto{display:none!important}
+  .linkhd{background:transparent!important;color:inherit!important;border-bottom:1px solid #999}
+  .tool-in,.brk-track{background:transparent!important}
+  .avgnote{background:transparent!important}
+  .brk-track{border:1px solid #999}
+  .brk-track i{background:#666!important}
+  body{font-size:11pt}
+  a[href]:after{content:""}
+  @page{margin:14mm}
+}
+</style>
+<style>
+/* 統計と営業の境目をページに明示する。統計サイトの価値は「公表値だけ」と
+   言い切れることなので、**この帯を消さないこと。** */
+.bizband{margin-top:26px;padding:7px 14px;border:1px solid var(--rule);
+  background:var(--sunk);font-family:var(--cond);font-weight:600;font-size:11.5px;
+  letter-spacing:.05em;color:var(--ink3)}
+.bizband b{color:var(--ink2);font-weight:700;margin-right:10px}
+.cf{border:1px solid var(--rule);border-top:0}
+.cf > summary{list-style:none;cursor:pointer;display:block;padding:16px 18px;background:var(--raise)}
+.cf > summary::-webkit-details-marker{display:none}
+.cf > summary:hover{background:var(--sunk)}
+.cf .cfk{display:block;font-family:var(--cond);font-weight:700;font-size:15px;color:var(--ink)}
+.cf .cfd{display:block;margin-top:5px;font-size:12.5px;line-height:1.8;color:var(--ink2)}
+.cf .cfgo{display:inline-block;margin-top:11px;font-family:var(--cond);font-weight:700;font-size:13px;
+  color:var(--ai);border:1px solid var(--ai);border-radius:999px;padding:7px 16px;
+  transition:background .15s,color .15s}
+.cf > summary:hover .cfgo{background:var(--ai);color:var(--ground)}
+.cf[open] > summary .cfgo{display:none}
+.cf-in{padding:4px 18px 20px;border-top:1px solid var(--rule)}
+.cf-f{display:block;margin-top:16px}
+.cf-f > span.l{display:block;font-family:var(--cond);font-weight:600;font-size:12.5px;
+  color:var(--ink3);letter-spacing:.04em;margin-bottom:6px}
+.cf-f .req{color:var(--shu);font-weight:700;margin-left:7px}
+.cf-f .opt{color:var(--ink3);font-weight:400;margin-left:7px}
+.cf-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 16px}
+.cf input[type=text],.cf input[type=email],.cf input[type=tel],.cf select,.cf textarea{
+  width:100%;box-sizing:border-box;font:inherit;font-size:14px;padding:8px 10px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:2px}
+.cf textarea{font-size:13px;line-height:1.85;resize:vertical}
+.cf input:focus-visible,.cf select:focus-visible,.cf textarea:focus-visible{outline:2px solid var(--ai);outline-offset:1px}
+.cf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.cf-grid label{display:flex;align-items:center;gap:7px;background:var(--surface);
+  padding:8px 11px;font-size:13px;cursor:pointer}
+.cf-grid label:hover{background:var(--sunk)}
+.cf-sum{margin-top:16px;border:1px solid var(--ai);background:var(--sunk);padding:11px 14px;
+  font-size:12.5px;line-height:1.85;color:var(--ink2)}
+.cf-sum b{display:block;font-family:var(--cond);font-size:11.5px;letter-spacing:.06em;
+  color:var(--ai);margin-bottom:4px}
+.cf-sum .v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.cf-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.cf-send{margin-top:18px;font-family:var(--cond);font-weight:700;font-size:14.5px;padding:12px 26px;
+  background:var(--ai);color:var(--ground);border:1px solid var(--ai);border-radius:2px;cursor:pointer}
+.cf-send:hover{opacity:.88}
+.cf-rb{margin-top:8px;font-family:var(--cond);font-size:12px;padding:6px 12px;background:var(--surface);
+  color:var(--ink2);border:1px solid var(--rule);border-radius:2px;cursor:pointer}
+.cf-note{margin:12px 0 0;font-size:11.5px;line-height:1.85;color:var(--ink3)}
+.cf-pre{margin-top:14px;padding:12px;background:var(--sunk);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--ink2)}
+@media print{.cf,.bizband{display:none!important}}
 </style>
 </head>
 <body>
@@ -227,6 +392,465 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <div class="v">21<small>位 / 46</small></div><p>神奈川県の市区町村のうち。県全体 851,200戸 の 2.4%。</p>
     </div>
   </div>
+  <section>
+    <h2><span class="idx">Tool</span>この規模なら、工事金額はいくらくらいか</h2>
+    <p class="lede">国土交通省の実態調査（回答818件）にある<strong>戸あたり工事金額</strong>を、
+    建設工事費デフレーターで2026年6月の水準へ換算し、戸数を掛けたものです。
+    <strong>つまみの戸数は操作のための例で、このページに出ている戸数とは関係ありません。</strong></p>
+    <div class="warn">
+      <h4>この数字が何であって、何でないか</h4>
+      <ul>
+        <li><strong>共通仮設費が入っていません。</strong>現場事務所・仮設トイレ・資材置場・安全対策・近隣対策などの費用です。原典の集計対象外なので、<strong>実際の総額はここに出る額より上になります。</strong>消費税と設計コンサルタント業務の費用も別です。</li>
+        <li>これは<strong>統計の分布に戸数を掛けただけ</strong>の数値で、その建物の工事費ではありません。劣化の程度、仕様、外壁の形状・面積、立地、工期は一切反映していません。</li>
+        <li>幅は回答の<strong>真ん中50%</strong>です。外側にも50%の回答があります。<strong>個別の見積がこの範囲を外れていることは、それ自体では何も意味しません。</strong></li>
+        <li>用語（仮設・共通仮設・足場）の違い、算式と出典の全文は<a href="https://dai1giken.co.jp/shuzen-stats/cost/">工事金額の分布のページ</a>にあります。</li>
+      </ul>
+    </div>
+    <div class="tool">
+      <div class="tool-in">
+        <label><span class="cap">総戸数</span>
+          <span class="unitv"><b id="oUnits">40</b><small>戸</small></span>
+          <input type="range" id="iUnits" min="6" max="300" step="1" value="40">
+          <span class="unitax"><span>6</span><span>300</span></span>
+          <span class="drag">つまみを動かすと、下の表の9つの金額がすべて変わります</span>
+        </label>
+        <label><span class="cap">地上階数</span>
+          <select id="iFloors"><option value="">選ばない（合計の割合を使う）</option><option value="5">3〜5階</option><option value="9">6〜9階</option><option value="14">10〜14階</option><option value="19">15〜19階</option><option value="20">20階以上（超高層）</option></select>
+          <span class="unitax"><span>仮設工事の割合だけが変わります</span></span>
+        </label>
+        <label><span class="cap">工事の範囲</span>
+          <select id="iScope"><option value="full">大規模修繕（一式）</option><option value="partial">部分改修（工種を選ぶ）</option></select>
+          <span class="unitax"><span>部分改修は下で工種を選びます</span></span>
+        </label>
+      </div>
+
+      <div class="scope" id="scopeBox" hidden>
+        <p class="lede" style="margin:0">直す工種を選んでください。<strong>仮設工事と諸経費は、範囲を絞ってもほぼ同じだけかかります</strong>ので、外せないようにしてあります。部分改修は一式より割高になりやすい点にもご留意ください（工事量が減るぶん単価が上がるため）。</p>
+        <div class="scope-grid" id="scopeGrid"></div>
+      </div>
+
+      <div class="tool-out">
+        <p class="lede" style="margin:0 0 12px">原典（PDF p.15（紙面 14））は<strong>工事回数ごとに四分位を出しています</strong>ので、同じ形で3行とも並べます。回数で金額の水準が違うことも、そのまま見えます。</p>
+        <p class="howto"><b>使い方</b><span><strong>下線の付いた金額は押せます。</strong>ひとつ押すと、その金額で<strong>下の枠（構成表・内訳・計算）がまとめて切り替わります</strong>。</span></p>
+        <div class="tabwrap"><table class="viewtab">
+          <thead><tr>
+            <th class="nm">工事回数</th>
+            <th>下位25%</th><th>中央値</th><th>上位25%</th>
+            <th class="avgc">平均<span class="sub">分位ではありません</span></th>
+          </tr></thead>
+          <tbody id="oTable"></tbody>
+        </table></div>
+        <p class="qnote" id="oNote">—</p>
+        <p class="qnote">上段が税抜の金額、下段が戸あたり（万円/戸）です。税込は10%を足した額で、選んだ金額について下の構成表に出しています。10万円未満は四捨五入しています。</p>
+        <p class="avgnote"><b>「平均」は分位ではありません。順位として読まないでください。</b>少数の大きな案件に引っ張られるため、分布が右に伸びていると上位25%を上回ることがあります。原典では<b>1回目がこれにあたり、平均 151.6 万円/戸が上位25%値 134.0 万円/戸を上回っています</b>（2回目 112.4 &lt; 129.8、3回目以上 106.1 &lt; 125.7 は上回っていません）。左の3列（四分位）と罫線で切り離してあるのはこのためです。</p>
+
+        <div class="linked">
+          <div class="linkhd">
+            <span>いま下に表示しているのは</span>
+            <span class="v" id="oSel">—</span>
+            <span class="amt" id="oSelAmt">—</span>
+          </div>
+          <div class="linked-in" id="oLinked">
+            <div class="compo" id="oCompo"></div>
+
+            <h3 style="margin:26px 0 0;font-family:var(--cond);font-size:15px">工事金額の内訳（調査全体の平均的な姿）</h3>
+            <p class="qnote" id="oBrkNote">—</p>
+            <div class="brk" id="oBrk"></div>
+            <p class="qnote">出典 国土交通省「令和3年度 マンション大規模修繕工事に関する実態調査」PDF p.13（紙面 12）（総工事金額に対する割合。建築系工事の内訳は同ページの建築系合計に対する割合を按分）。PDF p.50（紙面 49） の「総工事金額に占める割合」と一致することを確認しています。<strong>共通仮設費と消費税は、この100%のどこにも含まれていません。</strong>内訳の母数は n=726 で、戸あたり金額（n=818）とは異なります（建築系工事を実施していないサンプルを除外した集計のため）。</p>
+
+            <h3 style="margin:26px 0 0;font-family:var(--cond);font-size:15px">計算の内訳</h3>
+            <ol class="formula" id="oFormula"></ol>
+          </div>
+        </div>
+
+        <button type="button" class="prbtn" id="prBtn">印刷 / PDFで保存</button>
+      </div>
+    </div>
+  <script id="cost-data" type="application/json">{"per_unit": [{"label": "1回目", "n": 331, "q1": 90.9, "median": 110.2, "q3": 134.0, "mean": 151.6}, {"label": "2回目", "n": 194, "q1": 87.8, "median": 106.1, "q3": 129.8, "mean": 112.4}, {"label": "3回目以上", "n": 242, "q1": 76.8, "median": 97.0, "q3": 125.7, "mean": 106.1}], "ratio": 1.272, "index": 127.2, "month": "2026年6月", "base": "2020年度＝100", "views": [{"key": "q1", "label": "下位25%", "avg": false}, {"key": "median", "label": "中央値", "avg": false}, {"key": "q3", "label": "上位25%", "avg": false}, {"key": "mean", "label": "平均", "avg": true}], "breakdown": [{"label": "仮設工事", "percent": 22.8, "kasetsu": true, "common": true}, {"label": "外壁塗装", "percent": 14.77, "kasetsu": false, "common": false}, {"label": "床防水", "percent": 11.22, "kasetsu": false, "common": false}, {"label": "諸経費①（現場管理費等）", "percent": 9.5, "kasetsu": false, "common": true}, {"label": "屋根防水", "percent": 8.08, "kasetsu": false, "common": false}, {"label": "外壁タイル", "percent": 7.78, "kasetsu": false, "common": false}, {"label": "シーリング工事", "percent": 7.24, "kasetsu": false, "common": false}, {"label": "鉄部等塗装", "percent": 4.46, "kasetsu": false, "common": false}, {"label": "建具・金物等", "percent": 4.46, "kasetsu": false, "common": false}, {"label": "その他工事", "percent": 3.8, "kasetsu": false, "common": false}, {"label": "共用内部", "percent": 2.23, "kasetsu": false, "common": false}, {"label": "設備系工事", "percent": 1.6, "kasetsu": false, "common": false}, {"label": "外構・付属施設", "percent": 1.3, "kasetsu": false, "common": false}, {"label": "諸経費②（瑕疵保険料）", "percent": 0.8, "kasetsu": false, "common": true}], "kasetsu": {"all": {"label": "合計", "n": 726, "percent": 22.8}, "tall": {"label": "20階以上", "n": 44, "percent": 29.0}, "other": {"label": "20階未満", "n": 679, "percent": 21.9}}, "tallFloors": 20, "commonItems": ["仮設工事", "諸経費①（現場管理費等）", "諸経費②（瑕疵保険料）"], "unitMin": 6, "unitMax": 300, "unitDefault": 40, "n": 818, "breakdownN": 726}</script><script>
+(function(){
+  var D = JSON.parse(document.getElementById('cost-data').textContent);
+  var $ = function(id){ return document.getElementById(id); };
+  var nf = new Intl.NumberFormat('ja-JP');
+  var nf1 = new Intl.NumberFormat('ja-JP', {minimumFractionDigits:1, maximumFractionDigits:1});
+  var ROUND = 100000, TAX = 0.10;
+
+  var iUnits=$('iUnits'), iFloors=$('iFloors'), iScope=$('iScope');
+  var REDUCE = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 選んでいるマス（工事回数 × 見方）。表のどの金額を押しても変わる。
+     既定は3区分の真ん中「2回目」の中央値。内訳の基準を決めるのに既定は要るが、
+     **表は常に3行とも出す**ので、当社がひとつの水準を選んで見せる形にはならない。 */
+  var sel = {repeat: (D.per_unit[1] || D.per_unit[0]).label, view: 'median'};
+
+  /* 範囲を絞ってもかかる項目は外せない。外すと金額が現実離れして低く出る。 */
+  var picked = {};
+  D.breakdown.forEach(function(r){ picked[r.label] = r.common; });
+
+  function money(n){ return Math.round(n/ROUND)*ROUND; }
+  function man(n){ return nf.format(Math.round(n/10000)) + '万円'; }
+
+  function kasetsuShare(floors){
+    if(!floors) return D.kasetsu.all;
+    return floors >= D.tallFloors ? D.kasetsu.tall : D.kasetsu.other;
+  }
+
+  function scopeRatio(){
+    if(iScope.value !== 'partial') return null;
+    var sum = 0;
+    D.breakdown.forEach(function(r){ if(picked[r.label]) sum += r.percent; });
+    return sum > 0 ? Math.round(sum*10)/10 : null;
+  }
+
+  function calc(){
+    var sr = scopeRatio();
+    return {
+      units: +iUnits.value || D.unitMin,
+      factor: (iScope.value === 'partial' && sr) ? sr/100 : 1,
+      scopeRatio: sr,
+      kasetsu: kasetsuShare(+iFloors.value || 0)
+    };
+  }
+
+  /* 1つのマスの金額。**幅にしない。**
+     原典は工事回数ごとに四分位を出しているので、回数をまたいで最小〜最大に
+     潰すと、原典に無い「幅」を当社が作ることになる。しかも1回目は平均が
+     上位25%を上回るため、潰した幅どうしが上下で食い違って読めなくなる。
+     原典と同じ3行4列のまま出すこと。 */
+  function cell(row, key, c){
+    var pu = row[key] * D.ratio;
+    return {
+      /* 画面に出す戸あたりは**対象割合を掛けたあと**の値。掛ける前の
+         公表値を出すと、同じマスの「金額 ÷ 戸数」と一致しなくなる。
+         公表値そのものは算式の行に出しているので、そちらで辿れる。 */
+      perUnit: pu * c.factor,
+      full:    pu * 10000 * c.units,            /* 一式の額。内訳の按分に使う */
+      amount:  pu * 10000 * c.units * c.factor  /* 範囲を絞った額 */
+    };
+  }
+
+  function drawScope(){
+    var box = $('scopeBox'), grid = $('scopeGrid');
+    box.hidden = iScope.value !== 'partial';
+    if(box.hidden) return;
+    if(grid.childElementCount) return;
+    D.breakdown.forEach(function(r){
+      var lb = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = !!picked[r.label]; cb.disabled = !!r.common;
+      cb.addEventListener('change', function(){ picked[r.label] = cb.checked; render(true); });
+      var nm = document.createElement('span');
+      nm.textContent = r.label;
+      if(r.common){ nm.className = 'fix'; nm.title = '範囲を絞ってもかかるため外せません'; }
+      var pc = document.createElement('span');
+      pc.className = 'pc'; pc.textContent = r.percent.toFixed(2) + '%';
+      lb.appendChild(cb); lb.appendChild(nm); lb.appendChild(pc);
+      if(r.common) lb.classList.add('on');
+      grid.appendChild(lb);
+    });
+  }
+
+  function render(flash){
+    drawScope();
+    var c = calc();
+    $('oUnits').textContent = nf.format(c.units);
+
+    /* --- 原典と同じ「工事回数 × 四分位」の表 --- */
+    var tb = $('oTable');
+    tb.replaceChildren();
+    D.per_unit.forEach(function(row){
+      var tr = document.createElement('tr');
+      var nm = document.createElement('td');
+      nm.className = 'nm';
+      nm.textContent = row.label;
+      var nn = document.createElement('span');
+      nn.className = 'n'; nn.textContent = 'n=' + row.n;
+      nm.appendChild(nn);
+      tr.appendChild(nm);
+      D.views.forEach(function(v){
+        var td = document.createElement('td');
+        td.className = 'c' + (v.avg ? ' avgc' : '');
+        var x = cell(row, v.key, c);
+        var amt = money(x.amount);
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cell'
+          + (row.label === sel.repeat && v.key === sel.view ? ' on' : '');
+        b.setAttribute('aria-label', row.label + ' ' + v.label + ' ' + man(amt));
+        var a = document.createElement('span');
+        a.className = 'a'; a.textContent = man(amt);
+        var p = document.createElement('span');
+        p.className = 'p'; p.textContent = nf1.format(x.perUnit);
+        /* 選択中のセルだけに出る。CSS が .cell.on のときだけ display:block にする。
+           「選択中」ではなく**「下に表示中」**と書くこと。何と繋がっているかが
+           伝わらないのが元の問題だった。 */
+        var g = document.createElement('span');
+        g.className = 'tag'; g.textContent = '▼ 下に表示中';
+        b.appendChild(a); b.appendChild(p); b.appendChild(g);
+        b.addEventListener('click', function(){
+          sel = {repeat: row.label, view: v.key};
+          render(true);
+        });
+        td.appendChild(b);
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+
+    var selRow = D.per_unit.filter(function(r){ return r.label === sel.repeat; })[0]
+      || D.per_unit[0];
+    var selView = D.views.filter(function(v){ return v.key === sel.view; })[0] || D.views[1];
+    $('oNote').textContent = '選んでいるのは「' + selRow.label + '（n=' + selRow.n + '）の'
+      + selView.label + '」です。下の枠の中（構成表・内訳・計算）は、すべてこの金額で出しています。'
+      + '表のどの金額を押しても切り替わります。';
+
+    /* --- 構成（共通仮設費は別途） --- */
+    var pick = cell(selRow, sel.view, c);
+    var pv = money(pick.amount);
+
+    /* 連動枠の見出し。**下の枠が何で決まっているかを常時ここに出す。**
+       消すと「たまたま下にも数字がある」ようにしか見えなくなる。 */
+    $('oSel').textContent = nf.format(c.units) + '戸 ／ ' + selRow.label
+      + ' ／ ' + selView.label;
+    $('oSelAmt').textContent = man(pv);
+    if(flash && !REDUCE){
+      var lk = $('oLinked');
+      lk.classList.remove('flash');
+      void lk.offsetWidth;          /* 連続で押しても毎回光らせるための再描画 */
+      lk.classList.add('flash');
+    }
+    var co = $('oCompo');
+    co.replaceChildren();
+    function row(k, v, cls){
+      var d = document.createElement('div');
+      var a = document.createElement('span'); a.className = 'k'; a.textContent = k;
+      var b = document.createElement('span'); b.className = 'v ' + (cls||''); b.textContent = v;
+      d.appendChild(a); d.appendChild(b); co.appendChild(d);
+    }
+    row('① 工事費（仮設工事を含む・税抜）', man(pv));
+    row('　　税込10%', man(pv*(1+TAX)));
+    row('② 共通仮設費', '別途', 'betsu');
+    row('③ 設計コンサルタント業務の費用（調査・診断／設計／工事監理 等）', '別途', 'betsu');
+    row('①＋②＋③', '②③の確定後に算出', 'betsu');
+
+    /* --- 内訳 --- */
+    var brk = $('oBrk');
+    brk.replaceChildren();
+    var maxp = Math.max.apply(null, D.breakdown.map(function(r){ return r.percent; }));
+    D.breakdown.forEach(function(r){
+      var fv = money(pick.full * r.percent/100);
+      var d = document.createElement('div');
+      d.className = 'brk-row' + (r.kasetsu ? ' ks' : '');
+      var lb = document.createElement('span'); lb.className='lb'; lb.textContent = r.label;
+      var pc = document.createElement('span'); pc.className='pc'; pc.textContent = r.percent.toFixed(2)+'%';
+      var tk = document.createElement('span'); tk.className='brk-track';
+      var i = document.createElement('i'); i.style.width = (r.percent/maxp*100).toFixed(1)+'%';
+      tk.appendChild(i);
+      var am = document.createElement('span'); am.className='am'; am.textContent = man(fv);
+      d.appendChild(lb); d.appendChild(pc); d.appendChild(tk); d.appendChild(am);
+      brk.appendChild(d);
+    });
+
+    /* 内訳は「一式で行った場合の金額」に掛ける。範囲を絞った額に掛けると、
+       絞った割合が二重にかかる。 */
+    $('oBrkNote').textContent =
+      '下の割合を、一式で行った場合の金額（' + man(money(pick.full))
+      + '・' + selRow.label + 'の' + selView.label + '）に掛けています。'
+      + '本物件の実際の割合ではなく、調査全体の平均的な姿です。'
+      + '上の構成表では、仮設工事に本物件の階数に合わせた ' + c.kasetsu.percent.toFixed(1) + '%（'
+      + c.kasetsu.label + '・n=' + c.kasetsu.n + '）が対応します。';
+
+    /* --- 算式 --- */
+    var fm = $('oFormula');
+    fm.replaceChildren();
+    [
+      '使った統計　' + selRow.label + '（n=' + selRow.n + '）の' + selView.label
+        + '　' + nf1.format(selRow[sel.view]) + ' 万円/戸（調査時点）',
+      '工事費指数による換算倍率　' + D.index + ' ÷ 100 ＝ ' + D.ratio.toFixed(3)
+        + '（建設総合_建築補修（改装・改修）・' + D.base + '・' + D.month + '）',
+      '換算後 ' + nf1.format(selRow[sel.view] * D.ratio) + ' 万円/戸 × 戸数 '
+        + nf.format(c.units) + ' 戸'
+        + (c.factor !== 1 ? '　× 対象割合 ' + c.scopeRatio + '%' : '') + '　＝ ' + man(pv),
+      'この工事金額に占める仮設工事の割合は ' + c.kasetsu.percent.toFixed(1) + '%（'
+        + c.kasetsu.label + '・n=' + c.kasetsu.n + '）。',
+      '金額は10万円未満を四捨五入しています。統計は税抜で、消費税相当額と共通仮設費を含みません。'
+    ].forEach(function(t){
+      var li = document.createElement('li'); li.textContent = t; fm.appendChild(li);
+    });
+  }
+
+  /* **つまみの input ごとに光らせないこと。**動かしているあいだじゅう点滅して
+     読めなくなる。値の追従は input、点滅は change（＝離したとき）で分ける。 */
+  [iUnits, iFloors, iScope].forEach(function(e){
+    e.addEventListener('input', function(){ render(false); });
+    e.addEventListener('change', function(){ render(true); });
+  });
+  $('prBtn').addEventListener('click', function(){ window.print(); });
+
+  /* バナーから引き継いだ戸数。**照合できない値は無視する。** */
+  var m = /[?&]units=(\d+)/.exec(location.search);
+  if(m){
+    var n = +m[1];
+    if(n >= D.unitMin && n <= D.unitMax) iUnits.value = n;
+  }
+  render(false);
+})();
+</script>
+  </section>
+
+  <div class="bizband"><b>当社のご案内</b>ここから下は株式会社第一技研からのご案内です。公表統計ではありません。</div>
+  <details class="cf">
+    <summary>
+      <span class="cfk">お見積りをご希望の場合は、この条件のままご相談いただけます</span>
+      <span class="cfd">上の金額は<strong>公表統計に戸数を掛けた数字で、お見積りではありません</strong>。実際の金額は建物の劣化状況と仕様で決まります。上で選んだ戸数と金額は、そのままご相談の本文に入ります。対応エリアは東京・神奈川・埼玉・千葉です。</span>
+      <span class="cfgo">この条件で相談する（このページで送信できます）→</span>
+    </summary>
+    <div class="cf-in">
+      <form id="contact-form" action="/contact.php" method="post">
+        <div class="cf-sum"><b>ご相談に入る内容（上のツールの状態）</b><span id="cfSumV">—</span></div>
+
+        <div class="cf-row">
+          <label class="cf-f"><span class="l">所在地<span class="opt">任意</span></span>
+            <select id="cfRegion"><option value="">選んでください</option><option>東京都</option><option selected>神奈川県</option><option>埼玉県</option><option>千葉県</option><option>その他の地域</option><option>未定・相談したい</option></select>
+          </label>
+          <label class="cf-f"><span class="l">市区町村<span class="opt">任意</span></span>
+            <input type="text" id="cfCity" maxlength="60" value="横浜市旭区" placeholder="例：文京区" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="cf-f"><span class="l">希望する工事<span class="opt">任意・複数選べます</span></span>
+          <div class="cf-grid"><label><input type="checkbox" data-cf="trade" value="大規模修繕（一括で相談）">大規模修繕（一括で相談）</label><label><input type="checkbox" data-cf="trade" value="足場・ゴンドラ仮設">足場・ゴンドラ仮設</label><label><input type="checkbox" data-cf="trade" value="下地・タイル補修">下地・タイル補修</label><label><input type="checkbox" data-cf="trade" value="シーリング">シーリング</label><label><input type="checkbox" data-cf="trade" value="塗装">塗装</label><label><input type="checkbox" data-cf="trade" value="防水">防水</label><label><input type="checkbox" data-cf="trade" value="内装・付帯工事">内装・付帯工事</label><label><input type="checkbox" data-cf="trade" value="まだ決まっていない">まだ決まっていない</label></div>
+        </div>
+
+        <label class="cf-f"><span class="l">希望する時期<span class="opt">任意</span></span>
+          <select id="cfTiming"><option value="">選んでください</option><option>できるだけ早く</option><option>3か月以内</option><option>半年以内</option><option>1年以内</option><option>1年以上先</option><option>未定・相談したい</option></select>
+        </label>
+
+        <label class="cf-f"><span class="l">お問い合わせ内容<span class="req">必須</span></span>
+          <textarea name="message" id="cfMsg" rows="12" required></textarea>
+        </label>
+        <button type="button" class="cf-rb" id="cfRb" hidden>選んだ条件から本文を作り直す</button>
+
+        <div class="cf-row">
+          <label class="cf-f"><span class="l">会社名・団体名<span class="opt">任意</span></span>
+            <input type="text" name="company" autocomplete="organization"></label>
+          <label class="cf-f"><span class="l">お名前<span class="req">必須</span></span>
+            <input type="text" name="name" autocomplete="name" required></label>
+        </div>
+        <div class="cf-row">
+          <label class="cf-f"><span class="l">メールアドレス<span class="req">必須</span></span>
+            <input type="email" name="email" autocomplete="email" required></label>
+          <label class="cf-f"><span class="l">電話番号<span class="opt">任意</span></span>
+            <input type="tel" name="tel" autocomplete="tel"></label>
+        </div>
+
+        <div class="cf-hp" aria-hidden="true"><label>このフィールドは空欄のままにしてください
+          <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+        <button type="submit" class="cf-send">この内容で相談する</button>
+        <p class="cf-note">送信内容は既存のお問い合わせ窓口に届きます。<strong>金額・工期・施工の可否は、現地または資料を確認のうえ担当者よりご案内します。この画面で確約するものではありません。</strong>建物の用途や所有形態も含めて詳しく選べる<a href="https://dai1giken.co.jp/consultation/">案件のご相談ページ</a>もあります。</p>
+        <pre class="cf-pre" id="cfPre" hidden></pre>
+      </form>
+    </div>
+  </details>
+  <script id="cf-data" type="application/json">{"action": "/contact.php", "url": "https://dai1giken.co.jp/shuzen-stats/city/14112.html", "title": "横浜市旭区の大規模修繕 費用の目安｜築26〜45年 20,590戸｜神奈川県"}</script>
+  <script>
+(function(){
+  'use strict';
+  var C = JSON.parse(document.getElementById('cf-data').textContent);
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $('contact-form'), msg = $('cfMsg');
+  if(!form || !msg) return;
+  var touched = false;               /* 利用者が本文を触ったら自動で上書きしない */
+  var nf = new Intl.NumberFormat('ja-JP');
+
+  /* 上のツールの状態を**実行時に**読む。ビルド時に埋め込むと、つまみを動かしても
+     本文が既定値のまま残る。ツールが無いページでも落ちないよう null を返す。 */
+  function tool(){
+    var u = $('iUnits'), s = $('oSel'), a = $('oSelAmt');
+    if(!u || !s || !a) return null;
+    return { units: +u.value || 0, sel: s.textContent, amt: a.textContent };
+  }
+  function picked(g){
+    return [].slice.call(document.querySelectorAll('[data-cf="' + g + '"]:checked'))
+             .map(function(e){ return e.value; });
+  }
+  function compose(){
+    var t = tool();
+    var region = $('cfRegion').value, city = $('cfCity').value.trim();
+    var trades = picked('trade'), timing = $('cfTiming').value;
+    var L = ['大規模修繕のお見積りについて、ご相談したく連絡しました。', '', '【案件の条件】'];
+    if(region) L.push('所在地：' + region + (city ? ' ' + city : ''));
+    if(t && t.units) L.push('総戸数：' + nf.format(t.units) + '戸');
+    if(trades.length) L.push('希望する工事：' + trades.join('、'));
+    if(timing) L.push('希望する時期：' + timing);
+    if(L.length === 3) L.push('（まだ決まっていません。相談しながら整理したいです。）');
+    if(t){
+      L.push('', '【統計ページで見た概算】', C.title, C.url,
+             t.sel + ' ＝ ' + t.amt + '（税抜）');
+      /* **この2行を外さないこと。**転送された先で、当社が出した金額として読まれる。 */
+      L.push('※国土交通省の実態調査の値に戸数を掛けた統計値で、当社のお見積りではありません。');
+      L.push('※共通仮設費・消費税・設計コンサルタント業務の費用は含まれていません。');
+    }
+    L.push('', '【ご相談の内容】', '');
+    return L.join('\n');
+  }
+  function summary(){
+    var t = tool();
+    var box = $('cfSumV');
+    if(t){
+      box.replaceChildren();
+      var v = document.createElement('span');
+      v.className = 'v';
+      v.textContent = t.sel + ' ＝ ' + t.amt + '（税抜）';
+      box.appendChild(v);
+    } else {
+      box.textContent = '上のツールで戸数と金額を選ぶと、ここに入ります。';
+    }
+  }
+  function refresh(){
+    summary();
+    if(!touched) msg.value = compose();
+  }
+
+  /* ツールの操作（つまみ・表のセル・階数・範囲）はどれも input/change/click で
+     起きる。個別に繋ぐとツールを直したときに片方だけ古くなるので、文書ごと拾う。
+     **capture で拾うこと。**ツール側が再描画でボタンを作り直すため、
+     個々の要素に後から付けたリスナーは消える。 */
+  ['input', 'change', 'click'].forEach(function(ev){
+    document.addEventListener(ev, function(e){
+      if(e.target === msg) return;
+      refresh();
+    }, true);
+  });
+  msg.addEventListener('input', function(){ touched = true; $('cfRb').hidden = false; });
+  $('cfRb').addEventListener('click', function(){
+    touched = false; $('cfRb').hidden = true; refresh(); msg.focus();
+  });
+
+  /* **本番以外からは送らない。**テストのホストから送ると本物の問い合わせが飛ぶ。 */
+  if(location.hostname !== 'dai1giken.co.jp'){
+    form.removeAttribute('action');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!form.reportValidity()) return;
+      var fd = new FormData(form), lines = [];
+      fd.forEach(function(v, k){ if(k !== 'website') lines.push(k + ': ' + v); });
+      var pre = $('cfPre');
+      pre.hidden = false;
+      pre.textContent = 'POST ' + C.action + '\n\n' + lines.join('\n');
+      pre.scrollIntoView({ block: 'center' });
+    });
+  }
+  refresh();
+  /* **ツールの JS より先に走ることがある。**そのときは oSel がまだ「—」なので、
+     読み込み完了後にもう一度作り直す。これを外すと、ページによってまとめ欄が
+     「— ＝ —」のまま残る（/cost/ で実際に起きた）。 */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', refresh);
+  }
+})();
+</script>
 
   <section>
     <h2><span class="idx">Fig.</span>横浜市旭区の非木造共同住宅（建築の時期別）</h2>
@@ -393,64 +1017,6 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <li>大規模修繕の実施周期は<strong>12〜15年程度が目安</strong>（国土交通省ガイドライン）で、築年数だけで実施時期が決まるものではありません。</li>
     </ul>
   </div>
-
-  <a class="costban" href="https://dai1giken.co.jp/shuzen-stats/cost/" id="costban">
-    <span class="cbk">TOOL ／ 戸数から工事金額の分布を見る</span>
-    <span class="cbbody">
-      <span class="cbmain">
-        <span class="cbu"><b id="cbu">40</b><small>戸</small></span>
-        <span class="cbeq">なら、工事金額の中央値は</span>
-        <span class="cbv" id="cbv">—</span>
-        <span class="cbgo">くわしく見る →</span>
-      </span>
-      <input type="range" id="cbr" min="6" max="300" step="1"
-        value="40" aria-label="総戸数（例示）">
-      <span class="cbn">国土交通省の実態調査（2回目・2026年6月換算）の中央値に戸数を掛けた額です。
-        <strong>共通仮設費と消費税は含みません</strong>（原典の集計定義）。実際の総額はこれより上になります。
-        戸数は操作のための例で、このページに出ている戸数とは関係ありません。</span>
-    </span>
-  </a>
-  <script>(function(){
-    var C={"perUnit": 134.95919999999998, "min": 6, "max": 300, "demo": [24, 38, 56, 80, 120], "url": "https://dai1giken.co.jp/shuzen-stats/cost/"};
-    var r=document.getElementById('cbr'),u=document.getElementById('cbu'),
-        v=document.getElementById('cbv'),a=document.getElementById('costban');
-    if(!r) return;
-    var nf=new Intl.NumberFormat('ja-JP');
-    function draw(){
-      var n=+r.value||C.min;
-      u.textContent=nf.format(n);
-      v.textContent=nf.format(Math.round(C.perUnit*n/10)*10)+'万円';
-      a.href=C.url+'?units='+n;
-    }
-    // 切り替えは「薄くする → 180ms 後に値を差し替える」の2段になっている。
-    // **止めるときは予約済みの差し替えも消すこと。**interval だけ止めると、
-    // つまみを掴んだ直後の 180ms に予約分が発火して、利用者の値を上書きする。
-    var timer=null, pending=null;
-    function stop(){
-      if(timer){clearInterval(timer);timer=null;}
-      if(pending){clearTimeout(pending);pending=null;}
-      v.classList.remove('fade');
-    }
-    ['pointerdown','keydown','focus'].forEach(function(e){ r.addEventListener(e,stop); });
-    // **input では stop() だけでなく draw() も呼ぶこと。**stop() だけだと、
-    // つまみを動かしても金額が動かない。自動デモが裏で描画しているあいだは
-    // 動いているように見えるので、デモを止めた後でしか気づけない。
-    r.addEventListener('input',function(){ stop(); draw(); });
-    // つまみの操作でリンクをたどってしまわないように既定動作を止める。
-    r.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); });
-    draw();
-    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!reduce){
-      var i=0;
-      timer=setInterval(function(){
-        i=(i+1)%C.demo.length;
-        v.classList.add('fade');
-        pending=setTimeout(function(){
-          pending=null; r.value=C.demo[i]; draw(); v.classList.remove('fade');
-        },180);
-      },2600);
-    }
-  })();</script>
   <section class="cite">
     <h2><span class="idx">Cite</span>このページを引用する</h2>
     <p class="lede">出典を明記すれば、図表・数値とも自由に転載・引用できます（CC BY 4.0）。下の1行をそのままお使いください。</p>

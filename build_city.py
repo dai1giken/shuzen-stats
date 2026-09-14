@@ -28,7 +28,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner
+# ツール本体と相談フォームは、詳細ページに**丸ごと**置く（2026-09-15 本人判断）。
+# 一覧ページ（index）は従来どおり入口バナー。**1ページにツールは1つまで。**
+# バナーと本体を同じページに置くと id が重なって、どちらかが黙って動かなくなる。
+import consult_form
+import cost_tool
+from cost_banner import EXTRA_CSS as COST_CSS, banner as cost_banner, per_unit_median
 from build_pref import (CSS, CTA_HOUSING, SITE_URL, SLUG, age_of, bar_cell, cite_block,
                         head, period_chart, ref_ages)
 from pref_city import MIN_UNITS, cohort_sum, label, published_leaves
@@ -184,6 +189,10 @@ def build(basis: dict) -> int:
     out = HERE / "city"
     out.mkdir(exist_ok=True)
     written = []
+    # description に出す戸あたり工事金額。**バナーと同じ関数から読むこと。**
+    cost_med, cost_month = per_unit_median(basis)
+    # ツール本体は全ページ同じ HTML。**ループの中で組み立て直さない**（179回になる）。
+    tool_html = cost_tool.section(basis, cost_url=f"{SITE_URL}cost/")
 
     for code, a in areas.items():
         if code.endswith("000"):          # 都県の行はページにしない（pref/ が担当）
@@ -200,12 +209,23 @@ def build(basis: dict) -> int:
         pref_v = coh(areas[pre + "000"]) if pre + "000" in areas else 0
         pshare = v / pref_v * 100 if pref_v else 0
         canonical = f"{SITE_URL}city/{code}.html"
-        title = f"{name}（{pref_name}）の大規模修繕統計｜築{age_lo}〜{age_hi}年 {v:,}戸"
+        # 日本語SERPは約32字で切れる。定義は h1 と description が担う。
+        # **「費用」を32字の内側に置く。**検索されているのは「○○区 大規模修繕」に
+        # 費用・相場を足した語で、「統計」しか無いタイトルは表示されても押されて
+        # いなかった（2026-09-15 時点の Search Console）。
+        # **金額そのものはタイトルに入れない。**原典の中央値は全国値なので、
+        # 地名の直後に数字を置くと「その地域の相場」と読まれる。cost_banner.py の
+        # 「そのページの戸数とバナーの金額を繋げない」と同じ理由。金額は
+        # description 側で「全国」と明示したうえで出す。
+        title = f"{name}の大規模修繕 費用の目安｜築{age_lo}〜{age_hi}年 {v:,}戸｜{pref_name}"
         desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{v:,}戸。"
                 f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
-                f"総務省「令和5年住宅・土地統計調査」の公表値。")
+                f"工事金額は全国の実態調査で1戸あたり中央値{cost_med:,.0f}万円"
+                f"（{cost_month}換算・共通仮設費と消費税を除く）。"
+                f"総務省・国土交通省の公表値。")
 
-        h = [head(title, desc, canonical, crumb="市区町村別", extra_css=COST_CSS)]
+        h = [head(title, desc, canonical, crumb="市区町村別",
+                  extra_css=cost_tool.EXTRA_CSS + consult_form.EXTRA_CSS)]
         rank_html = (f'<div class="v">{r}<small>位 / {len(leaves[pre])}</small></div>'
                      f'<p>{pref_name}の市区町村のうち。{u}全体 {pref_v:,}戸 の {pshare:.1f}%。</p>'
                      if r else
@@ -235,7 +255,7 @@ def build(basis: dict) -> int:
       {rank_html}
     </div>
   </div>
-
+{tool_html}{consult_form.form(page_url=canonical, page_title=title, region=pref_name, city=name)}
   <section>
     <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
     <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、{ref}年時点で築{age_lo}〜{age_hi}年にあたります。</p>
@@ -364,7 +384,6 @@ def build(basis: dict) -> int:
     </ul>
   </div>
 ''')
-        h.append(cost_banner(basis))
         h.append(cite_block(canonical, day))
         h.append(FOOT_T.format(back=f"../pref/{SLUG[pref_name]}.html", pref=pref_name,
                                whole=f"{u}全体", site=SITE_URL))
