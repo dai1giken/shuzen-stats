@@ -544,6 +544,10 @@ def main() -> None:
     print(f"  現存ストック 全国行 {_fmt(nat_stock)} 戸　47都道府県合計 {_fmt(sum47)} 戸　"
           f"差 {_fmt(nat_stock - sum47)} 戸　一都三県 {_fmt(stock_metro)} 戸"
           f"（{tokens['{{STOCK_METRO_PCT}}']}%）")
+    # 3D工事分析の入口（会社サイトの /3d/cta.js）を公開ページに1行足す。毎月の更新で index.html から消えないよう、
+    # 全ページを作り終えたここで流す（2026-10-10・add_cta.py）
+    from add_cta import add as add_cta
+    print(f"3D入口     {add_cta()} ページに追加")
 
 
 def write_llms_txt(basis: dict, national: int, stock_metro: int) -> None:
