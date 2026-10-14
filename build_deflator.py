@@ -177,6 +177,115 @@ def line_chart(months: list[str], vals: list[float], cpi: list[float],
             + "".join(g) + '</svg>')
 
 
+# ---- ページ冒頭の「要点」と、3D工事分析への案内（2026-10-15）------------------
+# GA4（9/17〜10/14）で、Google・ChatGPT からの着地の中心がこのページ群だった
+# （建築補修 29・建築総合 23・基準年 17）。一方で建築総合は平均22秒で帰っている。
+# **答え（何年から何%上がったか）を最初の画面に1文で置く。**数字は下の kpis と
+# 同じ値をそのまま使い、新しい計算は「指数の比で金額を換算する」割り算だけ。
+#
+# 3Dの案内は cta.js（会社サイト /3d/cta.js）が差し込むカードの「前置き」だけを
+# ここで書く。カードは <div data-dgk3d-card> に入る（cta.js の仕様）。
+# cta.js が読めなかったときのために中に素のリンクを置き、カードが入ったら CSS で隠す。
+
+# マンション（住宅）に関わる区分。それ以外（非住宅）はビル・工場向けの文言にする。
+# **ビルは修繕費の目安を出さない**（/3d の仕様。使える公表統計が無い）ので、
+# 非住宅のページで「概算」と言わない。
+RESIDENTIAL = {"260", "110", "120", "130", "140", "150", "160", "170", "180",
+               "700", "710", "720", "730", "740", "750"}
+URL_3D = "https://dai1giken.co.jp/3d/"
+
+EXTRA_CSS = """<style>
+.ans{margin-top:22px;border:1px solid var(--rule);border-left:4px solid var(--shu);background:var(--raise);padding:16px 20px}
+.ans .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--shu);margin:0 0 6px}
+.ans .a1{font-size:17px;line-height:1.6;margin:0}
+.ans ul{margin:8px 0 0;padding-left:1.2em;font-size:14px;line-height:1.75;color:var(--ink2)}
+.ans .meta{margin:10px 0 0;font-size:12px;line-height:1.7;color:var(--ink3)}
+.ans .meta a{color:var(--ai)}
+.ask3d{margin-top:34px}
+.ask3d h2{margin-bottom:6px}
+.ask3d [data-dgk3d-card] > a.fallback{display:inline-block;margin-top:8px;font-weight:700;color:var(--shu)}
+.ask3d [data-dgk3d-card] > a.fallback:not(:only-child){display:none}
+.ask3d [data-dgk3d-card] > .dgk3d-card{margin-top:12px}
+</style>"""
+
+
+def iso_month(m: str) -> str:
+    """「2016年4月」→「2016-04」。"""
+    y, mm = m.rstrip("月").split("年")
+    return f"{int(y):04d}-{int(mm):02d}"
+
+
+def answer_block(nm: str, first: str, last: str, prev_year: str,
+                 v_first: float, v_last: float, yoy: float, cpi_chg: float,
+                 day: str, base: str, url: str) -> str:
+    """最初の画面に置く要点。人にも、引用元を選ぶ言語モデルにも同じ1文を渡す。"""
+    since = _pct(v_last, v_first)
+    verb = "上がりました" if since >= 0 else "下がりました"
+    ratio = v_last / v_first
+    return f'''  <div class="ans" role="note" aria-label="要点">
+    <p class="k">要点</p>
+    <p class="a1"><strong>{nm}の工事費（建設工事費デフレーター）は、{first}から{last}までに {abs(since):.1f}% {verb}。</strong></p>
+    <ul>
+      <li>直近1年（{prev_year}→{last}）は {_sign(yoy)}。</li>
+      <li>同じ期間（{first}→{last}）の消費者物価は {_sign(cpi_chg)}。差は {since - cpi_chg:+.1f} ポイントです。</li>
+      <li>{first}に1,000万円だった工事は、同じ内容なら約 {1000 * ratio:,.0f}万円（指数の比 {ratio:.3f} 倍で換算）。</li>
+    </ul>
+    <p class="meta">最新データ：{last}分 ／ 最終確認：<time datetime="{day}">{day}</time>（毎月10日に e-Stat を自動で確認） ／ 出典：国土交通省「建設工事費デフレーター」{base}（<a href="{url}" target="_blank" rel="noopener">e-Stat</a>）</p>
+  </div>
+'''
+
+
+def ask3d_block(code: str, nm: str, since: float, first: str) -> str:
+    """3D工事分析への前置き。ページの内容（住宅か非住宅か）で文言を変える。"""
+    if code == "260":
+        q = "この値上がりで、あなたのマンションの修繕費は？"
+        p = ("住所を入れると、国の3D都市モデルから建物を立ち上げ、国の公表統計"
+             "（この建築補修の指数を含む）から修繕費の目安をその場で出します。無料です。")
+        link = "住所を入れて3Dと概算（無料）→"
+    elif code in RESIDENTIAL:
+        q = f"工事費が{first}から {since:+.1f}%。あなたのマンションの修繕費は？"
+        p = ("住所を入れると、国の3D都市モデルから建物を立ち上げ、国の公表統計"
+             "（建築補修の工事費指数など）から修繕費の目安をその場で出します。無料です。")
+        link = "住所を入れて3Dと概算（無料）→"
+    else:
+        q = "あなたのビル・工場の外壁は、何㎡ありますか？"
+        p = ("住所を入れると、国の3D都市モデルから建物を立ち上げ、外壁の面積の目安と"
+             "足場の掛け方を3Dで見られます。無料です。ビル・工場の修繕費は、"
+             "使える公表統計が無いため目安を出していません。")
+        link = "住所を入れて3Dで見る（無料）→"
+    return f'''  <section class="ask3d">
+    <h2><span class="idx">3D</span>{q}</h2>
+    <p class="lede">{p}実際の計画・金額は現地調査のうえでご案内します。</p>
+    <div data-dgk3d-card><a class="fallback" href="{URL_3D}">{link}</a></div>
+  </section>
+'''
+
+
+def dataset_ld(name: str, desc: str, canonical: str, day: str, first: str,
+               last: str, value: float, base: str, sid: str, url: str) -> str:
+    """ページ単位の Dataset。トップ（template.html）の書き方に合わせる。"""
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": name,
+        "description": desc,
+        "inLanguage": "ja",
+        "url": canonical,
+        "dateModified": day,
+        "temporalCoverage": f"{iso_month(first)}/{iso_month(last)}",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "isAccessibleForFree": True,
+        "creator": {"@type": "Organization", "name": "株式会社第一技研",
+                    "url": "https://dai1giken.co.jp/"},
+        "isBasedOn": url,
+        "variableMeasured": [{"@type": "PropertyValue", "name": name,
+                              "value": f"{value:.1f}", "unitText": base,
+                              "measurementTechnique": f"e-Stat API statsDataId={sid}"}],
+    }
+    return ('<script type="application/ld+json">'
+            + json.dumps(ld, ensure_ascii=False) + '</script>\n')
+
+
 def year_rows(months: list[str], vals: list[float], cpi: list[float]) -> str:
     """各年4月の値を並べる。1年1行なので、引用しやすく機械でも読みやすい。"""
     rows = []
@@ -265,18 +374,24 @@ def build(basis: dict) -> int:
                 f"（{base}）。前年同月比 {_sign(yoy)}、{first}比 {_sign(since)}。"
                 f"同期間の消費者物価は {_sign(cpi_chg)}。e-Stat API の公表値。")
 
-        h = [head(title, desc, canonical, crumb="工事種別")]
-        h.append(f'''  <div class="srcband">
+        ld = dataset_ld(f"建設工事費デフレーター（{nm}）", desc, canonical, day,
+                        first, last, latest, base, d["statsDataId"], d["url"])
+        h = [head(title, desc, canonical, crumb="工事種別",
+                  extra_css=EXTRA_CSS + "\n" + ld)]
+        # 並びは「見出し → 要点 → 出典の断り → 数字」。出典の断りを先頭に置いていた
+        # ころは、スマホの最初の画面に答えが入らなかった。
+        h.append(f'''  <span class="toplabel">公表統計 ／ 工事種別</span>
+  <h1>{nm}
+    <span class="sub">建設工事費デフレーター（{base}）の工事種別「{nm}」。{note}</span>
+  </h1>
+
+{answer_block(nm, first, last, months[-13], v[0], latest, yoy, cpi_chg, day, base, d["url"])}
+  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて国土交通省「建設工事費デフレーター」の公表値です。</strong>
     e-Stat の API から取得し、<strong>変化率を割り算で出すところまで</strong>を行っています。
     当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
   </div>
-
-  <span class="toplabel">公表統計 ／ 工事種別</span>
-  <h1>{nm}
-    <span class="sub">建設工事費デフレーター（{base}）の{nm}は、{last}時点で <strong>{latest:.1f}</strong>。{first}から {_sign(since)} です。{note}</span>
-  </h1>
 
   <div class="kpis">
     <div class="kpi hi">
@@ -301,6 +416,7 @@ def build(basis: dict) -> int:
     </div>
   </div>
 
+{ask3d_block(code, nm, since, first)}
   <section>
     <h2><span class="idx">Fig.</span>{nm}の月次推移（{first}〜{last}）</h2>
     <p class="lede">朱の線が{nm}、破線が消費者物価指数（総合・全国）です。どちらも指数で、建設工事費デフレーターは{base}、消費者物価指数は2020年＝100 と、それぞれの基準にそろえてあります。点線は 100 の高さです。</p>
@@ -390,19 +506,40 @@ def build(basis: dict) -> int:
             f"{last}時点の値と{first}比で並べています。"
             f"上昇幅は {spread_lo:.1f}% 〜 {spread_hi:.1f}%、"
             f"同期間の消費者物価は {_sign(cpi_chg)}。e-Stat API の公表値。")
-    idx = [head(title, desc, canonical, crumb="工事種別")]
-    idx.append(f'''  <div class="srcband">
+    ld = dataset_ld("建設工事費デフレーター 工事種別一覧（建築系）", desc, canonical,
+                    day, first, last, allser[d["primary_code"]]["values"][-1], base,
+                    d["statsDataId"], d["url"])
+    idx = [head(title, desc, canonical, crumb="工事種別",
+                extra_css=EXTRA_CSS + "\n" + ld)]
+    # 一覧の要点は、よく引かれる2区分（建築補修・建築総合）を名指しで出す
+    key = [c for c in ("260", "110") if c in slug_of]
+    key_li = "".join(
+        f'<li><a href="{slug_of[c]}.html">{name_of[c]}</a>：{first}比 {_sign(chg(c))}'
+        f'・前年同月比 {_sign(_pct(allser[c]["values"][-1], allser[c]["values"][-13]))}</li>'
+        for c in key)
+    idx.append(f'''  <span class="toplabel">公表統計 ／ 工事種別</span>
+  <h1>建設工事費デフレーター 工事種別一覧
+    <span class="sub">この統計表は工事種別を <strong>{len(allser)}区分</strong> 持っています。そのうち建築にあたる <strong>{len(target)}区分</strong> を1区分1ページで出しています。</span>
+  </h1>
+
+  <div class="ans" role="note" aria-label="要点">
+    <p class="k">要点</p>
+    <p class="a1"><strong>建築の工事費（建設工事費デフレーター・建築系{len(target)}区分）は、{first}から{last}までに {spread_lo:.1f}% 〜 {spread_hi:.1f}% 上がりました。</strong></p>
+    <ul>
+      {key_li}
+      <li>同じ期間の消費者物価は {_sign(cpi_chg)}。</li>
+    </ul>
+    <p class="meta">最新データ：{last}分 ／ 最終確認：<time datetime="{day}">{day}</time>（毎月10日に e-Stat を自動で確認） ／ 出典：国土交通省「建設工事費デフレーター」{base}（<a href="{d["url"]}" target="_blank" rel="noopener">e-Stat</a>）</p>
+  </div>
+
+  <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて国土交通省「建設工事費デフレーター」の公表値です。</strong>
     e-Stat の API から取得し、<strong>変化率を割り算で出すところまで</strong>を行っています。
     当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
   </div>
 
-  <span class="toplabel">公表統計 ／ 工事種別</span>
-  <h1>建設工事費デフレーター 工事種別一覧
-    <span class="sub">この統計表は工事種別を <strong>{len(allser)}区分</strong> 持っています。そのうち建築にあたる <strong>{len(target)}区分</strong> を1区分1ページで出しています。{first}から{last}までの上昇は {spread_lo:.1f}% 〜 {spread_hi:.1f}%（幅 {spread_hi-spread_lo:.1f} ポイント）、同じ期間の消費者物価は {_sign(cpi_chg)} でした。</span>
-  </h1>
-''')
+{ask3d_block("260", name_of.get("260", ""), chg("260") if "260" in slug_of else 0.0, first)}''')
     rows = []
     for c in ranked:
         vv = allser[c]["values"]

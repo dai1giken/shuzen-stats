@@ -165,7 +165,21 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
 .prefgrid a:hover{background:var(--sunk)}
 .prefgrid .nm{font-size:14px}
 .prefgrid .vv{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style><style>
+.ans{margin-top:22px;border:1px solid var(--rule);border-left:4px solid var(--shu);background:var(--raise);padding:16px 20px}
+.ans .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--shu);margin:0 0 6px}
+.ans .a1{font-size:17px;line-height:1.6;margin:0}
+.ans ul{margin:8px 0 0;padding-left:1.2em;font-size:14px;line-height:1.75;color:var(--ink2)}
+.ans .meta{margin:10px 0 0;font-size:12px;line-height:1.7;color:var(--ink3)}
+.ans .meta a{color:var(--ai)}
+.ask3d{margin-top:34px}
+.ask3d h2{margin-bottom:6px}
+.ask3d [data-dgk3d-card] > a.fallback{display:inline-block;margin-top:8px;font-weight:700;color:var(--shu)}
+.ask3d [data-dgk3d-card] > a.fallback:not(:only-child){display:none}
+.ask3d [data-dgk3d-card] > .dgk3d-card{margin-top:12px}
 </style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "建設工事費デフレーター（住宅・鉄骨造）", "description": "国土交通省「建設工事費デフレーター」の住宅・鉄骨造は2026年7月時点で 136.1（2020年度＝100）。前年同月比 +7.7%、2016年4月比 +46.2%。同期間の消費者物価は +16.4%。e-Stat API の公表値。", "inLanguage": "ja", "url": "https://dai1giken.co.jp/shuzen-stats/deflator/jutaku-s.html", "dateModified": "2026-10-10", "temporalCoverage": "2016-04/2026-07", "license": "https://creativecommons.org/licenses/by/4.0/", "isAccessibleForFree": true, "creator": {"@type": "Organization", "name": "株式会社第一技研", "url": "https://dai1giken.co.jp/"}, "isBasedOn": "https://www.e-stat.go.jp/dbview?sid=0004055083", "variableMeasured": [{"@type": "PropertyValue", "name": "建設工事費デフレーター（住宅・鉄骨造）", "value": "136.1", "unitText": "2020年度＝100", "measurementTechnique": "e-Stat API statsDataId=0004055083"}]}</script>
+
 </head>
 <body>
 <div class="wrap">
@@ -174,17 +188,28 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
     <span class="spacer"></span>
     <span class="crumb"><a href="https://dai1giken.co.jp/shuzen-stats/">大規模修繕統計ビューア</a> ／ 工事種別</span>
   </header>
+  <span class="toplabel">公表統計 ／ 工事種別</span>
+  <h1>住宅・鉄骨造
+    <span class="sub">建設工事費デフレーター（2020年度＝100）の工事種別「住宅・鉄骨造」。鉄骨造（S造）の住宅。</span>
+  </h1>
+
+  <div class="ans" role="note" aria-label="要点">
+    <p class="k">要点</p>
+    <p class="a1"><strong>住宅・鉄骨造の工事費（建設工事費デフレーター）は、2016年4月から2026年7月までに 46.2% 上がりました。</strong></p>
+    <ul>
+      <li>直近1年（2025年7月→2026年7月）は +7.7%。</li>
+      <li>同じ期間（2016年4月→2026年7月）の消費者物価は +16.4%。差は +29.8 ポイントです。</li>
+      <li>2016年4月に1,000万円だった工事は、同じ内容なら約 1,462万円（指数の比 1.462 倍で換算）。</li>
+    </ul>
+    <p class="meta">最新データ：2026年7月分 ／ 最終確認：<time datetime="2026-10-10">2026-10-10</time>（毎月10日に e-Stat を自動で確認） ／ 出典：国土交通省「建設工事費デフレーター」2020年度＝100（<a href="https://www.e-stat.go.jp/dbview?sid=0004055083" target="_blank" rel="noopener">e-Stat</a>）</p>
+  </div>
+
   <div class="srcband">
     <b>SOURCE ／ 出典</b>
     <strong>このページの数値は、すべて国土交通省「建設工事費デフレーター」の公表値です。</strong>
     e-Stat の API から取得し、<strong>変化率を割り算で出すところまで</strong>を行っています。
     当社が独自に調べたデータ、当社の分析・見解・将来予測は<strong>含みません</strong>。
   </div>
-
-  <span class="toplabel">公表統計 ／ 工事種別</span>
-  <h1>住宅・鉄骨造
-    <span class="sub">建設工事費デフレーター（2020年度＝100）の住宅・鉄骨造は、2026年7月時点で <strong>136.1</strong>。2016年4月から +46.2% です。鉄骨造（S造）の住宅。</span>
-  </h1>
 
   <div class="kpis">
     <div class="kpi hi">
@@ -208,6 +233,12 @@ a.sitelink .arrow{margin-left:auto;font-family:var(--mono);font-size:20px;color:
       <p>建築系31区分中。全75区分では 29 位。</p>
     </div>
   </div>
+
+  <section class="ask3d">
+    <h2><span class="idx">3D</span>工事費が2016年4月から +46.2%。あなたのマンションの修繕費は？</h2>
+    <p class="lede">住所を入れると、国の3D都市モデルから建物を立ち上げ、国の公表統計（建築補修の工事費指数など）から修繕費の目安をその場で出します。無料です。実際の計画・金額は現地調査のうえでご案内します。</p>
+    <div data-dgk3d-card><a class="fallback" href="https://dai1giken.co.jp/3d/">住所を入れて3Dと概算（無料）→</a></div>
+  </section>
 
   <section>
     <h2><span class="idx">Fig.</span>住宅・鉄骨造の月次推移（2016年4月〜2026年7月）</h2>
