@@ -160,6 +160,28 @@ FOOT_T = CTA_HOUSING + """
 
 
 
+
+# ── この地域での当社の施工実績（2026-10-17 藤岡さん「市区町村ページに実績を紐付ける」）──
+# 元データは works.json（実績_Web掲載用_確定版_20260919.xlsx。所在地・完工年月はすべて自社の工事台帳から確定したもの）。
+# 載せるのは 完工年月・用途・物件名 だけ（ご下命先・請負金額・数量は載せない＝2026-09-19 の決定）。
+WORKS = json.loads((HERE / "works.json").read_text(encoding="utf-8"))["works"]
+def works_section(code: str, name: str) -> str:
+    ws = [w for w in WORKS if w["code"] == code]
+    if not ws:
+        return ""
+    ws.sort(key=lambda w: w["ym"], reverse=True)
+    rows = "".join(f'<tr><td>{w["ym"]}</td><td>{w["use"]}</td><td>{w["name"]}</td></tr>' for w in ws)
+    return f'''  <section id="works">
+    <h2><span class="idx">Works</span>{name}での当社の施工実績</h2>
+    <p class="lede">株式会社第一技研が{name}で手がけた外装改修・大規模修繕です（{len(ws)}件）。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>完工</th><th>用途</th><th>物件名</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table></div>
+    <p class="colophon">出典：当社の工事台帳（完工年月・所在地）。ご下命先・請負金額は載せていません。ほかの地域の実績は<a href="{SITE_URL.rsplit('/shuzen-stats/', 1)[0]}/#works">会社サイトの施工実績</a>へ。</p>
+  </section>
+'''
+
 def build(basis: dict) -> int:
     city = basis["city"]
     areas = city["areas"]
@@ -255,7 +277,7 @@ def build(basis: dict) -> int:
       {rank_html}
     </div>
   </div>
-{tool_html}{consult_form.form(page_url=canonical, page_title=title, region=pref_name, city=name)}
+{works_section(code, name)}{tool_html}{consult_form.form(page_url=canonical, page_title=title, region=pref_name, city=name)}
   <section>
     <h2><span class="idx">Fig.</span>{name}の非木造共同住宅（建築の時期別）</h2>
     <p class="lede">2023年10月1日時点で現存する住宅の数です。朱色の2本が、{ref}年時点で築{age_lo}〜{age_hi}年にあたります。</p>
