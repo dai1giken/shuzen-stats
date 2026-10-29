@@ -239,12 +239,21 @@ def build(basis: dict) -> int:
         # 地名の直後に数字を置くと「その地域の相場」と読まれる。cost_banner.py の
         # 「そのページの戸数とバナーの金額を繋げない」と同じ理由。金額は
         # description 側で「全国」と明示したうえで出す。
-        title = f"{name}の大規模修繕 費用の目安｜築{age_lo}〜{age_hi}年 {v:,}戸｜{pref_name}"
-        desc = (f"{name}の非木造共同住宅のうち、1981〜2000年に建築されたものは{v:,}戸。"
-                f"{ref}年時点で築{age_lo}〜{age_hi}年、大規模修繕の2〜3回目にあたります。"
+        # 2026-10-30 発注者（管理組合・オーナー）向けに変更。「戸田市 大規模修繕」で2位なのに
+        # 86表示0クリック＝統計の題名は業者を探す人に押されなかった（Search Console 9/9〜10/28）。
+        # 戸数は description へ移し、題名には実績の有無と社名を入れる。
+        # **contact.php の $TITLE_ECHO と同じ文字列を作らないこと**（題名はフォーム本文に入る）。
+        n_works = sum(1 for w in WORKS if w["code"] == code)
+        tail = f"当社施工実績{n_works}件" if n_works else "第一技研"
+        title = f"{name}のマンション大規模修繕｜費用の目安と{tail}"
+        if not n_works:
+            title = f"{name}のマンション大規模修繕｜費用の目安・ご相談｜第一技研"
+        works_txt = f"当社は{name}で{n_works}件の施工実績があります。" if n_works else ""
+        desc = (f"{name}でマンションの大規模修繕をご検討の管理組合・オーナー様へ。"
+                f"{name}の共同住宅のうち築{age_lo}〜{age_hi}年（大規模修繕の2〜3回目）は{v:,}戸。"
                 f"工事金額は全国の実態調査で1戸あたり中央値{cost_med:,.0f}万円"
                 f"（{cost_month}換算・共通仮設費と消費税を除く）。"
-                f"総務省・国土交通省の公表値。")
+                f"{works_txt}足場から塗装・防水まで自社管理の第一技研に、このページからご相談いただけます。")
 
         h = [head(title, desc, canonical, crumb="市区町村別",
                   extra_css=cost_tool.EXTRA_CSS + consult_form.EXTRA_CSS)]
